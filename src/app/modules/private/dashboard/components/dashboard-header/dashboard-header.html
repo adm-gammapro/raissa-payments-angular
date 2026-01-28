@@ -1,0 +1,29 @@
+<div class="card">
+  <p-menubar>
+    <ng-template #start>
+      <app-dashboard-menu></app-dashboard-menu>
+      <img src="assets/images/Raissa-logo-fondo-transparente-pequenio.png" height="92" alt="Descripción" />
+    </ng-template>
+    <ng-template #end>
+      <div class="flex flex-wrap align-items-center gap-2 justify-content-end">
+        <p-toast />
+        <p-splitbutton
+          severity="info"
+          outlined
+          [model]="items">
+          <ng-template #content>
+                        <span class="flex items-center font-bold">
+                            <img
+                              alt="logo"
+                              src="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png"
+                              class="h-2rem mr-2"
+                            />
+                            <span class="hidden sm:inline">{{ nombreUsuarioSesion }}</span>
+                        </span>
+          </ng-template>
+        </p-splitbutton>
+      </div>
+    </ng-template>
+
+  </p-menubar>
+</div>

@@ -1,0 +1,41 @@
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.6rem;
+  cursor: pointer;
+  color: var(--p-text-color);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.nav-item i {
+  color: var(--p-text-secondary-color);
+}
+.nav-item:hover {
+  background: color-mix(in srgb, var(--p-primary-color) 8%, transparent);
+  color: var(--p-text-color);
+}
+.nav-item.has-children .nav-item-header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 0.6rem;
+}
+.nav-sublist {
+  list-style: none;
+  margin: 0.2rem 0 0.2rem 0;
+  padding-left: 1.25rem;
+  border-left: 1px solid color-mix(in srgb, var(--p-surface-300, #dfe3eb) 60%, transparent);
+}
+.badge {
+  min-width: 1.5rem;
+  height: 1.5rem;
+  padding: 0 0.35rem;
+  border-radius: 999px;
+  background: var(--p-primary-color);
+  color: var(--p-primary-contrast-color, #fff);
+  font-size: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

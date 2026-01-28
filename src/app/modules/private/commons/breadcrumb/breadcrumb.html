@@ -1,0 +1,15 @@
+<div class="card flex justify-center">
+  <p-breadcrumb class="max-w-full" [model]="itemsBread">
+    <ng-template #item let-item>
+      <ng-container *ngIf="item.route; else elseBlock">
+        <a [routerLink]="item.route" class="p-breadcrumb-item-link">
+          <span [ngClass]="[item.icon ? item.icon : '', 'text-color']"></span>
+          <span class="text-primary font-semibold">{{ item.label }}</span>
+        </a>
+      </ng-container>
+      <ng-template #elseBlock>
+        <p-tag severity="info" value="{{ item.label }}" />
+      </ng-template>
+    </ng-template>
+  </p-breadcrumb>
+</div>

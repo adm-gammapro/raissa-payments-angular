@@ -1,0 +1,50 @@
+<div class="card flex justify-center">
+  <p-dialog header="Edit Profile" [modal]="true" [(visible)]="visible" [style]="{ width: '50rem' }" closable="false">
+    <ng-template #header>
+      <div class="inline-flex items-center justify-center gap-2">
+        <h2><span class="font-bold whitespace-nowrap">{{ headerTitle }}</span></h2>
+      </div>
+    </ng-template>
+
+    <p-table [value]="observaciones"
+             [tableStyle]="{ 'min-width': '45rem' }"
+             [size]="'small'"
+             stripedRows
+             showGridlines
+             class="mb-4">
+      <ng-template #header>
+        <tr>
+          <th id="descripcion">Descripción</th>
+          <th id="fecha">Fecha y hora</th>
+          <th id="usuarioReg">Usuario que realizó observación</th>
+          <th id="evento">Evento donde se realizó observación</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-observacion>
+        <tr>
+          <td>{{ observacion.descripcion }}</td>
+          <td>{{ observacion.fecha }}</td>
+          <td>{{ observacion.usuarioReg }}</td>
+          <td>{{ observacion.evento }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+    @if (this.showCard) {
+      <p-card [style]="{ width: '47rem', overflow: 'hidden' }">
+        <ng-template #title>{{ cardTitle }}</ng-template>
+        <textarea rows="5" cols="30" pTextarea [autoResize]="true" fluid></textarea>
+      </p-card>
+    }
+    <ng-template #footer>
+      <p-button label="Cerrar" [outlined]="true" severity="info" (onClick)="cerrar()"></p-button>
+      @if (this.showBtnObservar) {
+        <p-button label="Observar" [outlined]="true" severity="warn"
+                  (onClick)="cerrar()"></p-button>
+      }
+      @if (this.showBtnAnular) {
+        <p-button label="Anular" [outlined]="true" severity="danger"
+                  (onClick)="cerrar()"></p-button>
+      }
+    </ng-template>
+  </p-dialog>
+</div>

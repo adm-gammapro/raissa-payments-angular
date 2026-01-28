@@ -1,0 +1,34 @@
+<div class="card flex justify-center">
+  <p-dialog header="Edit Profile" [modal]="true" [(visible)]="visible" [style]="{ width: '50rem' }" closable="false">
+    <ng-template #header>
+      <div class="inline-flex items-center justify-center gap-2">
+        <h2><span class="font-bold whitespace-nowrap">Tracking de solicitud</span></h2>
+      </div>
+    </ng-template>
+
+    <p-table [value]="trackList"
+             [tableStyle]="{ 'min-width': '45rem' }"
+             [size]="'small'"
+             stripedRows
+             showGridlines
+             class="mb-4">
+      <ng-template #header>
+        <tr>
+          <th id="fecha">Fecha y hora</th>
+          <th id="usuarioReg">Usuario que realizó observación</th>
+          <th id="evento">Evento donde se realizó observación</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-track>
+        <tr>
+          <td>{{ track.fecha }}</td>
+          <td>{{ track.usuarioReg }}</td>
+          <td>{{ track.evento }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+    <ng-template #footer>
+      <p-button label="Cerrar" [outlined]="true" severity="info" (onClick)="cerrar()"></p-button>
+    </ng-template>
+  </p-dialog>
+</div>

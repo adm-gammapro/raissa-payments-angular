@@ -1,0 +1,256 @@
+<p-toast position="top-center"></p-toast>
+<p-confirmdialog></p-confirmdialog>
+<app-breadcrumb [itemsBread]="misItems"></app-breadcrumb>
+
+<form [formGroup]="filtroForm" (ngSubmit)="filtrar()">
+  <p-table [value]="solicitudes"
+           [tableStyle]="{ 'min-width': '50rem' }"
+           [paginator]="true"
+           [rows]="5"
+           [rowsPerPageOptions]="[5, 10, 20]"
+           stripedRows
+           showGridlines
+           selectionMode="single"
+           [first]="first"
+           [size]="'small'"
+           breakpoint="960px"
+           currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros en total"
+           showCurrentPageReport="true"
+           sortField="fecha"
+           [sortOrder]="1"
+  >
+    <ng-template #caption>
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-2 w-full">
+        <!-- Izquierda: inputs (solo en desktop) -->
+        <div class="hidden sm:flex flex-row gap-2">
+          <input
+            pInputText
+            type="text"
+            placeholder="Por código"
+            class="sm:w-64 w-full"
+            formControlName="codigo"
+          />
+          <p-datepicker
+            formControlName="fecha"
+            selectionMode="range"
+            placeholder="Por fecha"
+            [readonlyInput]="true">
+          </p-datepicker>
+          <input
+            pInputText
+            type="text"
+            placeholder="Por usuario"
+            class="sm:w-64 w-full"
+            formControlName="usuario"
+          />
+          <p-multiselect
+            [options]="estadoSolicitudFiltrada"
+            formControlName="estado"
+            placeholder="Por estado de solicitud"
+            optionLabel="descripcion"
+            optionValue="codigo"
+            display="chip"
+            class="sm:w-64 w-full">
+          </p-multiselect>
+        </div>
+
+        <!-- Derecha: botones -->
+        <div class="flex items-center gap-2 sm:gap-2">
+          <!-- Buscar y Limpiar (solo visibles en desktop) -->
+          <div class="hidden sm:flex gap-2">
+            <p-button icon="pi pi-external-link" [outlined]="true" severity="info" label="Exportar datos filtrados"/>
+            <p-button
+              icon="pi pi-search"
+              label="Buscar"
+              (onClick)="filtrar()"
+              [outlined]="true"
+              severity="info"
+            ></p-button>
+
+            <p-button
+              icon="pi pi-filter-slash"
+              label="Limpiar"
+              (onClick)="limpiarFiltros()"
+              [outlined]="true"
+              severity="secondary"
+            ></p-button>
+
+          </div>
+        </div>
+      </div>
+    </ng-template>
+
+    <ng-template #header>
+      <tr>
+        <th id="codigo" class="text-center">Código de solicitud</th>
+        <th id="semaforo" class="text-center">Indicador para tiempo de aplicación</th>
+        <th id="fecha" class="text-center">Fecha de carga
+          <p-sortIcon field="fecha"/>
+        </th>
+        <th id="usuario">Usuario de carga</th>
+        <th id="cantidad" class="text-right">Cantidad de órdenes</th>
+        <th id="estado" class="text-center">Estado</th>
+        <th id="acciones" class="text-center">Acciones</th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-solicitud>
+      <tr>
+        <td class="text-center">{{ solicitud.id }}</td>
+        <td class="text-center">
+          <i class="pi"
+             [ngClass]="solicitud?.id % 2 === 0 ? 'pi-check-circle status-ok' : 'pi-times-circle status-bad'"
+             [pTooltip]="solicitud?.id % 2 === 0 ? 'Han pasado 10 min. o menos' : 'Han pasado más de 10 min.'"></i>
+          <span>
+            {{ solicitud?.id % 2 === 0 ? 'Han pasado 10 min. o menos' : 'Han pasado más de 10 min.' }}
+          </span>
+        </td>
+        <td class="text-center">{{ solicitud.fecha }}</td>
+        <td>{{ solicitud.usuario }}</td>
+        <td class="text-right">{{ solicitud.tramas }}</td>
+        <td class="text-center">
+          <span class="p-badge" [ngStyle]="badgeStyle(solicitud.estado)">
+            {{ estadoLabel(solicitud.estado) }}
+          </span>
+        </td>
+
+        <td style="text-align: center;">
+          <p-button
+            icon="pi pi-chart-bar"
+            [rounded]="true"
+            severity="success"
+            [outlined]="true"
+            pTooltip="Resumen"
+            tooltipPosition="left"
+            size="small"
+            (onClick)="verResumen($event, solicitud)"
+          />
+          <p-button
+            icon="pi pi-align-justify"
+            [rounded]="true"
+            severity="info"
+            [outlined]="true"
+            pTooltip="Tracking"
+            tooltipPosition="left"
+            size="small"
+            (onClick)="verTrack($event, solicitud.id)"
+          />
+          @if (modo === 'validar') {
+            @if (solicitud.estado === 'REGISTRADO') {
+              <p-button
+                icon="pi pi-filter"
+                [rounded]="true"
+                severity="info"
+                [outlined]="true"
+                pTooltip="Validar"
+                tooltipPosition="left"
+                size="small"
+                (onClick)="validar($event, solicitud.id)"/>
+            } @else if (solicitud.estado === 'OBSERVADO') {
+              <p-button
+                icon="pi pi-eye"
+                [rounded]="true"
+                severity="warn"
+                [outlined]="true"
+                pTooltip="Ver detalle"
+                tooltipPosition="left"
+                size="small"
+                (onClick)="verDetalle($event, solicitud.id)"/>
+              <p-button
+                icon="pi pi-times"
+                [rounded]="true"
+                severity="danger"
+                [outlined]="true"
+                pTooltip="Anular"
+                tooltipPosition="left"
+                size="small"
+                (onClick)="anular($event, solicitud.id)"/>
+            } @else if (solicitud.estado === 'ANULADO') {
+              <p-button
+                icon="pi pi-eye"
+                [rounded]="true"
+                severity="warn"
+                [outlined]="true"
+                pTooltip="Ver detalle"
+                tooltipPosition="left"
+                size="small"
+                (onClick)="verDetalle($event, solicitud.id)"/>
+            } @else if (solicitud.estado === 'VALIDADO') {
+              <p-button
+                icon="pi pi-send"
+                [rounded]="true"
+                severity="info"
+                [outlined]="true"
+                pTooltip="Enviar a autorización"
+                tooltipPosition="left"
+                size="small"
+                (onClick)="solicitarAutorizacion($event, solicitud.id)"/>
+            }
+          }
+          @if (this.modo === 'autorizar') {
+            <p-button
+              icon="pi pi-lock-open"
+              [rounded]="true"
+              severity="info"
+              [outlined]="true"
+              pTooltip="Autorizar"
+              tooltipPosition="left"
+              size="small"
+              (onClick)="autorizar($event, solicitud.id)"
+            />
+          }
+          @if (this.modo === 'ejecutar') {
+            @if (solicitud.estado === 'AUTORIZADO') {
+              <p-button
+                icon="pi pi-cog"
+                [rounded]="true"
+                severity="info"
+                [outlined]="true"
+                pTooltip="Procesar"
+                tooltipPosition="left"
+                size="small"
+                (onClick)="procesar($event, solicitud.id)"
+              />
+            }
+            @if (solicitud.estado === 'PROC_PARCIAL') {
+              <p-button
+                icon="pi pi-replay"
+                [rounded]="true"
+                severity="info"
+                [outlined]="true"
+                pTooltip="Reprocesar"
+                tooltipPosition="left"
+                size="small"
+                (onClick)="procesar($event, solicitud.id)"
+              />
+            }
+          }
+          @if (this.modo === 'autorizar' || this.modo === 'ejecutar') {
+            @if (solicitud.estado === 'AUTORIZADO') {
+              <p-button
+                icon="pi pi-question"
+                [rounded]="true"
+                severity="danger"
+                [outlined]="true"
+                pTooltip="Observar"
+                tooltipPosition="left"
+                size="small"
+                (onClick)="observar($event, solicitud.id)"
+              />
+            }
+          }
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template #emptymessage>
+      <tr>
+        <td colspan="7">No se encuentran registros para mostrar</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</form>
+
+<app-detalle-solicitud [(visible)]="visibleResumen" [mostrar]="IndicadorMostrar"></app-detalle-solicitud>
+<app-observaciones [(visible)]="visibleObservaciones" [modo]="modoObservaciones"></app-observaciones>
+<app-track [(visible)]="visibleTrack"></app-track>
+<app-factor-autenticacion [(visible)]="visibleFactor" (autenticado)="onAutenticado()"></app-factor-autenticacion>

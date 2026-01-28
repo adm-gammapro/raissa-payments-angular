@@ -1,0 +1,50 @@
+<div class="card flex justify-center">
+  <p-drawer #drawerRef [(visible)]="visible">
+    <div class="card">
+      <p-menu [model]="items" class="flex justify-center" styleClass="w-full md:w-60">
+        <ng-template #start>
+          <div class="flex items-center gap-2 px-3 py-3">
+            <div class="leading-tight">
+              <div class="text-lg font-semibold tracking-wide text-surface-900">RAISSA PAYMENTS</div>
+              <div class="text-xs text-surface-500">Suite de transacciones</div>
+            </div>
+          </div>
+        </ng-template>
+
+        <ng-template #submenuheader let-item>
+          <div class="pt-4">
+            <span class="text-primary font-bold">{{ item.label }}</span>
+          </div>
+
+        </ng-template>
+
+        <ng-template #item let-item>
+          <a class="flex items-center p-menu-item-link">
+            <span [class]="item.icon"></span>
+            <span class="ml-2">{{ item.label }}</span>
+          </a>
+        </ng-template>
+
+        <ng-template #end>
+          <div class="w-full p-1">
+            <p-button label="Cerrar Sesión"
+                      icon="pi pi-sign-out"
+                      styleClass="w-full justify-center"
+                      severity="danger"
+                      outlined></p-button>
+          </div>
+        </ng-template>
+      </p-menu>
+    </div>
+
+  </p-drawer>
+
+  <p-button (onClick)="visible = true"
+            icon="pi pi-bars"
+            severity="info"
+            variant="outlined"/>
+</div>
+
+
+
+

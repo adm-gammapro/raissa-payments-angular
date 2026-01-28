@@ -1,0 +1,19 @@
+@import "primeicons/primeicons.css";
+@import 'primeflex/primeflex.css';
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  overflow-x: hidden; /* bien */
+  overflow-y: auto;
+}
+
+label.required::after {
+  content: ' *';
+  color: red;
+  font-weight: bold;
+}
+
+.status-ok { color: #22c55e !important; }
+.status-bad { color: #ef4444 !important; }
