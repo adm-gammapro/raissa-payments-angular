@@ -3,31 +3,52 @@
 <app-breadcrumb [itemsBread]="misItems"></app-breadcrumb>
 
 <form [formGroup]="filtroForm" (ngSubmit)="filtrar()">
-  <p-table [value]="allSolicitudes"
+  <p-table [value]="solicitudes"
            [tableStyle]="{ 'min-width': '50rem' }"
            [paginator]="true"
+           [totalRecords]="totalRecords"
+           [lazy]="true"
+           [loading]="loading"
            [rows]="5"
            [rowsPerPageOptions]="[5, 10, 20]"
            stripedRows
            showGridlines
-           [first]="first"
            breakpoint="960px"
+           [size]="'small'"
+           (onLazyLoad)="loadLazy($event)"
            currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros en total"
            showCurrentPageReport="true"
-           sortField="fecha"
+           sortField="id"
            [sortOrder]="1"
   >
     <ng-template #caption>
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-2 w-full">
         <!-- Izquierda: inputs (solo en desktop) -->
         <div class="hidden sm:flex flex-row gap-2">
+          <input type="text"
+                 pInputText
+                 id="codigoSolicitud"
+                 formControlName="codigoSolicitud"
+                 placeholder="Por código"
+          />
+        </div>
+        <div class="hidden sm:flex flex-row gap-2">
           <p-datepicker
             formControlName="fecha"
             selectionMode="range"
             [readonlyInput]="true"
-            placeholder="Rango de fechas"
+            placeholder="por fechas"
+            dateFormat="dd/mm/yy"
           >
           </p-datepicker>
+        </div>
+        <div class="hidden sm:flex flex-row gap-2">
+          <input type="text"
+                 pInputText
+                 id="usuarioCarga"
+                 formControlName="usuarioCarga"
+                 placeholder="por usuario"
+          />
         </div>
 
         <!-- Derecha: botones -->
@@ -56,8 +77,10 @@
             url="https://www.primefaces.org/cdn/api/upload.php"
             accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
             maxFileSize="5000000"
-            (onUpload)="onBasicUploadAuto($event)"
-            [auto]="true"
+            [customUpload]="true"
+            (uploadHandler)="onUploadHandler($event)"
+            (onSelect)="onSelect($event)"
+            [auto]="false"
             chooseLabel="Cargar plantilla"
           />
         </div>
@@ -71,7 +94,7 @@
           <p-sortIcon field="fecha"/>
         </th>
         <th id="usuario">Usuario de carga</th>
-        <th id="cantidad" class="text-right">Cantidad de tramas</th>
+        <th id="cantidad" class="text-right">Cantidad de órdenes</th>
         <th id="acciones" class="text-center">Acciones</th>
       </tr>
     </ng-template>
@@ -79,9 +102,9 @@
     <ng-template #body let-solicitud>
       <tr>
         <td class="text-center">{{ solicitud.id }}</td>
-        <td class="text-center">{{ solicitud.fecha }}</td>
-        <td>{{ solicitud.usuario }}</td>
-        <td class="text-right">{{ solicitud.tramas }}</td>
+        <td class="text-center">{{ solicitud.fechaCarga }}</td>
+        <td>{{ solicitud.usuarioCarga }}</td>
+        <td class="text-right">{{ solicitud.cantidadOrdenes }}</td>
         <td class="text-center">
           <p-button
             icon="pi pi-eye"
@@ -91,7 +114,7 @@
             pTooltip="Resumen"
             tooltipPosition="left"
             size="small"
-            (onClick)="detalle()"
+            (onClick)="detalle(solicitud.cargos)"
           />
         </td>
       </tr>
@@ -99,4 +122,16 @@
   </p-table>
 </form>
 
-<app-detalle-solicitud [(visible)]="visible"></app-detalle-solicitud>
+<app-vista-previa-solicitud
+  [(visible)]="visibleVistaPrevia"
+  [cargos]="cargos"
+  [mostrar]="mostrarVistaPrevia"
+  [selectedFile]="selectedFile"
+  (refresh)="filtrar()">
+</app-vista-previa-solicitud>
+
+<app-detalle-solicitud
+  [(visible)]="visibleDetalle"
+  [cargos]="cargosSolicitud"
+  [mostrar]="mostrarDetalle">
+</app-detalle-solicitud>

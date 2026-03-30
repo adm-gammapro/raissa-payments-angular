@@ -27,7 +27,7 @@
           <th id="cuentaOrigen">Cuenta origen</th>
           <th id="entidadOrigen">Entidad origen</th>
           <th id="monedaOrigen">Moneda</th>
-          <th id="montoOrigen">Monto cargo</th>
+          <th id="montoOrigen" class="text-right">Monto cargo</th>
           <th id="estado">Estado validación</th>
           @if (mostrar) {
             <th id="estadoEjecucion">Estado ejecución</th>
@@ -47,16 +47,16 @@
               [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'">
             </p-button>
           </td>
-          <td>{{ cargo.cuentaCargo }}</td>
-          <td>{{ cargo.entidadFinancieraCargo }}</td>
+          <td>{{ cargo.cuentaOrigen }}</td>
+          <td>{{ cargo.codigoEntidadFinanciera }}</td>
           <td>
-            <p-tag [value]="cargo.monedaCuentaCargo" [severity]="monedaSeverity(cargo.monedaCuentaCargo)"></p-tag>
+            <p-tag [value]="cargo.moneda" [severity]="monedaSeverity(cargo.moneda)"></p-tag>
           </td>
-          <td>{{ cargo.montoCargo }}</td>
+          <td class="text-right">{{ cargo.montoCargo }}</td>
           <td>
             <p-tag
-              [value]="totalAbonos(cargo) === toNumber(cargo.montoCargo) ? 'Correcto' : 'Observado'"
-              [severity]="totalAbonos(cargo) === toNumber(cargo.montoCargo) ? 'success' : 'danger'">
+              [value]="cargo.montoTotalAbonos === cargo.montoCargo ? 'Correcto' : 'Observado'"
+              [severity]="cargo.montoTotalAbonos === cargo.montoCargo ? 'success' : 'danger'">
             </p-tag>
           </td>
           @if (mostrar) {
@@ -76,21 +76,21 @@
             <div class="p-4">
               <h5 class="font-bold flex items-center gap-2">
                 <p-tag
-                  [value]="'Abonos totales para ' + cargo.cuentaCargo + ': '"
+                  [value]="'Abonos totales para ' + cargo.cuentaOrigen + ': '"
                   severity="info"
                 ></p-tag>
                 <p-tag
-                  [value]="formatMonto(totalAbonos(cargo), cargo.monedaCuentaCargo)"
+                  [value]="formatMonto(cargo.montoTotalAbonos, cargo.moneda)"
                   [severity]="tagSeverity(cargo)">
                 </p-tag>
               </h5>
-              <p-table [value]="cargo.detalle" dataKey="id" [tableStyle]="{ 'min-width': '50rem' }" [size]="'small'">
+              <p-table [value]="cargo.abonos" dataKey="id" [tableStyle]="{ 'min-width': '50rem' }" [size]="'small'">
                 <ng-template #header>
                   <tr>
                     <th id="cuentaAbono">Cuenta abono</th>
                     <th id="entidadAbono">Entidad destino</th>
                     <th id="monedaAbono">Moneda</th>
-                    <th id="montoAbono">Monto</th>
+                    <th id="montoAbono" class="text-right">Monto</th>
                     <th id="clienteAbono">Beneficiario</th>
                     @if (mostrar) {
                       <th id="estadoEjecucionDetalle">Estado ejecución</th>
@@ -100,13 +100,13 @@
                 </ng-template>
                 <ng-template #body let-det>
                   <tr>
-                    <td>{{ det.cuentaAbono }}</td>
-                    <td>{{ det.entidadFinancieraAbono }}</td>
+                    <td>{{ det.cuentaDestino }}</td>
+                    <td>{{ det.codigoEntidadFinanciera }}</td>
                     <td>
-                      <p-tag [value]="det.monedaCuentaAbono" [severity]="monedaSeverity(det.monedaCuentaAbono)"></p-tag>
+                      <p-tag [value]="det.moneda" [severity]="monedaSeverity(det.moneda)"></p-tag>
                     </td>
-                    <td>{{ det.montoAbono }}</td>
-                    <td>{{ det.cliente }}</td>
+                    <td class="text-right">{{ det.montoDestino }}</td>
+                    <td>{{ det.beneficiario }}</td>
                     @if (mostrar) {
                       <td>
                         <p-tag

@@ -15,15 +15,15 @@
       <ng-template #header>
         <tr>
           <th id="fecha">Fecha y hora</th>
-          <th id="usuarioReg">Usuario que realizó observación</th>
+          <th id="usuario">Usuario que realizó observación</th>
           <th id="evento">Evento donde se realizó observación</th>
         </tr>
       </ng-template>
       <ng-template #body let-track>
         <tr>
           <td>{{ track.fecha }}</td>
-          <td>{{ track.usuarioReg }}</td>
-          <td>{{ track.evento }}</td>
+          <td>{{ track.usuario }}</td>
+          <td>{{ eventoLabel(track.evento) }}</td>
         </tr>
       </ng-template>
     </p-table>

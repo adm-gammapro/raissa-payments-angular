@@ -1,0 +1,148 @@
+<p-dialog
+  [(visible)]="visible"
+  [modal]="true"
+  closable="false"
+  [style]="{ width: '100rem' }"
+>
+  <div class="card">
+    <p-table
+      [value]="cargos"
+      dataKey="id"
+      [tableStyle]="{ 'min-width': '70rem' }"
+      [expandedRowKeys]="expandedRows"
+      [size]="'small'"
+      stripedRows
+      showGridlines
+    >
+      <ng-template #caption>
+        <div class="flex flex-wrap justify-end gap-2">
+          <p-button label="Expandir todo" icon="pi pi-plus" severity="info" text (onClick)="expandAll()"></p-button>
+          <p-button label="Contraer todo" icon="pi pi-minus" severity="info" text (onClick)="collapseAll()"></p-button>
+        </div>
+      </ng-template>
+
+      <ng-template #header>
+        <tr>
+          <th id="boton" style="width: 4rem"></th>
+          <th id="cuentaOrigen">Cuenta origen</th>
+          <th id="entidadOrigen">Entidad origen</th>
+          <th id="monedaOrigen" class="text-center">Moneda</th>
+          <th id="montoOrigen"  class="text-right">Monto cargo</th>
+          <th id="estado">Estado validación</th>
+          @if (mostrar) {
+            <th id="estadoEjecucion">Estado ejecución</th>
+          }
+        </tr>
+      </ng-template>
+
+      <ng-template #body let-cargo let-expanded="expanded">
+        <tr>
+          <td>
+            <p-button
+              type="button"
+              [pRowToggler]="cargo"
+              [text]="true"
+              [rounded]="true"
+              [plain]="true"
+              [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'">
+            </p-button>
+          </td>
+          <td>{{ cargo.cuentaCargo }}</td>
+          <td>{{ cargo.entidadFinancieraCargo }}</td>
+          <td class="text-center">
+            <p-tag [value]="cargo.monedaCuentaCargo" [severity]="monedaSeverity(cargo.monedaCuentaCargo)"></p-tag>
+          </td>
+          <td class="text-right">{{ cargo.montoCargo }}</td>
+          <td>
+            <p-tag
+              [value]="totalAbonos(cargo) === toNumber(cargo.montoCargo) ? 'Correcto' : 'Observado'"
+              [severity]="totalAbonos(cargo) === toNumber(cargo.montoCargo) ? 'success' : 'danger'">
+            </p-tag>
+          </td>
+          @if (mostrar) {
+            <td>
+              <p-tag
+                [value]="cargo.estadoEjecucion"
+                [severity]="cargo.estadoEjecucion === 'Correcto' ? 'success' : 'danger'">
+              </p-tag>
+            </td>
+          }
+        </tr>
+      </ng-template>
+
+      <ng-template #expandedrow let-cargo>
+        <tr>
+          <td colspan="7">
+            <div class="p-4">
+              <h5 class="font-bold flex items-center gap-2">
+                <p-tag
+                  [value]="'Abonos totales para ' + cargo.cuentaCargo + ': '"
+                  severity="info"
+                ></p-tag>
+                <p-tag
+                  [value]="formatMonto(totalAbonos(cargo), cargo.monedaCuentaCargo)"
+                  [severity]="tagSeverity(cargo)">
+                </p-tag>
+              </h5>
+              <p-table [value]="cargo.detalle" dataKey="id" [tableStyle]="{ 'min-width': '50rem' }" [size]="'small'">
+                <ng-template #header>
+                  <tr>
+                    <th id="cuentaAbono">Cuenta abono</th>
+                    <th id="entidadAbono">Entidad destino</th>
+                    <th id="monedaAbono" class="text-center">Moneda</th>
+                    <th id="montoAbono"  class="text-right">Monto</th>
+                    <th id="clienteAbono">Beneficiario</th>
+                    @if (mostrar) {
+                      <th id="estadoEjecucionDetalle">Estado ejecución</th>
+                      <th id="detalleEjecucion">Detalle ejecución</th>
+                    }
+                  </tr>
+                </ng-template>
+                <ng-template #body let-det>
+                  <tr>
+                    <td>{{ det.cuentaAbono }}</td>
+                    <td>{{ det.entidadFinancieraAbono }}</td>
+                    <td class="text-center">
+                      <p-tag [value]="det.monedaCuentaAbono" [severity]="monedaSeverity(det.monedaCuentaAbono)"></p-tag>
+                    </td>
+                    <td class="text-right">{{ det.montoAbono }}</td>
+                    <td>{{ det.cliente }}</td>
+                    @if (mostrar) {
+                      <td>
+                        <p-tag
+                          [value]="det.estadoEjecucion"
+                          [severity]="det.estadoEjecucion === 'Correcto' ? 'success' : 'danger'">
+                        </p-tag>
+                      </td>
+                      <td>{{ det.detalleEjecucion }}</td>
+                    }
+                  </tr>
+                </ng-template>
+                <ng-template #emptymessage>
+                  <tr>
+                    <td colspan="5">Sin abonos.</td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <ng-template #footer>
+    <p-button
+      label="Enviar"
+      severity="success"
+      [disabled]="hasObservados() || !selectedFile"
+      (onClick)="enviar()">
+    </p-button>
+    <p-button
+      label="Cerrar"
+      [outlined]="true"
+      severity="info"
+      (onClick)="cerrar()"
+    />
+  </ng-template>
+</p-dialog>

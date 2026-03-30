@@ -14,5 +14,5 @@ import {RouterOutlet} from '@angular/router';
   styleUrl: './dashboard.scss',
 })
 export class Dashboard {
-  constructor(/*private readonly dashboardService: DashboardService*/) {}
+  constructor() {}
 }

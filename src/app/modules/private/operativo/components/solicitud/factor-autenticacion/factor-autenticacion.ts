@@ -30,6 +30,7 @@ import {MessageService} from 'primeng/api';
     InputOtp,
     Tooltip,
   ],
+  providers: [MessageService],
   templateUrl: './factor-autenticacion.html',
   styleUrl: './factor-autenticacion.scss',
 })

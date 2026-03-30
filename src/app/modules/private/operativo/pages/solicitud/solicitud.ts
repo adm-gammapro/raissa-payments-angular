@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {BadgeModule} from 'primeng/badge';
-import {TableModule} from 'primeng/table';
+import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {CommonModule} from '@angular/common';
 import { InputTextModule } from 'primeng/inputtext';
 import {ConfirmationService, MenuItem, MessageService} from 'primeng/api';
@@ -18,16 +18,30 @@ import {Track} from '../../components/solicitud/track/track';
 import { DatePicker } from 'primeng/datepicker';
 import {MultiSelectModule} from 'primeng/multiselect';
 import {FactorAutenticacion} from '../../components/solicitud/factor-autenticacion/factor-autenticacion';
+import {environment} from '../../../../../../environments/environment';
+import {SolicitudSearch} from '../../../../../apis/model/module/private/operativo/solicitud/request/solicitud-search';
+import {
+  SolicitudSearchResponse
+} from '../../../../../apis/model/module/private/operativo/solicitud/response/solicitud-search-response';
+import {Util} from '../../../../../utils/util/util';
+import {SolicitudService} from '../../../../../service/modules/private/operativo/solicitud/solicitud';
+import {
+  SolicitudResponse
+} from '../../../../../apis/model/module/private/operativo/solicitud/response/solicitud-response';
+import {
+  CargoSolicitudResponse
+} from '../../../../../apis/model/module/private/operativo/solicitud/response/cargo-solicitud-response';
+import {
+  FlujoSolicitudRequest
+} from '../../../../../apis/model/module/private/operativo/solicitud/request/flujo-solicitud-request';
+import {TrackingService} from '../../../../../service/modules/private/operativo/solicitud/tracking';
+import {
+  TrackingResponse
+} from '../../../../../apis/model/module/private/operativo/solicitud/response/tracking-response';
+import {TrackingRequest} from '../../../../../apis/model/module/private/operativo/solicitud/request/tracking-request';
+import {TimeStatusPipe} from '../../../../../utils/pipes/time-status-pipe';
 
-type Estado = 'REGISTRADO' | 'VALIDADO' | 'OBSERVADO' | 'ENVIADO' | 'ANULADO' | 'AUTORIZADO' | 'PROC_TOTAL' | 'PROC_PARCIAL';
-
-interface SolicitudInterface {
-  id: number;
-  fecha: string;
-  estado: Estado;
-  usuario: string;
-  tramas: number;
-}
+type Estado = 'REGISTRADO' | 'VALIDADO' | 'OBSERVADO' | 'PENDIENTE_AUTORIZACION' | 'ANULADO' | 'AUTORIZADO' | 'PROCESADO_TOTAL' | 'PROCESADO_PARCIAL';
 
 interface EstadoSolicitudInterface {
   codigo: string,
@@ -53,20 +67,21 @@ interface EstadoSolicitudInterface {
     Track,
     DatePicker,
     MultiSelectModule,
-    FactorAutenticacion
+    FactorAutenticacion,
+    TimeStatusPipe
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './solicitud.html',
   styleUrl: './solicitud.scss',
 })
 export class Solicitud implements OnInit {
-  solicitudes: SolicitudInterface[] = [];
-  allSolicitudes: SolicitudInterface[] = [];
+  protected solicitudes!: SolicitudResponse[];
+  protected cargosSolicitud!: CargoSolicitudResponse[];
   filtroForm: FormGroup;
-  estadoSolicitud: EstadoSolicitudInterface[] | undefined;
-  estadoSolicitudFiltrada: EstadoSolicitudInterface[] | undefined;
+  protected estadoSolicitud: EstadoSolicitudInterface[] | undefined;
+  protected estadoSolicitudFiltrada: EstadoSolicitudInterface[] | undefined;
   modo!: 'gestionar' | 'validar' | 'autorizar' | 'ejecutar';
-  visibleResumen: boolean = false;
+  protected visibleDetalle: boolean = false;
   visibleObservaciones: boolean = false;
   visibleTrack: boolean = false;
   visibleFactor: boolean = false;
@@ -75,6 +90,11 @@ export class Solicitud implements OnInit {
   rows = 10;
   modoObservaciones: 'ver' | 'anular' | 'observar' = 'ver';
   IndicadorMostrar: boolean = false;
+  protected idEmpresa: string = "";
+  protected loading: boolean = false;
+  protected totalRecords: number = 0;
+  protected registrosMostrados = 0;
+  protected tracking!: TrackingResponse[];
 
   misItems: MenuItem[] = [];
 
@@ -83,11 +103,17 @@ export class Solicitud implements OnInit {
     private readonly messageService: MessageService,
     private readonly fb: FormBuilder,
     private readonly router: Router,
+    private readonly solicitudService: SolicitudService,
+    private readonly trackingService: TrackingService,
     private readonly route: ActivatedRoute
   ) {
+    if (sessionStorage.getItem(environment.session.ID_EMPRESA) != undefined) {
+      this.idEmpresa = sessionStorage.getItem(environment.session.ID_EMPRESA)!;
+    }
+
     this.filtroForm = this.fb.group({
-      codigo: [''],
-      fecha: [''],
+      codigoSolicitud: [''],
+      fecha: [null as Date[] | null],
       usuario: [''],
       estado: this.fb.control<Estado[]>([])
     });
@@ -96,39 +122,16 @@ export class Solicitud implements OnInit {
   ngOnInit(): void {
     this.modo = this.route.snapshot.data['modo'];
 
-    this.allSolicitudes = [
-      { id: 1, fecha: '2026-01-19 09:10', estado: 'REGISTRADO', usuario: 'jrojas', tramas: 5 },
-      { id: 2, fecha: '2026-01-19 09:25', estado: 'REGISTRADO', usuario: 'mruiz', tramas: 8 },
-      { id: 3, fecha: '2026-01-19 09:40', estado: 'VALIDADO', usuario: 'acarhuam', tramas: 12 },
-      { id: 4, fecha: '2026-01-19 10:05', estado: 'VALIDADO', usuario: 'mlopez', tramas: 20 },
-      { id: 5, fecha: '2026-01-19 10:15', estado: 'OBSERVADO', usuario: 'cgarcia', tramas: 7 },
-      { id: 6, fecha: '2026-01-19 10:30', estado: 'OBSERVADO', usuario: 'dtorres', tramas: 4 },
-      { id: 7, fecha: '2026-01-18 15:20', estado: 'ENVIADO', usuario: 'ealvarez', tramas: 6 },
-      { id: 8, fecha: '2026-01-18 15:45', estado: 'ENVIADO', usuario: 'lramirez', tramas: 9 },
-      { id: 9, fecha: '2026-01-18 16:00', estado: 'ENVIADO', usuario: 'rquiroz', tramas: 18 },
-      { id: 10, fecha: '2026-01-18 16:25', estado: 'OBSERVADO', usuario: 'vruiz', tramas: 3 },
-      { id: 11, fecha: '2026-01-18 17:05', estado: 'ANULADO', usuario: 'fcastro', tramas: 11 },
-      { id: 12, fecha: '2026-01-18 17:30', estado: 'ANULADO', usuario: 'kespinoza', tramas: 2 },
-      { id: 13, fecha: '2026-01-17 11:10', estado: 'AUTORIZADO', usuario: 'mgutierrez', tramas: 14 },
-      { id: 14, fecha: '2026-01-17 11:40', estado: 'AUTORIZADO', usuario: 'jvaldez', tramas: 22 },
-      { id: 15, fecha: '2026-01-17 12:05', estado: 'PROC_TOTAL', usuario: 'srodriguez', tramas: 10 },
-      { id: 16, fecha: '2026-01-17 12:05', estado: 'PROC_TOTAL', usuario: 'srodriguez', tramas: 10 },
-      { id: 17, fecha: '2026-01-17 12:05', estado: 'PROC_PARCIAL', usuario: 'srodriguez', tramas: 10 },
-      { id: 18, fecha: '2026-01-17 12:05', estado: 'PROC_PARCIAL', usuario: 'srodriguez', tramas: 10 },
-    ];
-
     this.estadoSolicitud = [
       { codigo: 'REGISTRADO', descripcion: 'Registrado' },
       { codigo: 'VALIDADO', descripcion: 'Validado' },
       { codigo: 'OBSERVADO', descripcion: 'Observado' },
-      { codigo: 'ENVIADO', descripcion: 'Pendiente de autorización' },
+      { codigo: 'PENDIENTE_AUTORIZACION', descripcion: 'Pendiente de autorización' },
       { codigo: 'ANULADO', descripcion: 'Anulado' },
       { codigo: 'AUTORIZADO', descripcion: 'Autorizado' },
-      { codigo: 'PROC_TOTAL', descripcion: 'Procesado total' },
-      { codigo: 'PROC_PARCIAL', descripcion: 'Procesado parcial' }
+      { codigo: 'PROCESADO_TOTAL', descripcion: 'Procesado total' },
+      { codigo: 'PROCESADO_PARCIAL', descripcion: 'Procesado parcial' }
     ];
-
-    this.estadoSolicitudFiltrada = this.estadoSolicitud;
 
     this.filtrarPorModo();
 
@@ -140,11 +143,11 @@ export class Solicitud implements OnInit {
       case 'REGISTRADO': return 'Registrado';
       case 'VALIDADO': return 'Validado';
       case 'OBSERVADO': return 'Observado';
-      case 'ENVIADO': return 'Pendiente de autorización';
+      case 'PENDIENTE_AUTORIZACION': return 'Pendiente de autorización';
       case 'ANULADO': return 'Anulado';
       case 'AUTORIZADO': return 'Autorizado';
-      case 'PROC_TOTAL': return 'Procesado total';
-      case 'PROC_PARCIAL': return 'Procesado parcial';
+      case 'PROCESADO_TOTAL': return 'Procesado total';
+      case 'PROCESADO_PARCIAL': return 'Procesado parcial';
       default: return estado;
     }
   }
@@ -153,11 +156,11 @@ export class Solicitud implements OnInit {
     const map: Record<Estado, { bg: string; fg: string }> = {
       REGISTRADO: { bg: '#1d4ed8', fg: '#ffffff' }, // Azul
       VALIDADO: { bg: '#16a34a', fg: '#ffffff' }, // Verde
-      ENVIADO: { bg: '#16a34a', fg: '#ffffff' }, // Verde
-      PROC_TOTAL: { bg: '#16a34a', fg: '#ffffff' }, // Verde
+      PENDIENTE_AUTORIZACION: { bg: '#16a34a', fg: '#ffffff' }, // Verde
+      PROCESADO_TOTAL: { bg: '#16a34a', fg: '#ffffff' }, // Verde
       AUTORIZADO: { bg: '#16a34a', fg: '#ffffff' }, // Verde
       ANULADO: { bg: '#f97316', fg: '#111827' }, // Naranja
-      PROC_PARCIAL: { bg: '#dc2626', fg: '#ffffff' }, // Rojo
+      PROCESADO_PARCIAL: { bg: '#dc2626', fg: '#ffffff' }, // Rojo
       OBSERVADO: { bg: '#dc2626', fg: '#ffffff' }, // Rojo
     };
     const { bg, fg } = map[estado];
@@ -169,9 +172,85 @@ export class Solicitud implements OnInit {
       fontWeight: 600,
     };
   }
-  filtrar() {}
+  filtrar() {
+    const fakeLazyEvent: TableLazyLoadEvent = {
+      first: 0,
+      rows: 5,
+      sortField: 'id',
+      sortOrder: 1
+    };
 
-  limpiarFiltros() {}
+    this.loadLazy(fakeLazyEvent);
+  }
+
+  loadLazy(event: TableLazyLoadEvent) {
+    this.loading = true;
+
+    const firstValue = event.first ?? 0;
+    const rowsValue = event.rows ?? 5;
+
+    const { codigoSolicitud, usuarioCarga, fecha, estado } = this.filtroForm.value;
+    let fechaInicial: string | undefined = undefined;
+    let fechaFinal: string | undefined = undefined;
+
+    if (Array.isArray(fecha) && fecha[0]) {
+      fechaInicial = Util.formatDate(fecha[0]);
+
+      if (fecha[1]) {
+        fechaFinal = Util.formatDate(fecha[1]);
+      }
+    }
+
+    const estadosSeleccionados: string[] | undefined = (Array.isArray(estado) && estado.length > 0) ? estado : undefined;
+
+    const request: SolicitudSearch = {
+      page: Math.floor(firstValue / (rowsValue || 1)),
+      size: rowsValue,
+      sortField: event.sortField as string,
+      sortOrder: Util.mapSortOrder(event.sortOrder),
+      usuario: usuarioCarga || undefined,
+      fechaInicial: fechaInicial || undefined,
+      fechaFinal: fechaFinal || undefined,
+      codigo: codigoSolicitud || undefined,
+      estadoSolicitud: estadosSeleccionados,
+      codigoCliente: this.idEmpresa
+    };
+
+    this.solicitudService.getSolicitudesPage(request).subscribe({
+      next: (response: SolicitudSearchResponse) => {
+        this.solicitudes = response.list;
+        this.registrosMostrados = response.list.length;
+        this.totalRecords = response.totalElements;
+        this.loading = false;
+      },
+      error: (error) => {
+        this.loading = false;
+        if (error.status === 502) {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error en el servicio'
+          });
+        } else if (error.status === 503) {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Servicio no disponible'
+          });
+        }
+      }
+    });
+  }
+
+  limpiarFiltros() {
+    this.filtroForm.reset({
+      codigoSolicitud: '',
+      usuarioCarga: '',
+      fecha: null,
+    });
+
+    this.filtrar();
+  }
 
   solicitarAutorizacion(event: Event, id: number) {
     this.confirmationService.confirm({
@@ -191,7 +270,26 @@ export class Solicitud implements OnInit {
       },
 
       accept: () => {
-        this.visibleFactor = true;
+        const payload: FlujoSolicitudRequest = {
+          idSolicitud: id,
+          flujo: 'enviar-autorizacion',
+          codigoCliente: Number(this.idEmpresa)
+        };
+
+        this.solicitudService.flujoSolicitudes(payload).subscribe({
+          next: (resultado: number) => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Confirmación',
+              detail: 'Se envió a autorización solicitud ' + resultado + ' correctamente',
+            });
+
+            this.filtrar();
+          },
+          error: (err) => {
+            console.error('Error al validar solicitud', err);
+          }
+        });
         this.solicitudSeleccionadaId = id;
       },
       reject: () => {
@@ -218,14 +316,32 @@ export class Solicitud implements OnInit {
       },
 
       accept: () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Confirmación',
-          detail: 'Se validó solicitud correctamente',
+
+        const payload: FlujoSolicitudRequest = {
+          idSolicitud: id,
+          flujo: 'validar',
+          codigoCliente: Number(this.idEmpresa)
+        };
+
+        this.solicitudService.flujoSolicitudes(payload).subscribe({
+          next: (resultado: number) => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Confirmación',
+              detail: 'Se validó solicitud ' + resultado + ' correctamente',
+            });
+
+            this.filtrar();
+          },
+          error: (err) => {
+            console.error('Error al validar solicitud', err);
+          }
         });
+
+
       },
       reject: () => {
-        this.messageService.add({ severity: 'error', summary: 'Rechazado', detail: 'No se pudo validar solicitud' });
+        this.messageService.add({ severity: 'warn', summary: 'Cancelado', detail: 'No se envió a validar solicitud' });
       }
     });
   }
@@ -248,6 +364,7 @@ export class Solicitud implements OnInit {
       },
 
       accept: () => {
+
         this.visibleFactor = true;
         this.solicitudSeleccionadaId = id;
       },
@@ -284,15 +401,27 @@ export class Solicitud implements OnInit {
     });
   }
 
-  verResumen(event: Event, solicitud: SolicitudInterface) {
-    const { id, estado } = solicitud;
-
-    this.IndicadorMostrar = estado === 'PROC_TOTAL' || estado === 'PROC_PARCIAL';
-    this.visibleResumen = true;
+  verResumen(cargos: CargoSolicitudResponse[]) {
+    this.cargosSolicitud = cargos;
+    this.IndicadorMostrar = false;
+    this.visibleDetalle = true;
   }
 
-  verTrack(event: Event, id: number) {
-    this.visibleTrack = true;
+  verTrack(id: number) {
+    const trackRequest: TrackingRequest = {
+      idSolicitud: id,
+      codigoCliente: Number(this.idEmpresa)
+    };
+
+    this.trackingService.getTrackingList(trackRequest).subscribe({
+      next: (resultado: TrackingResponse[]) => {
+        this.tracking = resultado;
+        this.visibleTrack = true;
+      },
+      error: (err) => {
+        console.error('Error al obtener tracking', err);
+      }
+    });
   }
 
   verDetalle(event: Event, id: number) {
@@ -329,14 +458,29 @@ export class Solicitud implements OnInit {
     const id = this.solicitudSeleccionadaId;
     if (id == null) return;
 
-    // Aquí tu lógica comentada
-    this.allSolicitudes = this.allSolicitudes.filter(s => s.id !== id);
-    this.solicitudes     = this.solicitudes.filter(s => s.id !== id);
+    const payload: FlujoSolicitudRequest = {
+      idSolicitud: id,
+      flujo: this.modo,
+      codigoCliente: Number(this.idEmpresa)
+    };
 
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Confirmación',
-      detail: 'Se realizó petición solicitada',
+    this.solicitudService.flujoSolicitudes(payload).subscribe({
+      next: (resultado: number) => {
+        const mensaje = this.modo === 'autorizar'
+          ? `Se autorizó solicitud ${resultado} correctamente`
+          : `Se ejecutó solicitud ${resultado} correctamente`;
+
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Confirmación',
+          detail: mensaje,
+        });
+
+        this.filtrar();
+      },
+      error: (err) => {
+        console.error('Error al autorizar solicitud', err);
+      }
     });
 
     this.visibleFactor = false;
@@ -346,30 +490,25 @@ export class Solicitud implements OnInit {
   private filtrarPorModo() {
     const estados = this.estadosPorModo[this.modo];
     if (estados?.length) {
-      // Opciones visibles en el multiselect
       // @ts-ignore
       this.estadoSolicitudFiltrada = this.estadoSolicitud.filter(e => estados.includes(e.codigo));
-      // Preselección según modo
       const preset = this.preselectPorModo[this.modo] ?? [];
       this.filtroForm.get('estado')?.setValue(preset);
-      // Filtra la tabla
-      this.solicitudes = this.allSolicitudes.filter(s => estados.includes(s.estado));
     } else {
       this.estadoSolicitudFiltrada = this.estadoSolicitud;
       this.filtroForm.get('estado')?.setValue([]);
-      this.solicitudes = this.allSolicitudes;
     }
   }
 
   private readonly estadosPorModo: Record<string, Estado[]> = {
     validar: ['REGISTRADO', 'VALIDADO', 'OBSERVADO', 'ANULADO'],
-    autorizar: ['ENVIADO'],
-    ejecutar: ['AUTORIZADO', 'PROC_TOTAL', 'PROC_PARCIAL']
+    autorizar: ['PENDIENTE_AUTORIZACION'],
+    ejecutar: ['AUTORIZADO', 'PROCESADO_TOTAL', 'PROCESADO_PARCIAL']
   };
 
   private readonly preselectPorModo: Record<string, Estado[]> = {
     validar: ['REGISTRADO', 'VALIDADO'],
-    autorizar: ['ENVIADO'],
+    autorizar: ['PENDIENTE_AUTORIZACION'],
     ejecutar: ['AUTORIZADO']
   };
 }

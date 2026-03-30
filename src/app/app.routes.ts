@@ -1,22 +1,34 @@
-import { Routes } from '@angular/router';
-import {RootResolver} from './config/commons/root.resolver';
+import {Routes} from '@angular/router';
 import {Content} from './modules/private/dashboard/pages/content/content';
 import {GuestGuard} from './config/commons/guest.guard';
 import {dashboardRoutes} from './modules/private/dashboard/dashboard.routes';
 import {AuthGuard} from './config/commons/auth.guard';
 import {Dashboard} from './modules/private/dashboard/pages/dashboard/dashboard';
 import {operativoRoutes} from './modules/private/operativo/operativo.routes';
+import {Authorized} from './config/authorized/authorized';
+import {Logout} from './config/logout/logout';
+import {Login} from './config/login/login';
 
 export const routes: Routes = [
+  { path: '', pathMatch: 'full', redirectTo: 'login' },
   {
-    path: '',
-    resolve: { redirect: RootResolver },
-    children: []
+    path: 'authorized',
+    component: Authorized
+  },
+  {
+    path: 'login',
+    component: Login,
+    canActivate: [AuthGuard]
   },
   {
     path: 'content',
     component: Content,
     canActivate: [GuestGuard]
+  },
+  {
+    path: 'logout',
+    component: Logout,
+    canActivate: [AuthGuard]
   },
   {
     path: '',
@@ -36,6 +48,6 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'content'
+    redirectTo: 'login'
   }
 ];

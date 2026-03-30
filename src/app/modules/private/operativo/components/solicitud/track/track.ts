@@ -2,12 +2,11 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Button} from 'primeng/button';
 import {Dialog} from 'primeng/dialog';
 import {TableModule} from 'primeng/table';
+import {
+  TrackingResponse
+} from '../../../../../../apis/model/module/private/operativo/solicitud/response/tracking-response';
 
-interface Tracking {
-  fecha: string;
-  usuarioReg: string;
-  evento: string;
-}
+type Evento = 'REGISTRADO_EXCEL' | 'REGISTRADO_JSON' | 'VALIDAR' | 'ENVIAR_AUTORIZACION' | 'AUTORIZAR' | 'EJECUTAR';
 
 @Component({
   selector: 'app-track',
@@ -22,17 +21,24 @@ interface Tracking {
 export class Track implements OnInit {
   @Input() visible: boolean = false;
   @Output() visibleChange = new EventEmitter<boolean>();
-  protected trackList: Tracking[] = [];
+  @Input() trackList: TrackingResponse[] = [];
 
   ngOnInit(): void {
-    this.trackList = [
-      { fecha: '2024-12-01 10:30', usuarioReg: 'jrodriguez', evento: 'Ejecución' },
-      { fecha: '2024-12-02 14:15', usuarioReg: 'mlopez', evento: 'Autorización' },
-      { fecha: '2024-12-03 09:05', usuarioReg: 'acarvajal', evento: 'Anulación' },
-    ];
   }
 
   protected cerrar() {
     this.visibleChange.emit(false);
+  }
+
+  eventoLabel(estado: Evento): string {
+    switch (estado) {
+      case 'REGISTRADO_EXCEL': return 'Registrado por excel';
+      case 'REGISTRADO_JSON': return 'Registrado desde origen del cliente';
+      case 'VALIDAR': return 'Validado';
+      case 'ENVIAR_AUTORIZACION': return 'Enviado a autorización';
+      case 'AUTORIZAR': return 'Autorizado';
+      case 'EJECUTAR': return 'Ejecutado';
+      default: return estado;
+    }
   }
 }

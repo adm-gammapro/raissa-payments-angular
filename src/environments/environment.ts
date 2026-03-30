@@ -1,10 +1,11 @@
-const URL_BASE = 'https://www.raissaob.com/api/extranet'
+const URL_BASE = 'https://www.raissaob.com/api/payments'
 
 export const environment = {
   production: true,
   url: {
     base: URL_BASE,
     baseApi: `${URL_BASE}/api`,
+    landing: 'https://www.raissaob.com/landing',
     requestNewPassword: `${URL_BASE}/api/public/login/requestNewPassword`,
     changePassword: `${URL_BASE}/api/public/login/changePassword`
   },
@@ -26,16 +27,16 @@ export const environment = {
   },
   security: {
     authorize_uri: 'https://www.raissaob.com/api/autorizador/oauth2/authorize?',
-    client_id: 'extranet',
+    client_id: 'client_payments',
     secret_client: 'S3cr3t$$',
-    redirect_uri: 'https://www.raissaob.com/extranet/authorized',
+    redirect_uri: 'https://www.raissaob.com/payments/authorized',
     scope: 'openid',
     response_type: 'code',
     response_mode: 'form_post',
     code_challenge_method: 'S256',
     token_url: "https://www.raissaob.com/api/autorizador/oauth2/token",
     grant_type: "authorization_code",
-    resource_url: 'https://www.raissaob.com/api/extranet/resource/',//esta es la ruta del servicio del server resource
+    resource_url: 'https://www.raissaob.com/api/payments/resource/',//esta es la ruta del servicio del server resource
     logout_url: 'https://www.raissaob.com/api/autorizador/logout',
     secret_pkce: 'secret',
   }

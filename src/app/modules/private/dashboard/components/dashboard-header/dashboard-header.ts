@@ -9,6 +9,8 @@ import {SplitButtonModule} from 'primeng/splitbutton';
 import {ToastModule} from 'primeng/toast';
 import {ButtonModule} from 'primeng/button';
 import {MenuItem, MessageService} from 'primeng/api';
+import {Token} from '../../../../../service/authorization/token';
+import {environment} from '../../../../../../environments/environment';
 
 @Component({
   selector: 'app-dashboard-header',
@@ -26,12 +28,12 @@ import {MenuItem, MessageService} from 'primeng/api';
   templateUrl: './dashboard-header.html',
   styleUrl: './dashboard-header.scss',
 })
-export class DashboardHeader implements OnInit {
+export class DashboardHeader {
   items: MenuItem[] | undefined;
   protected nombreUsuarioSesion: string = 'Administrador';
 
-  constructor(private readonly messageService: MessageService/*,
-              private readonly authService: AuthService*/
+  constructor(private readonly messageService: MessageService,
+              private readonly tokenService: Token
   ) {
     this.items = [
       {
@@ -44,7 +46,7 @@ export class DashboardHeader implements OnInit {
       {
         label: 'Cerrar sesión',
         command: () => {
-          this.logout();
+          this.onLogout();
         }
       }
     ];
@@ -74,17 +76,8 @@ export class DashboardHeader implements OnInit {
     });
   }
 
-  changeLang(lang: string) {
-    //this.translate.use(lang);
-    localStorage.setItem('lang', lang);
-  }
-
-  ngOnInit() {
-    const lang = localStorage.getItem('lang') || 'es';
-    //this.translate.use(lang);
-  }
-
-  logout() {
-    //this.authService.logout();
+  onLogout(): void {
+    this.tokenService.clear();
+    location.href = environment.security.logout_url;
   }
 }
