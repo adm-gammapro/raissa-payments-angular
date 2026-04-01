@@ -40,6 +40,7 @@ import {
 } from '../../../../../apis/model/module/private/operativo/solicitud/response/tracking-response';
 import {TrackingRequest} from '../../../../../apis/model/module/private/operativo/solicitud/request/tracking-request';
 import {TimeStatusPipe} from '../../../../../utils/pipes/time-status-pipe';
+import {IftaLabel} from 'primeng/iftalabel';
 
 type Estado = 'REGISTRADO' | 'VALIDADO' | 'OBSERVADO' | 'PENDIENTE_AUTORIZACION' | 'ANULADO' | 'AUTORIZADO' | 'PROCESADO_TOTAL' | 'PROCESADO_PARCIAL';
 
@@ -68,7 +69,8 @@ interface EstadoSolicitudInterface {
     DatePicker,
     MultiSelectModule,
     FactorAutenticacion,
-    TimeStatusPipe
+    TimeStatusPipe,
+    IftaLabel
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './solicitud.html',

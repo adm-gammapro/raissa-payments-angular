@@ -24,58 +24,95 @@
     <ng-template #caption>
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-2 w-full">
         <!-- Izquierda: inputs (solo en desktop) -->
-        <div class="hidden sm:flex flex-row gap-2">
-          <input
-            pInputText
-            type="text"
-            placeholder="Por código"
-            class="sm:w-64 w-full"
-            formControlName="codigoSolicitud"
-          />
-          <p-datepicker
-            formControlName="fecha"
-            selectionMode="range"
-            placeholder="Por fecha"
-            [readonlyInput]="true">
-          </p-datepicker>
-          <input
-            pInputText
-            type="text"
-            placeholder="Por usuario"
-            class="sm:w-64 w-full"
-            formControlName="usuario"
-          />
-          <p-multiselect
-            [options]="estadoSolicitudFiltrada"
-            formControlName="estado"
-            placeholder="Por estado de solicitud"
-            optionLabel="descripcion"
-            optionValue="codigo"
-            display="chip"
-            class="sm:w-64 w-full">
-          </p-multiselect>
+        <div class="sm:flex flex-row gap-2">
+          <p-iftalabel>
+            <input
+              pInputText
+              type="text"
+              placeholder="Código"
+              class="sm:w-86 w-full"
+              formControlName="codigoSolicitud"
+            />
+            <label for="codigoSolicitud">Búsqueda por código</label>
+          </p-iftalabel>
+        </div>
+        <div class="sm:flex flex-row gap-2">
+          <p-iftalabel>
+            <p-datepicker
+              formControlName="fecha"
+              selectionMode="range"
+              placeholder="Fechas"
+              class="sm:w-86 w-full"
+              [readonlyInput]="true">
+            </p-datepicker>
+            <label for="codigoSolicitud">Búsqueda por rango de fechas</label>
+          </p-iftalabel>
+        </div>
+        <div class="sm:flex flex-row gap-2">
+          <p-iftalabel>
+            <input
+              pInputText
+              type="text"
+              placeholder="Usuario"
+              class="sm:w-86 w-full"
+              formControlName="usuario"
+            />
+            <label for="codigoSolicitud">Búsqueda por usuario</label>
+          </p-iftalabel>
+        </div>
+        <div class="sm:flex flex-row gap-2">
+          <div style="width: 300px;">
+            <p-iftalabel>
+              <p-multiselect
+                [options]="estadoSolicitudFiltrada"
+                formControlName="estado"
+                placeholder="Estado de solicitud"
+                optionLabel="descripcion"
+                optionValue="codigo"
+                display="chip"
+                class="sm:w-86 w-full">
+              </p-multiselect>
+              <label for="codigoSolicitud">Búsqueda por estado de solicitud</label>
+            </p-iftalabel>
+          </div>
         </div>
 
         <!-- Derecha: botones -->
         <div class="flex items-center gap-2 sm:gap-2 ml-auto">
           <!-- Buscar y Limpiar (solo visibles en desktop) -->
-          <div class="hidden sm:flex gap-2">
-            <p-button icon="pi pi-external-link" [outlined]="true" severity="info" label="Exportar datos filtrados"/>
-            <p-button
-              icon="pi pi-search"
-              label="Buscar"
-              (onClick)="filtrar()"
-              [outlined]="true"
-              severity="info"
-            ></p-button>
-
-            <p-button
-              icon="pi pi-filter-slash"
-              label="Limpiar"
-              (onClick)="limpiarFiltros()"
-              [outlined]="true"
-              severity="secondary"
-            ></p-button>
+          <div class="sm:flex gap-2">
+            <div style="width: 100px;">
+              <p-button
+                icon="pi pi-external-link"
+                [outlined]="true"
+                severity="info"
+                label="Exportar"
+                iconPos="top"
+                styleClass="w-full"
+              ></p-button>
+            </div>
+            <div style="width: 100px;">
+              <p-button
+                icon="pi pi-search"
+                label="Buscar"
+                (onClick)="filtrar()"
+                [outlined]="true"
+                severity="info"
+                iconPos="top"
+                styleClass="w-full">
+              </p-button>
+            </div>
+            <div style="width: 100px;">
+              <p-button
+                icon="pi pi-filter-slash"
+                label="Limpiar"
+                (onClick)="limpiarFiltros()"
+                [outlined]="true"
+                severity="secondary"
+                styleClass="w-full"
+                iconPos="top">
+              </p-button>
+            </div>
 
           </div>
         </div>
@@ -261,7 +298,8 @@
   </p-table>
 </form>
 
-<app-detalle-solicitud [(visible)]="visibleDetalle" [cargos]="cargosSolicitud" [mostrar]="IndicadorMostrar"></app-detalle-solicitud>
+<app-detalle-solicitud [(visible)]="visibleDetalle" [cargos]="cargosSolicitud"
+                       [mostrar]="IndicadorMostrar"></app-detalle-solicitud>
 <app-observaciones [(visible)]="visibleObservaciones" [modo]="modoObservaciones"></app-observaciones>
 <app-track [(visible)]="visibleTrack" [trackList]="tracking"></app-track>
 <app-factor-autenticacion [(visible)]="visibleFactor" (autenticado)="onAutenticado()"></app-factor-autenticacion>

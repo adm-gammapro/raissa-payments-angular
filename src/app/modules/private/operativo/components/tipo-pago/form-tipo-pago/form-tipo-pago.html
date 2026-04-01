@@ -1,0 +1,32 @@
+<div class="card flex justify-center">
+  <p-dialog header="Edit Profile" [modal]="true" [(visible)]="visible" [style]="{ width: '30rem' }" closable="false">
+    <ng-template #header>
+      <div class="inline-flex items-center justify-center gap-2">
+        <h2><span class="font-bold whitespace-nowrap">{{ headerTitle }}</span></h2>
+      </div>
+    </ng-template>
+
+    <form [formGroup]="form" class="flex flex-column">
+      <p-panel class="mb-1">
+        <input type="hidden" formControlName="codigo">
+        <div class="p-1">
+          <div class="field">
+            <label for="descripcion">Descripción</label>
+            <input type="text" id="descripcion" pInputText formControlName="descripcion" class="w-full"
+                   [class.p-invalid]="form.get('descripcion')?.invalid && form.get('descripcion')?.touched"/>
+            <small *ngIf="form.get('descripcion')?.touched && form.get('descripcion')?.errors">
+              <ng-container *ngIf="form.get('descripcion')?.errors?.['required']" class="text-red-500">
+                <p-message severity="error" variant="simple" size="small">Campo obligatorio</p-message>
+              </ng-container>
+            </small>
+          </div>
+        </div>
+      </p-panel>
+    </form>
+
+    <ng-template #footer>
+      <p-button label="Cancelar" [outlined]="true" severity="info" (onClick)="cerrar()"></p-button>
+      <p-button label="Guardar" [outlined]="true" severity="success" (onClick)="guardar()"></p-button>
+    </ng-template>
+  </p-dialog>
+</div>

@@ -33,6 +33,7 @@ import {
   CargoSolicitudResponse
 } from '../../../../../apis/model/module/private/operativo/solicitud/response/cargo-solicitud-response';
 import {Util} from '../../../../../utils/util/util';
+import {IftaLabel} from 'primeng/iftalabel';
 
 @Component({
   selector: 'app-cargar-solicitud',
@@ -53,6 +54,7 @@ import {Util} from '../../../../../utils/util/util';
     VistaPreviaSolicitud,
     DetalleSolicitud,
     FormsModule,
+    IftaLabel,
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './cargar-solicitud.html',

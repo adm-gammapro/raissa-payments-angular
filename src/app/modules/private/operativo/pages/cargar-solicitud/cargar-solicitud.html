@@ -25,30 +25,39 @@
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-2 w-full">
         <!-- Izquierda: inputs (solo en desktop) -->
         <div class="hidden sm:flex flex-row gap-2">
-          <input type="text"
-                 pInputText
-                 id="codigoSolicitud"
-                 formControlName="codigoSolicitud"
-                 placeholder="Por código"
-          />
+          <p-iftalabel>
+            <input type="text"
+                   pInputText
+                   id="codigoSolicitud"
+                   formControlName="codigoSolicitud"
+                   placeholder="Código"
+            />
+            <label for="codigoSolicitud">Búsqueda por código</label>
+          </p-iftalabel>
         </div>
         <div class="hidden sm:flex flex-row gap-2">
-          <p-datepicker
-            formControlName="fecha"
-            selectionMode="range"
-            [readonlyInput]="true"
-            placeholder="por fechas"
-            dateFormat="dd/mm/yy"
-          >
-          </p-datepicker>
+          <p-iftalabel>
+            <p-datepicker
+              formControlName="fecha"
+              selectionMode="range"
+              [readonlyInput]="true"
+              placeholder="Fechas"
+              dateFormat="dd/mm/yy"
+            >
+            </p-datepicker>
+            <label for="codigoSolicitud">Búsqueda por rango de fechas</label>
+          </p-iftalabel>
         </div>
         <div class="hidden sm:flex flex-row gap-2">
-          <input type="text"
-                 pInputText
-                 id="usuarioCarga"
-                 formControlName="usuarioCarga"
-                 placeholder="por usuario"
-          />
+          <p-iftalabel>
+            <input type="text"
+                   pInputText
+                   id="usuarioCarga"
+                   formControlName="usuarioCarga"
+                   placeholder="Usuario"
+            />
+            <label for="codigoSolicitud">Búsqueda por Usuario</label>
+          </p-iftalabel>
         </div>
 
         <!-- Derecha: botones -->
@@ -58,7 +67,8 @@
             label="Buscar"
             (onClick)="filtrar()"
             [outlined]="true"
-            severity="info">
+            severity="info"
+            iconPos="top">
           </p-button>
 
           <p-button
@@ -66,7 +76,8 @@
             label="Limpiar"
             (onClick)="limpiarFiltros()"
             [outlined]="true"
-            severity="secondary">
+            severity="secondary"
+            iconPos="top">
           </p-button>
 
           <!-- Botón extra a la derecha -->
@@ -82,6 +93,7 @@
             (onSelect)="onSelect($event)"
             [auto]="false"
             chooseLabel="Cargar plantilla"
+            iconPos="top"
           />
         </div>
       </div>

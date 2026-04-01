@@ -1,0 +1,85 @@
+<div class="card flex justify-center">
+  <p-dialog header="Edit Profile" [modal]="true" [(visible)]="visible" [style]="{ width: '30rem' }" closable="false">
+    <ng-template #header>
+      <div class="inline-flex items-center justify-center gap-2">
+        <h2><span class="font-bold whitespace-nowrap">{{ headerTitle }}</span></h2>
+      </div>
+    </ng-template>
+
+    <form [formGroup]="form" class="flex flex-column">
+      <p-panel class="mb-1">
+        <input type="hidden" formControlName="codigo">
+        <div class="p-1">
+          <div class="field">
+            <label for="descripcion">Descripción</label>
+            <input type="text" id="descripcion" pInputText formControlName="descripcion" class="w-full"
+                   [class.p-invalid]="form.get('descripcion')?.invalid && form.get('descripcion')?.touched"/>
+            <small *ngIf="form.get('descripcion')?.touched && form.get('descripcion')?.errors">
+              <ng-container *ngIf="form.get('descripcion')?.errors?.['required']" class="text-red-500">
+                <p-message severity="error" variant="simple" size="small">Campo obligatorio</p-message>
+              </ng-container>
+            </small>
+          </div>
+          <div class="field">
+            <label for="moneda">Moneda</label>
+            <p-select
+              id="monedas"
+              formControlName="moneda"
+              [options]="monedas"
+              optionLabel="descripcion"
+              optionValue="valor"
+              placeholder="Selecciona moneda"
+              style="width: 100%;"
+              [class.p-invalid]="form.get('moneda')?.invalid && form.get('moneda')?.touched">
+            </p-select>
+            <small *ngIf="form.get('moneda')?.touched && form.get('moneda')?.errors">
+              <ng-container *ngIf="form.get('moneda')?.errors?.['required']" class="text-red-500">
+                <p-message severity="error" variant="simple" size="small">Campo obligatorio</p-message>
+              </ng-container>
+            </small>
+          </div>
+          <div class="field">
+            <label for="limiteInferior">Límite inferior</label>
+            <p-inputnumber
+              formControlName="limiteInferior"
+              inputId="locale-us"
+              mode="decimal"
+              locale="en-US"
+              class="w-full"
+              [class.p-invalid]="form.get('limiteInferior')?.invalid && form.get('limiteInferior')?.touched"
+              [minFractionDigits]="2">
+            </p-inputnumber>
+
+            <small *ngIf="form.get('limiteInferior')?.touched && form.get('limiteInferior')?.errors">
+              <ng-container *ngIf="form.get('limiteInferior')?.errors?.['required']" class="text-red-500">
+                <p-message severity="error" variant="simple" size="small">Campo obligatorio</p-message>
+              </ng-container>
+            </small>
+          </div>
+          <div class="field">
+            <label for="limiteSuperior">Límite superior</label>
+            <p-inputnumber
+              formControlName="limiteSuperior"
+              inputId="locale-us"
+              mode="decimal"
+              locale="en-US"
+              class="w-full"
+              [class.p-invalid]="form.get('limiteSuperior')?.invalid && form.get('limiteSuperior')?.touched"
+              [minFractionDigits]="2">
+            </p-inputnumber>
+            <small *ngIf="form.get('limiteSuperior')?.touched && form.get('limiteSuperior')?.errors">
+              <ng-container *ngIf="form.get('limiteSuperior')?.errors?.['required']" class="text-red-500">
+                <p-message severity="error" variant="simple" size="small">Campo obligatorio</p-message>
+              </ng-container>
+            </small>
+          </div>
+        </div>
+      </p-panel>
+    </form>
+
+    <ng-template #footer>
+      <p-button label="Cancelar" [outlined]="true" severity="info" (onClick)="cerrar()"></p-button>
+      <p-button label="Guardar" [outlined]="true" severity="success" (onClick)="guardar()"></p-button>
+    </ng-template>
+  </p-dialog>
+</div>

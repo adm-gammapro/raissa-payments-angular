@@ -1,1 +1,130 @@
-<p>tipo-pago works!</p>
+<p-toast position="top-center"></p-toast>
+<p-confirmdialog></p-confirmdialog>
+<app-breadcrumb [itemsBread]="misItems"></app-breadcrumb>
+
+<form [formGroup]="filtroForm" (ngSubmit)="filtrar()">
+  <p-table #dt
+           [value]="tipoPagos"
+           [tableStyle]="{ 'min-width': '50rem' }"
+           [paginator]="true"
+           [totalRecords]="totalRecords"
+           [lazy]="true"
+           [loading]="loading"
+           [rows]="5"
+           [rowsPerPageOptions]="[5, 10, 20]"
+           stripedRows
+           showGridlines
+           breakpoint="960px"
+           [size]="'small'"
+           (onLazyLoad)="loadLazy($event)"
+           currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros en total"
+           showCurrentPageReport="true"
+           sortField="id"
+           [sortOrder]="1"
+  >
+    <ng-template #caption>
+      <div class="flex items-center justify-between gap-3 mb-2 w-full">
+        <div style="width: 400px;">
+          <p-iftalabel>
+            <input
+              pInputText
+              type="text"
+              placeholder="Descripción"
+              class="sm:w-86 w-full"
+              formControlName="descripcion"
+            />
+            <label for="codigoSolicitud">Búsqueda por descripción</label>
+          </p-iftalabel>
+        </div>
+        <div style="width: 400px;">
+          <p-iftalabel>
+            <p-select
+              id="estadoRegistro"
+              formControlName="estadoRegistro"
+              [options]="estados"
+              optionLabel="descripcion"
+              optionValue="valor"
+              placeholder="Selecciona estado"
+              style="width: 100%;">
+            </p-select>
+            <label for="estadoRegistro">Estado de registro</label>
+          </p-iftalabel>
+        </div>
+
+        <!-- Derecha: botones alineados a la derecha -->
+        <div class="flex items-center gap-2 ml-auto">
+          <div style="width: 100px;">
+            <p-button
+              icon="pi pi-search"
+              label="Buscar"
+              (onClick)="filtrar()"
+              [outlined]="true"
+              severity="info"
+              iconPos="top"
+              styleClass="w-full">
+            </p-button>
+          </div>
+          <div style="width: 100px;">
+            <p-button
+              icon="pi pi-filter-slash"
+              label="Limpiar"
+              (onClick)="limpiarFiltros()"
+              [outlined]="true"
+              severity="secondary"
+              styleClass="w-full"
+              iconPos="top">
+            </p-button>
+          </div>
+          <div style="width: 100px;">
+            <p-button
+              icon="pi pi-plus"
+              label="Nuevo"
+              [outlined]="true"
+              severity="success"
+              styleClass="w-full"
+              iconPos="top"
+              (onClick)="nuevo()">
+            </p-button>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+
+    <ng-template #header>
+      <tr>
+        <th pSortableColumn="descripcion" id="descripcion" style="width:80%">Descripcion<p-sortIcon field="descripcion"/></th>
+        <th id="acciones" style="width:20%" class="text-center">Acciones</th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-tipoPago>
+      <tr>
+        <td>{{ tipoPago.descripcion }}</td>
+        <td class="text-center">
+          <p-button
+            icon="pi pi-file-edit"
+            [rounded]="true"
+            severity="info"
+            [outlined]="true"
+            pTooltip="Editar"
+            tooltipPosition="left"
+            size="small"
+            (onClick)="editar(tipoPago.codigo)"
+          />
+          <p-button
+            icon="pi pi-trash"
+            [rounded]="true"
+            severity="danger"
+            [outlined]="true"
+            pTooltip="Eliminar"
+            tooltipPosition="left"
+            size="small"
+            (onClick)="delete($event, tipoPago.codigo)"
+          />
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</form>
+
+<app-form-tipo-pago [(visible)]="visibleForm" [tipoPagoData]="selectedTipoPago" (guardarRegistro)="guardar()" [modo]="modoUso"></app-form-tipo-pago>

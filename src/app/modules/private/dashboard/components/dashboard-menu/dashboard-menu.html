@@ -1,16 +1,27 @@
 <p-toast></p-toast>
 <div class="card flex justify-center">
+  <p-button (onClick)="visible = true" severity="info" icon="pi pi-bars"/>
   <p-drawer #drawerRef [(visible)]="visible">
-    <div class="card">
-      <div class="w-full md:w-80 border rounded-lg overflow-hidden">
-        <div class="flex items-center gap-2 px-3 py-3 bg-surface-100">
-          <div class="leading-tight">
-            <div class="text-lg font-semibold tracking-wide text-surface-900">RAISSA PAYMENTS</div>
-            <div class="text-xs text-surface-500">Suite de transacciones</div>
+    <ng-template #headless>
+      <div class="card p-2">
+        <div class="w-full md:w-80 border rounded-lg overflow-hidden pb-2">
+          <div class="flex items-center gap-2 bg-surface-100">
+            <div class="leading-tight">
+              <div class="text-lg font-semibold tracking-wide text-surface-900">RAISSA PAYMENTS</div>
+              <div class="text-xs text-surface-500">Suite de transacciones</div>
+            </div>
+            <p-button
+              (onClick)="closeCallback($event)"
+              icon="pi pi-times"
+              severity="info"
+              [rounded]="true"
+              [outlined]="true"
+              class="ml-auto w-2 h-4">
+            </p-button>
           </div>
         </div>
 
-        <p-panelmenu [model]="items" class="w-full md:w-80"></p-panelmenu>
+        <p-panelmenu [model]="items" pClass="w-full md:w-80"></p-panelmenu>
 
         <div class="w-full p-3">
           <p-button label="Cerrar Sesión"
@@ -22,14 +33,9 @@
           ></p-button>
         </div>
       </div>
-    </div>
-
+    </ng-template>
   </p-drawer>
 
-  <p-button (onClick)="visible = true"
-            icon="pi pi-bars"
-            severity="info"
-            variant="outlined"/>
 </div>
 
 

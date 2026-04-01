@@ -16,10 +16,11 @@ import {PanelMenuModule} from 'primeng/panelmenu';
 import {CommonModule} from '@angular/common';
 import {environment} from '../../../../../../environments/environment';
 import {Token} from '../../../../../service/authorization/token';
+import {ClassNames} from 'primeng/classnames';
 
 @Component({
   selector: 'app-dashboard-menu',
-  imports: [DrawerModule, ButtonModule, Toast, PanelMenuModule, CommonModule],
+  imports: [DrawerModule, ButtonModule, Toast, PanelMenuModule, CommonModule, ClassNames],
   providers: [MessageService],
   templateUrl: './dashboard-menu.html',
   styleUrl: './dashboard-menu.scss',
@@ -84,7 +85,6 @@ export class DashboardMenu implements OnInit {
       return {
         key: modulo.codigo.toString(), // Asignar codigo a key como string
         label: modulo.nombreModulo,    // Asignar nombreModulo a label
-        icon: modulo.icono,            // Asignar icono a icon
         items: this.convertirOpcionesPadreAMenuItems(this.listaPadres, modulo.codigo)
       };
     });
@@ -97,7 +97,6 @@ export class DashboardMenu implements OnInit {
           return {
             key: menu.codigo.toString(), // Asignar codigo a key como string
             label: menu.descripcionOpcion,    // Asignar nombreModulo a label
-            icon: menu.icono,            // Asignar icono a icon
             items: this.convertirOpcionesAMenuItems(this.listaOpciones, menu.codigo)
           };
         }
@@ -112,20 +111,22 @@ export class DashboardMenu implements OnInit {
             key: menu.codigo.toString(), // Asignar codigo a key como string
             label: menu.descripcionOpcion,    // Asignar nombreModulo a label
             icon: menu.icono,            // Asignar icono a icon
-            routerLink: menu.rutaOpcion
+            command: () => this.navigateAndClose(menu.rutaOpcion),
           };
         }
       );
   }
 
-  protected navigateAndClose(path: string) {
-    this.router.navigate([path])
-
+  navigateAndClose(path: string) {
+    this.router.navigate([path]);
 
     this.drawerRef.close({
-      preventDefault: () => {
-      }
+      preventDefault: () => {},
     } as unknown as Event);
+  }
+
+  closeCallback(e: unknown): void {
+    this.drawerRef.close(e as any);
   }
 
   protected onLogout(): void {

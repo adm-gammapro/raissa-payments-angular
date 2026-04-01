@@ -52,27 +52,11 @@ export class DashboardHeader {
     ];
   }
 
-  save() {
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Success',
-      detail: 'Data Saved',
-    });
-  }
-
   update() {
     this.messageService.add({
       severity: 'success',
       summary: 'Updated',
       detail: 'Data Updated',
-    });
-  }
-
-  delete() {
-    this.messageService.add({
-      severity: 'warn',
-      summary: 'Delete',
-      detail: 'Data Deleted',
     });
   }
 
