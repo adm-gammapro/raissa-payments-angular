@@ -6,6 +6,7 @@ export interface CargoSolicitudResponse {
   solicitudId: number;
   cuentaOrigen: string;
   codigoEntidadFinanciera: string;
+  nombreEntidadFinanciera: string;
   moneda: string;
   montoCargo: number;
   montoTotalAbonos: number;

@@ -45,6 +45,15 @@ import {
 import {
   ConfiguracionReglasResponse
 } from '../../../../../apis/model/module/private/operativo/administrativo/response/configuracion-reglas-response';
+import {
+  VinculoCategoriaUsuarioRequest
+} from '../../../../../apis/model/module/private/operativo/administrativo/request/vinculo-categoria-usuario-request';
+import {
+  VinculoCategoriaUsuarioResponse
+} from '../../../../../apis/model/module/private/operativo/administrativo/response/vinculo-categoria-usuario-response';
+import {
+  CategoriaUsuarioRequest
+} from '../../../../../apis/model/module/private/operativo/administrativo/request/categoria-usuario-request';
 
 @Injectable({
   providedIn: 'root',
@@ -178,6 +187,36 @@ export class AdministrativoService {
     );
   }
 
+  getCategoriaUsuariosVinculadosList(request: VinculoCategoriaUsuarioRequest): Observable<VinculoCategoriaUsuarioResponse> {
+    return this.http.post<VinculoCategoriaUsuarioResponse>(
+      `${this.baseUrl}/list-vinculo-categoria-usuario`,
+      request
+    ).pipe(
+      map((response: any) => response),
+      catchError(err => this.handleError(err))
+    );
+  }
+
+  vincularCategoriaUsuario(request: CategoriaUsuarioRequest): Observable<boolean> {
+    return this.http.post<boolean>(
+      `${this.baseUrl}/vincular-categoria-usuario`,
+      request
+    ).pipe(
+      map((response: any) => response),
+      catchError(err => this.handleError(err))
+    );
+  }
+
+  desvincularCategoriaUsuario(request: CategoriaUsuarioRequest): Observable<boolean> {
+    return this.http.post<boolean>(
+      `${this.baseUrl}/desvincular-categoria-usuario`,
+      request
+    ).pipe(
+      map((response: any) => response),
+      catchError(err => this.handleError(err))
+    );
+  }
+
   // REGLA METHODS
   listarReglaPage(search: ReglaSearch): Observable<ReglaConnectResponse> {
     console.log("regla");
@@ -262,7 +301,7 @@ export class AdministrativoService {
     );
   }
 
-  createConfiguracionRegla(create: ConfiguracionReglasRequest, request?: any): Observable<ConfiguracionReglasResponse> {
+  createConfiguracionRegla(create: ConfiguracionReglasRequest): Observable<ConfiguracionReglasResponse> {
     return this.http.post<ConfiguracionReglasResponse>(
       `${this.baseUrl}/create-configuracion-regla`,
       create
@@ -272,7 +311,7 @@ export class AdministrativoService {
     );
   }
 
-  updateConfiguracionRegla(update: ConfiguracionReglasRequest, request?: any): Observable<ConfiguracionReglasResponse> {
+  updateConfiguracionRegla(update: ConfiguracionReglasRequest): Observable<ConfiguracionReglasResponse> {
     return this.http.post<ConfiguracionReglasResponse>(
       `${this.baseUrl}/update-configuracion-regla`,
       update
@@ -282,7 +321,7 @@ export class AdministrativoService {
     );
   }
 
-  deleteConfiguracionRegla(remove: ConfiguracionReglasRequest, request?: any): Observable<ConfiguracionReglasResponse> {
+  deleteConfiguracionRegla(remove: ConfiguracionReglasRequest): Observable<ConfiguracionReglasResponse> {
     return this.http.post<ConfiguracionReglasResponse>(
       `${this.baseUrl}/delete-configuracion-regla`,
       remove

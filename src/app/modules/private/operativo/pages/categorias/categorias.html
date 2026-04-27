@@ -102,6 +102,16 @@
         <td>{{ categoria.descripcion }}</td>
         <td class="text-center">
           <p-button
+            icon="pi pi-users"
+            [rounded]="true"
+            severity="info"
+            [outlined]="true"
+            pTooltip="Vincular usuarios"
+            tooltipPosition="left"
+            size="small"
+            (onClick)="mostrarVinculo(categoria.codigo)"
+          />
+          <p-button
             icon="pi pi-file-edit"
             [rounded]="true"
             severity="info"
@@ -128,3 +138,4 @@
 </form>
 
 <app-form-categorias [(visible)]="visibleForm" [categoriaData]="selectedCategoria" (guardarRegistro)="guardar()" [modo]="modoUso"></app-form-categorias>
+<app-vincular-usuario-categoria [(visible)]="visibleVinculo" [UsuariosData]="usuariosVinculadosResponse" [Categoria]="idCategoria"></app-vincular-usuario-categoria>

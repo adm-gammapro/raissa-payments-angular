@@ -5,9 +5,12 @@ export interface AbonoSolicitudResponse {
   cargoSolicitudId: number;
   cuentaDestino: string;
   codigoEntidadFinanciera: string;
+  nombreEntidadFinanciera: string;
   moneda: string;
   montoDestino: number;
   beneficiario: string;
+  ndocBeneficiarioValidado: string;
+  nombreBeneficiarioValidado: string;
   estadoEjecucion: string;
   detalleEjecucion: string;
 

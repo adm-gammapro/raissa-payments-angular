@@ -3,7 +3,7 @@ export interface ConfiguracionReglasRequest {
   codigoRegla?: number;
   codigoCategoria?: number;
   codigoModo?: number;
-  predeterminado?: boolean;
+  predeterminado?: string;
   prioridad?: number;
   codigoCliente: number;
 }

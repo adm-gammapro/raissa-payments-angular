@@ -3,6 +3,7 @@
   [modal]="true"
   closable="false"
   [style]="{ width: '100rem' }"
+  styleClass="mi-dialog-cargos-unico"
 >
   <div class="card">
     <p-table
@@ -48,7 +49,7 @@
             </p-button>
           </td>
           <td>{{ cargo.cuentaOrigen }}</td>
-          <td>{{ cargo.codigoEntidadFinanciera }}</td>
+          <td>{{ cargo.nombreEntidadFinanciera }}</td>
           <td>
             <p-tag [value]="cargo.moneda" [severity]="monedaSeverity(cargo.moneda)"></p-tag>
           </td>
@@ -91,7 +92,11 @@
                     <th id="entidadAbono">Entidad destino</th>
                     <th id="monedaAbono">Moneda</th>
                     <th id="montoAbono" class="text-right">Monto</th>
-                    <th id="clienteAbono">Beneficiario</th>
+                    <th id="clienteAbono">Benef. cargado</th>
+                    @if (tieneBeneficiarioValidadoEnLista()) {
+                      <th id="docBeneficiarioValidado">N. doc benef. validado</th>
+                      <th id="nomBeneficiarioValidado">Nombre benef. validado</th>
+                    }
                     @if (mostrar) {
                       <th id="estadoEjecucionDetalle">Estado ejecución</th>
                       <th id="detalleEjecucion">Detalle ejecución</th>
@@ -101,12 +106,16 @@
                 <ng-template #body let-det>
                   <tr>
                     <td>{{ det.cuentaDestino }}</td>
-                    <td>{{ det.codigoEntidadFinanciera }}</td>
+                    <td>{{ det.nombreEntidadFinanciera }}</td>
                     <td>
                       <p-tag [value]="det.moneda" [severity]="monedaSeverity(det.moneda)"></p-tag>
                     </td>
                     <td class="text-right">{{ det.montoDestino }}</td>
                     <td>{{ det.beneficiario }}</td>
+                    @if (tieneBeneficiarioValidado(det)) {
+                      <td>{{ det.ndocBeneficiarioValidado }}</td>
+                      <td>{{ det.nombreBeneficiarioValidado }}</td>
+                    }
                     @if (mostrar) {
                       <td>
                         <p-tag

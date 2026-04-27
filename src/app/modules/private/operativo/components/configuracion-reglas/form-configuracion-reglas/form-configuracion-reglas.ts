@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, Output, signal} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, signal} from '@angular/core';
 import {Button} from 'primeng/button';
 import {Dialog} from 'primeng/dialog';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
@@ -24,6 +24,11 @@ import {
   CategoriaResponse
 } from '../../../../../../apis/model/module/private/operativo/administrativo/response/categoria-response';
 import {Modo} from '../../../../../../apis/model/module/commons/modo';
+import {ReglaRequest} from '../../../../../../apis/model/module/private/operativo/administrativo/request/regla-request';
+import {
+  CategoriaRequest
+} from '../../../../../../apis/model/module/private/operativo/administrativo/request/categoria-request';
+import {Predeterminado} from '../../../../../../apis/model/module/commons/predeterminado';
 
 @Component({
   selector: 'app-form-configuracion-reglas',
@@ -32,7 +37,6 @@ import {Modo} from '../../../../../../apis/model/module/commons/modo';
     Dialog,
     FormsModule,
     InputNumber,
-    InputText,
     Message,
     NgIf,
     Panel,
@@ -42,7 +46,7 @@ import {Modo} from '../../../../../../apis/model/module/commons/modo';
   templateUrl: './form-configuracion-reglas.html',
   styleUrl: './form-configuracion-reglas.scss',
 })
-export class FormConfiguracionReglas {
+export class FormConfiguracionReglas implements OnInit {
   @Input() visible: boolean = false;
   @Output() visibleChange = new EventEmitter<boolean>();
   @Input() modo: 'editar' | 'registrar' = 'registrar';
@@ -61,6 +65,7 @@ export class FormConfiguracionReglas {
   protected reglas!: ReglaResponse[];
   protected categorias!: CategoriaResponse[];
   protected modos: Modo[] = Modo.modos;
+  protected predeterminados: Predeterminado[] = Predeterminado.predeterminados;
 
   constructor(private readonly fb: FormBuilder,
               private readonly messageService: MessageService,
@@ -75,13 +80,22 @@ export class FormConfiguracionReglas {
       codigoCategoria: ['', Validators.required],
       codigoModo: ['', Validators.required],
       predeterminado: ['', Validators.required],
-      prioridad: ['', Validators.required],
+      prioridad: [1, Validators.required],
+    });
+  }
+
+  ngOnInit() {
+    this.getListReglas();
+    this.getListCategorias();
+
+    this.form.patchValue({
+      prioridad: 1
     });
   }
 
   guardar() {
     if (this.form.valid) {
-      const regla: ConfiguracionReglasRequest = {
+      const configuracion: ConfiguracionReglasRequest = {
         codigo: this.codigoConfiguracion,
         codigoRegla: this.form.get('codigoRegla')?.value,
         codigoCategoria: this.form.get('codigoCategoria')?.value,
@@ -92,12 +106,12 @@ export class FormConfiguracionReglas {
       };
 
       if(this.modo == 'registrar') {
-        this.administrativoService.createRegla(regla).subscribe({
-          next: (response: ReglaResponse) => {
+        this.administrativoService.createConfiguracionRegla(configuracion).subscribe({
+          next: (response: ConfiguracionReglasResponse) => {
             this.messageService.add({
               severity: 'success',
               summary: 'Confirmación',
-              detail: 'Se registró ' + response.descripcion + ' correctamente',
+              detail: 'Se registró correctamente',
             });
 
             this.guardarRegistro.emit();
@@ -119,12 +133,12 @@ export class FormConfiguracionReglas {
           }
         });
       } else {
-        this.administrativoService.updateRegla(regla).subscribe({
-          next: (response: ReglaResponse) => {
+        this.administrativoService.updateConfiguracionRegla(configuracion).subscribe({
+          next: (response: ConfiguracionReglasResponse) => {
             this.messageService.add({
               severity: 'success',
               summary: 'Confirmación',
-              detail: 'Se actualizó registro ' + response.descripcion + ' correctamente',
+              detail: 'Se actualizó registro correctamente',
             });
 
             this.guardarRegistro.emit();
@@ -161,7 +175,64 @@ export class FormConfiguracionReglas {
 
   protected cerrar() {
     this.form.reset();
+    this.form.patchValue({
+      prioridad: 1
+    });
     this.visibleChange.emit(false);
+  }
+
+  protected getListReglas(){
+    const request: ReglaRequest = {
+      codigoCliente: Number(this.idEmpresa),
+    };
+
+    this.administrativoService.listRegla(request).subscribe({
+      next: (response: ReglaResponse[]) => {
+        this.reglas = response;
+      },
+      error: (error) => {
+        if (error.status === 502) {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error en el servicio de reglas'
+          });
+        } else if (error.status === 503) {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Servicio de reglas no disponible'
+          });
+        }
+      }
+    });
+  }
+
+  protected getListCategorias(){
+    const request: CategoriaRequest = {
+      codigoCliente: Number(this.idEmpresa),
+    };
+
+    this.administrativoService.listCategoria(request).subscribe({
+      next: (response: CategoriaResponse[]) => {
+        this.categorias = response;
+      },
+      error: (error) => {
+        if (error.status === 502) {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error en el servicio de categorias'
+          });
+        } else if (error.status === 503) {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Servicio de categorias no disponible'
+          });
+        }
+      }
+    });
   }
 
   get headerTitle(): string {

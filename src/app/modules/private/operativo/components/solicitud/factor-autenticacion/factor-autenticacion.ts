@@ -12,6 +12,10 @@ import {InputText} from 'primeng/inputtext';
 import { InputOtp } from 'primeng/inputotp';
 import {Tooltip} from 'primeng/tooltip';
 import {MessageService} from 'primeng/api';
+import {GeneralService} from '../../../../../../service/commons/general';
+import {environment} from '../../../../../../../environments/environment';
+import { ProgressSpinner } from 'primeng/progressspinner';
+import {Toast} from 'primeng/toast';
 
 @Component({
   selector: 'app-factor-autenticacion',
@@ -29,6 +33,8 @@ import {MessageService} from 'primeng/api';
     InputText,
     InputOtp,
     Tooltip,
+    Toast,
+    ProgressSpinner
   ],
   providers: [MessageService],
   templateUrl: './factor-autenticacion.html',
@@ -38,34 +44,43 @@ export class FactorAutenticacion implements OnInit {
   @Input() visible: boolean = false;
   @Output() visibleChange = new EventEmitter<boolean>();
   @Output() autenticado = new EventEmitter<void>();
-  selectedCategory: any = null;
   form!: FormGroup;
   value : any
   otpEnabled = false;
-  otpLength = 4;
+  otpLength = 6;
+  protected username: string = '';
+  protected codigoAutenticacion: string = '';
+  protected loading = false;
 
   categories: any[] = [
-    {name: 'Enviar SMS', key: 'A'},
-    {name: 'Mensaje vía Whatsapp', key: 'M'},
-    {name: 'Correo electrónico', key: 'P'},
-    {name: 'Google Authenticator', key: 'R'}
+    {name: 'Enviar SMS', key: 'sms'},
+    {name: 'Mensaje vía Whatsapp', key: 'ws'},
+    {name: 'Correo electrónico', key: 'email'},
+    {name: 'Google Authenticator', key: 'auth'}
   ];
 
   constructor(private readonly fb: FormBuilder,
-              private readonly messageService: MessageService) {}
+              private readonly messageService: MessageService,
+              private readonly generalService: GeneralService) {
+    if (sessionStorage.getItem(environment.session.USERNAME) != undefined) {
+      this.username = sessionStorage.getItem(environment.session.USERNAME)!;
+    }
+  }
 
   ngOnInit(): void {
-    this.selectedCategory = this.categories[1];
+    const defaultCategory = this.categories.find(c => c.key === 'email');
 
     this.form = this.fb.group({
-      category: ['', Validators.required],
-      usuario: ['', Validators.required],
-      password: ['', [Validators.required, Validators.minLength(8)]]
+      category: [defaultCategory, Validators.required],
+      usuario: [this.username, Validators.required],
+      password: ['', [Validators.required, Validators.minLength(5)]]
     });
+
   }
 
   protected cerrar() {
     this.visibleChange.emit(false);
+    this.resetForm();
   }
 
   protected solicitar() {
@@ -86,18 +101,87 @@ export class FactorAutenticacion implements OnInit {
       return;
     }
 
-    this.otpEnabled = true;
-    this.value = '';
+    this.loading = true;
+
+    const { usuario, password, category } = this.form.value;
+
+    this.generalService.getCodigoRandom(usuario,
+                                        password,
+                                        category.key).subscribe({
+      next: (response) => {
+        if (response == "") {
+          this.messageService.add({
+            severity: 'warn',
+            summary: 'Validación',
+            detail: 'No se puedo autenticar las credenciales',
+          });
+        } else if (response == "-") {
+          this.messageService.add({
+            severity: 'warn',
+            summary: 'Validación',
+            detail: 'Medio de autenticación no disponible',
+          });
+        } else {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Confirmación',
+            detail: 'Ingrese codigo enviado',
+          });
+          this.otpEnabled = true;
+          this.value = '';
+          this.codigoAutenticacion= response;
+        }
+
+        this.loading = false;
+      },
+      error: (err) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error al obtener codigo'
+        });
+
+        this.loading = false;
+      }
+    });
   }
 
   autenticar() {
     if (!this.otpComplete) return;
+    const valorOtp = this.value?.toString().trim();
 
-    this.autenticado.emit();   // avisa al padre
-    this.cerrar();             // cierra el diálogo
+    if (valorOtp !== this.codigoAutenticacion) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Código incorrecto'
+      });
+
+      this.value = '';
+      this.otpEnabled = false;
+      return;
+    }
+
+    this.codigoAutenticacion = '';
+    this.autenticado.emit();
+    this.cerrar();
   }
 
   get otpComplete(): boolean {
     return this.value?.length === this.otpLength;
+  }
+
+  resetForm() {
+    const defaultCategory = this.categories.find(c => c.key === 'email');
+
+    this.form.reset({
+      category: defaultCategory,
+      usuario: this.username,
+      password: ''
+    });
+
+    this.codigoAutenticacion = '';
+    this.value = '';
+    this.otpEnabled = false;
   }
 }

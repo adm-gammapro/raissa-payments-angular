@@ -27,21 +27,34 @@
         <div style="width: 300px;">
           <p-iftalabel>
             <p-select
-              id="reglas"
+              id="codigoRegla"
               formControlName="codigoRegla"
               [options]="reglas"
               optionLabel="descripcion"
               optionValue="codigo"
+              [filter]="true"
+              filterBy="descripcion"
+              [showClear]="true"
               placeholder="Selecciona regla"
               style="width: 100%;">
+              <ng-template #selectedItem let-selectedOption>
+                <div class="flex items-center gap-2">
+                  <div>{{ selectedOption.descripcion }}</div>
+                </div>
+              </ng-template>
+              <ng-template let-regla #item>
+                <div class="flex items-center gap-2">
+                  <div>{{ regla.descripcion }}</div>
+                </div>
+              </ng-template>
             </p-select>
-            <label for="codigoSolicitud">Búsqueda por regla</label>
+            <label for="codigoRegla">Búsqueda por regla</label>
           </p-iftalabel>
         </div>
         <div style="width: 300px;">
           <p-iftalabel>
             <p-select
-              id="categorias"
+              id="codigoCategoria"
               formControlName="codigoCategoria"
               [options]="categorias"
               optionLabel="descripcion"
@@ -49,13 +62,13 @@
               placeholder="Selecciona categoria"
               style="width: 100%;">
             </p-select>
-            <label for="estadoRegistro">Búsqueda por categoria</label>
+            <label for="codigoCategoria">Búsqueda por categoria</label>
           </p-iftalabel>
         </div>
         <div style="width: 300px;">
           <p-iftalabel>
             <p-select
-              id="modos"
+              id="codigoModo"
               formControlName="codigoModo"
               [options]="modos"
               optionLabel="descripcion"
@@ -63,7 +76,7 @@
               placeholder="Selecciona modo"
               style="width: 100%;">
             </p-select>
-            <label for="modos">Búsqueda por modo</label>
+            <label for="codigoModo">Búsqueda por modo</label>
           </p-iftalabel>
         </div>
         <div style="width: 300px;">

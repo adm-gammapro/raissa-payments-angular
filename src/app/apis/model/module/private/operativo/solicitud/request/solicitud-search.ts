@@ -7,4 +7,5 @@ export interface SolicitudSearch extends SearchRequest {
   codigo?: string;
   estadoSolicitud?: string[];
   codigoCliente?: string;
+  usuarioActual?: string;
 }

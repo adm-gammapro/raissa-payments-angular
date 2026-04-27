@@ -6,7 +6,7 @@ export interface ConfiguracionReglasResponse {
   descripcionCategoria?: string;
   codigoModo?: number;
   descripcionModo?: string;
-  predeterminado?: boolean;
+  predeterminado?: string;
   prioridad: number;
   estadoRegistro: string;
   audiFechIns: string;

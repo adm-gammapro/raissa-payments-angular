@@ -1,0 +1,40 @@
+<div class="card flex justify-center">
+  <p-dialog header="Edit Profile" [modal]="true" [(visible)]="visible" [style]="{ width: '50rem' }" closable="false">
+    <ng-template #header>
+      <div class="inline-flex items-center justify-center gap-2">
+        <h2><span class="font-bold whitespace-nowrap">{{ headerTitle }}</span></h2>
+      </div>
+    </ng-template>
+
+    <div class="card">
+      <p-picklist
+        [source]="sourceUsers"
+        [target]="targetUsers"
+        [dragdrop]="true"
+        [responsive]="true"
+        [sourceStyle]="{ height: '20rem' }"
+        [targetStyle]="{ height: '20rem' }"
+        [showSourceControls]="false"
+        [showTargetControls]="false"
+        (onMoveToTarget)="onMoveRight($event)"
+        (onMoveToSource)="onMoveLeft($event)"
+        (onMoveAllToTarget)="onMoveRight($event)"
+        (onMoveAllToSource)="onMoveLeft($event)"
+        breakpoint="1400px"
+        scrollHeight="30rem"
+      >
+        <ng-template let-user pTemplate="item">
+          <div class="flex flex-wrap p-1 items-center gap-4 w-full">
+            <div class="flex-1 flex flex-col">
+              <span class="font-medium text-sm">{{ user.nombres + ' ' + user.apePaterno + ' ' + user.apeMaterno }}</span>
+            </div>
+          </div>
+        </ng-template>
+      </p-picklist>
+    </div>
+
+    <ng-template #footer>
+      <p-button label="Cerrar" [outlined]="true" severity="info" (onClick)="cerrar()"></p-button>
+    </ng-template>
+  </p-dialog>
+</div>

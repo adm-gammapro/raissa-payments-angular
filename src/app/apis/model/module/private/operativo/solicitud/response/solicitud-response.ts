@@ -5,8 +5,10 @@ export interface SolicitudResponse {
   id: number;
   fechaCarga: string;
   usuarioCarga: string;
+  nombreUsuarioCarga: string;
   cantidadOrdenes: number;
   estadoSolicitud: string;
+  nombresUsuariosAutorizacion: string;
   cargos: CargoSolicitudResponse[];
 
   estadoRegistro: EstadoRegistroEnum;

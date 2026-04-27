@@ -1,0 +1,25 @@
+::ng-deep {
+  .mi-dialog-cargos-unico {
+    // Tabla interna (hijo) - Filas en azul claro
+    .p-datatable-tbody .p-datatable-tbody > tr {
+      background-color: #e3f2fd !important;
+
+      td {
+        background-color: transparent !important;
+      }
+
+      &:hover {
+        background-color: #bbdefb !important;
+      }
+    }
+
+    // Forzar que la tabla padre mantenga su color por defecto
+    .p-datatable-tbody > tr {
+      background-color: #ffffff !important;
+
+      &:hover {
+        background-color: #f5f5f5 !important;
+      }
+    }
+  }
+}

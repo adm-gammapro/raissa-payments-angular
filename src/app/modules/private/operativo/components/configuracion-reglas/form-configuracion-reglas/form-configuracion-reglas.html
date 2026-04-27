@@ -11,24 +11,65 @@
         <input type="hidden" formControlName="codigo">
         <div class="p-1">
           <div class="field">
-            <label for="codigoRegla">Descripción</label>
-            <input type="text" id="codigoRegla" pInputText formControlName="codigoRegla" class="w-full"
-                   [class.p-invalid]="form.get('codigoRegla')?.invalid && form.get('codigoRegla')?.touched"/>
+            <label for="codigoRegla">Regla</label>
+            <p-select
+              id="codigoRegla"
+              formControlName="codigoRegla"
+              [options]="reglas"
+              optionLabel="descripcion"
+              optionValue="codigo"
+              [filter]="true"
+              filterBy="descripcion"
+              [showClear]="true"
+              placeholder="Selecciona regla"
+              style="width: 100%;"
+              [class.p-invalid]="form.get('codigoRegla')?.invalid && form.get('codigoRegla')?.touched">
+              <ng-template #selectedItem let-selectedOption>
+                <div class="flex items-center gap-2">
+                  <div>{{ selectedOption.descripcion }}</div>
+                </div>
+              </ng-template>
+              <ng-template let-regla #item>
+                <div class="flex items-center gap-2">
+                  <div>{{ regla.descripcion }}</div>
+                </div>
+              </ng-template>
+            </p-select>
             <small *ngIf="form.get('codigoRegla')?.touched && form.get('codigoRegla')?.errors">
               <ng-container *ngIf="form.get('codigoRegla')?.errors?.['required']" class="text-red-500">
                 <p-message severity="error" variant="simple" size="small">Campo obligatorio</p-message>
               </ng-container>
             </small>
           </div>
+
           <div class="field">
-            <label for="modo">Modo</label>
+            <label for="codigoCategoria">Categoria</label>
             <p-select
-              id="modos"
+              id="codigoCategoria"
+              formControlName="codigoCategoria"
+              [options]="categorias"
+              optionLabel="descripcion"
+              optionValue="codigo"
+              placeholder="Seleccione categoria"
+              style="width: 100%;"
+              [class.p-invalid]="form.get('codigoCategoria')?.invalid && form.get('codigoCategoria')?.touched">
+            </p-select>
+
+            <small *ngIf="form.get('codigoCategoria')?.touched && form.get('codigoCategoria')?.errors">
+              <ng-container *ngIf="form.get('codigoCategoria')?.errors?.['required']" class="text-red-500">
+                <p-message severity="error" variant="simple" size="small">Campo obligatorio</p-message>
+              </ng-container>
+            </small>
+          </div>
+          <div class="field">
+            <label for="codigoModo">Modo</label>
+            <p-select
+              id="codigoModo"
               formControlName="codigoModo"
               [options]="modos"
               optionLabel="descripcion"
               optionValue="valor"
-              placeholder="Selecciona moneda"
+              placeholder="Selecciona modo"
               style="width: 100%;"
               [class.p-invalid]="form.get('codigoModo')?.invalid && form.get('codigoModo')?.touched">
             </p-select>
@@ -39,36 +80,47 @@
             </small>
           </div>
           <div class="field">
-            <label for="codigoCategoria">Límite inferior</label>
-            <p-inputnumber
-              formControlName="codigoCategoria"
-              inputId="locale-us"
-              mode="decimal"
-              locale="en-US"
-              class="w-full"
-              [class.p-invalid]="form.get('codigoCategoria')?.invalid && form.get('codigoCategoria')?.touched"
-              [minFractionDigits]="2">
-            </p-inputnumber>
-
-            <small *ngIf="form.get('codigoCategoria')?.touched && form.get('codigoCategoria')?.errors">
-              <ng-container *ngIf="form.get('codigoCategoria')?.errors?.['required']" class="text-red-500">
+            <label for="predeterminado">Predeterminado</label>
+            <p-select
+              id="predeterminado"
+              formControlName="predeterminado"
+              [options]="predeterminados"
+              optionLabel="descripcion"
+              optionValue="valor"
+              placeholder="Selecciona predeterminado"
+              style="width: 100%;"
+              [class.p-invalid]="form.get('predeterminado')?.invalid && form.get('predeterminado')?.touched">
+            </p-select>
+            <small *ngIf="form.get('predeterminado')?.touched && form.get('predeterminado')?.errors">
+              <ng-container *ngIf="form.get('predeterminado')?.errors?.['required']" class="text-red-500">
                 <p-message severity="error" variant="simple" size="small">Campo obligatorio</p-message>
               </ng-container>
             </small>
           </div>
           <div class="field">
-            <label for="predeterminado">Límite superior</label>
+            <label for="prioridad">Prioridad</label>
             <p-inputnumber
-              formControlName="predeterminado"
-              inputId="locale-us"
-              mode="decimal"
-              locale="en-US"
-              class="w-full"
-              [class.p-invalid]="form.get('predeterminado')?.invalid && form.get('predeterminado')?.touched"
-              [minFractionDigits]="2">
+              id="prioridad"
+              formControlName="prioridad"
+              [showButtons]="true"
+              buttonLayout="horizontal"
+              spinnerMode="horizontal"
+              inputId="horizontal"
+              [min]="1"
+              [max]="10"
+              [step]="1"
+              style="width: 100%;"
+              [allowEmpty]="false"
+              [class.p-invalid]="form.get('prioridad')?.invalid && form.get('prioridad')?.touched">
+              <ng-template #incrementbuttonicon>
+                <span class="pi pi-plus"></span>
+              </ng-template>
+              <ng-template #decrementbuttonicon>
+                <span class="pi pi-minus"></span>
+              </ng-template>
             </p-inputnumber>
-            <small *ngIf="form.get('predeterminado')?.touched && form.get('predeterminado')?.errors">
-              <ng-container *ngIf="form.get('predeterminado')?.errors?.['required']" class="text-red-500">
+            <small *ngIf="form.get('prioridad')?.touched && form.get('prioridad')?.errors">
+              <ng-container *ngIf="form.get('prioridad')?.errors?.['required']" class="text-red-500">
                 <p-message severity="error" variant="simple" size="small">Campo obligatorio</p-message>
               </ng-container>
             </small>

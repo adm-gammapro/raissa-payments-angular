@@ -41,8 +41,17 @@ import {
 import {TrackingRequest} from '../../../../../apis/model/module/private/operativo/solicitud/request/tracking-request';
 import {TimeStatusPipe} from '../../../../../utils/pipes/time-status-pipe';
 import {IftaLabel} from 'primeng/iftalabel';
+import {
+  ObservacionRequest
+} from '../../../../../apis/model/module/private/operativo/solicitud/request/observacion-request';
+import {ObservacionService} from '../../../../../service/modules/private/operativo/solicitud/observacion';
+import {
+  ObservacionResponse
+} from '../../../../../apis/model/module/private/operativo/solicitud/response/observacion-response';
+import {Dialog} from 'primeng/dialog';
+import {ProgressSpinner} from 'primeng/progressspinner';
 
-type Estado = 'REGISTRADO' | 'VALIDADO' | 'OBSERVADO' | 'PENDIENTE_AUTORIZACION' | 'ANULADO' | 'AUTORIZADO' | 'PROCESADO_TOTAL' | 'PROCESADO_PARCIAL';
+type Estado = 'REGISTRADO' | 'VALIDADO' | 'OBSERVADO' | 'PENDIENTE_AUTORIZACION' | 'ANULADO' | 'AUTORIZADO' | 'PROCESADO_TOTAL' | 'PROCESADO_PARCIAL' | 'AUTORIZADO_PARCIAL';
 
 interface EstadoSolicitudInterface {
   codigo: string,
@@ -70,7 +79,9 @@ interface EstadoSolicitudInterface {
     MultiSelectModule,
     FactorAutenticacion,
     TimeStatusPipe,
-    IftaLabel
+    IftaLabel,
+    Dialog,
+    ProgressSpinner
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './solicitud.html',
@@ -79,24 +90,29 @@ interface EstadoSolicitudInterface {
 export class Solicitud implements OnInit {
   protected solicitudes!: SolicitudResponse[];
   protected cargosSolicitud!: CargoSolicitudResponse[];
-  filtroForm: FormGroup;
+  protected filtroForm: FormGroup;
   protected estadoSolicitud: EstadoSolicitudInterface[] | undefined;
   protected estadoSolicitudFiltrada: EstadoSolicitudInterface[] | undefined;
-  modo!: 'gestionar' | 'validar' | 'autorizar' | 'ejecutar';
+  protected modo!: 'gestionar' | 'validar' | 'autorizar' | 'ejecutar';
   protected visibleDetalle: boolean = false;
-  visibleObservaciones: boolean = false;
-  visibleTrack: boolean = false;
-  visibleFactor: boolean = false;
-  solicitudSeleccionadaId?: number;
-  first = 0;
-  rows = 10;
-  modoObservaciones: 'ver' | 'anular' | 'observar' = 'ver';
-  IndicadorMostrar: boolean = false;
+  protected visibleObservaciones: boolean = false;
+  protected visibleTrack: boolean = false;
+  protected visibleFactor: boolean = false;
+  protected solicitudSeleccionadaId?: number;
+  protected first = 0;
+  protected rows = 10;
+  protected modoObservaciones: 'ver' | 'anular' | 'observar' = 'ver';
+  protected IndicadorMostrar: boolean = false;
   protected idEmpresa: string = "";
+  protected usuarioActual: string = "";
   protected loading: boolean = false;
   protected totalRecords: number = 0;
   protected registrosMostrados = 0;
   protected tracking!: TrackingResponse[];
+  protected observaciones!: ObservacionResponse[];
+  protected idSolicitud!: number;
+  protected eventoObservacion: string = "";
+  loadingValidacion: boolean = false;
 
   misItems: MenuItem[] = [];
 
@@ -107,10 +123,14 @@ export class Solicitud implements OnInit {
     private readonly router: Router,
     private readonly solicitudService: SolicitudService,
     private readonly trackingService: TrackingService,
+    private readonly observacionService: ObservacionService,
     private readonly route: ActivatedRoute
   ) {
     if (sessionStorage.getItem(environment.session.ID_EMPRESA) != undefined) {
       this.idEmpresa = sessionStorage.getItem(environment.session.ID_EMPRESA)!;
+    }
+    if (sessionStorage.getItem(environment.session.USERNAME) != undefined) {
+      this.usuarioActual = sessionStorage.getItem(environment.session.USERNAME)!;
     }
 
     this.filtroForm = this.fb.group({
@@ -131,6 +151,7 @@ export class Solicitud implements OnInit {
       { codigo: 'PENDIENTE_AUTORIZACION', descripcion: 'Pendiente de autorización' },
       { codigo: 'ANULADO', descripcion: 'Anulado' },
       { codigo: 'AUTORIZADO', descripcion: 'Autorizado' },
+      { codigo: 'AUTORIZADO_PARCIAL', descripcion: 'Autorizado parcial' },
       { codigo: 'PROCESADO_TOTAL', descripcion: 'Procesado total' },
       { codigo: 'PROCESADO_PARCIAL', descripcion: 'Procesado parcial' }
     ];
@@ -148,6 +169,7 @@ export class Solicitud implements OnInit {
       case 'PENDIENTE_AUTORIZACION': return 'Pendiente de autorización';
       case 'ANULADO': return 'Anulado';
       case 'AUTORIZADO': return 'Autorizado';
+      case 'AUTORIZADO_PARCIAL': return 'Autorizado parcial';
       case 'PROCESADO_TOTAL': return 'Procesado total';
       case 'PROCESADO_PARCIAL': return 'Procesado parcial';
       default: return estado;
@@ -161,9 +183,10 @@ export class Solicitud implements OnInit {
       PENDIENTE_AUTORIZACION: { bg: '#16a34a', fg: '#ffffff' }, // Verde
       PROCESADO_TOTAL: { bg: '#16a34a', fg: '#ffffff' }, // Verde
       AUTORIZADO: { bg: '#16a34a', fg: '#ffffff' }, // Verde
-      ANULADO: { bg: '#f97316', fg: '#111827' }, // Naranja
+      AUTORIZADO_PARCIAL: { bg: '#16a34a', fg: '#ffffff' }, // Verde
+      ANULADO: { bg: '#dc2626', fg: '#ffffff' }, // Rojo
       PROCESADO_PARCIAL: { bg: '#dc2626', fg: '#ffffff' }, // Rojo
-      OBSERVADO: { bg: '#dc2626', fg: '#ffffff' }, // Rojo
+      OBSERVADO: { bg: '#f97316', fg: '#111827' }, // Naranja
     };
     const { bg, fg } = map[estado];
     return {
@@ -215,7 +238,8 @@ export class Solicitud implements OnInit {
       fechaFinal: fechaFinal || undefined,
       codigo: codigoSolicitud || undefined,
       estadoSolicitud: estadosSeleccionados,
-      codigoCliente: this.idEmpresa
+      codigoCliente: this.idEmpresa,
+      usuarioActual: this.usuarioActual
     };
 
     this.solicitudService.getSolicitudesPage(request).subscribe({
@@ -280,11 +304,31 @@ export class Solicitud implements OnInit {
 
         this.solicitudService.flujoSolicitudes(payload).subscribe({
           next: (resultado: number) => {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Confirmación',
-              detail: 'Se envió a autorización solicitud ' + resultado + ' correctamente',
-            });
+            if(resultado > 0) {
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Confirmación',
+                detail: 'Se envió a autorización solicitud ' + resultado + ' correctamente',
+              });
+            } else if(resultado == 0) {
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Validación',
+                detail: 'No se ubicó solicitud válida',
+              });
+            } else if(resultado == -1) {
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Validación',
+                detail: 'No se encontró configuraciones aplicables',
+              });
+            } else {
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Validación',
+                detail: 'No se encontró usuarios vinculados a categoria configurada',
+              });
+            }
 
             this.filtrar();
           },
@@ -295,7 +339,7 @@ export class Solicitud implements OnInit {
         this.solicitudSeleccionadaId = id;
       },
       reject: () => {
-        this.messageService.add({ severity: 'error', summary: 'Rechazado', detail: 'No se pudo enviar solicitud a autorización' });
+        this.messageService.add({ severity: 'warn', summary: 'Cancelado', detail: 'No se solicitó autorización' });
       }
     });
   }
@@ -318,6 +362,7 @@ export class Solicitud implements OnInit {
       },
 
       accept: () => {
+        this.loadingValidacion = true;
 
         const payload: FlujoSolicitudRequest = {
           idSolicitud: id,
@@ -327,15 +372,31 @@ export class Solicitud implements OnInit {
 
         this.solicitudService.flujoSolicitudes(payload).subscribe({
           next: (resultado: number) => {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Confirmación',
-              detail: 'Se validó solicitud ' + resultado + ' correctamente',
-            });
+            if (resultado == 0) {
+              this.messageService.add({
+                severity: 'warn',
+                summary: 'Confirmación',
+                detail: 'Validación de solicitud con observaciones',
+              });
+            } else if (resultado == -1) {
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Confirmación',
+                detail: 'No se pudo completar la validación',
+              });
+            } else {
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Confirmación',
+                detail: 'Se validó solicitud ' + resultado + ' correctamente',
+              });
+            }
 
+            this.loadingValidacion = false;
             this.filtrar();
           },
           error: (err) => {
+            this.loadingValidacion = false;
             console.error('Error al validar solicitud', err);
           }
         });
@@ -394,8 +455,29 @@ export class Solicitud implements OnInit {
       },
 
       accept: () => {
-        this.visibleFactor = true;
-        this.solicitudSeleccionadaId = id;
+        //this.visibleFactor = true;
+        //this.solicitudSeleccionadaId = id;
+
+        const payload: FlujoSolicitudRequest = {
+          idSolicitud: id,
+          flujo: 'ejecutar',
+          codigoCliente: Number(this.idEmpresa)
+        };
+
+        this.solicitudService.flujoSolicitudes(payload).subscribe({
+          next: (resultado: number) => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Confirmación',
+              detail: 'Se ejecutó solicitud ' + resultado + ' correctamente',
+            });
+
+            this.filtrar();
+          },
+          error: (err) => {
+            console.error('Error al ejecutar solicitud', err);
+          }
+        });
       },
       reject: () => {
         this.messageService.add({ severity: 'error', summary: 'Rechazado', detail: 'No se pudo procesar solictud' });
@@ -426,19 +508,31 @@ export class Solicitud implements OnInit {
     });
   }
 
-  verDetalle(event: Event, id: number) {
-    this.modoObservaciones = 'ver';
-    this.visibleObservaciones = true;
+  anularObservar(modo: 'ver' | 'anular' | 'observar', evento: string, id: number) {
+    const obsRequest: ObservacionRequest = {
+      solicitudId: id,
+      codigoCliente: Number(this.idEmpresa)
+    };
+
+    this.observacionService.getObservacionList(obsRequest).subscribe({
+      next: (resultado: ObservacionResponse[]) => {
+        this.observaciones = resultado;
+        this.visibleObservaciones = true;
+        this.modoObservaciones = modo;
+        this.idSolicitud = id;
+        if (modo != 'ver') {
+          this.eventoObservacion = evento;
+        }
+      },
+      error: (err) => {
+        console.error('Error al obtener observaciones', err);
+      }
+    });
   }
 
-  anular(event: Event, id: number) {
-    this.modoObservaciones = 'anular';
-    this.visibleObservaciones = true;
-  }
-
-  observar(event: Event, id: number) {
-    this.modoObservaciones = 'observar';
-    this.visibleObservaciones = true;
+  cerrarObservaciones(){
+    this.filtrar();
+    this.visibleObservaciones = false;
   }
 
   cargarBreadcrumb() {
@@ -504,13 +598,13 @@ export class Solicitud implements OnInit {
 
   private readonly estadosPorModo: Record<string, Estado[]> = {
     validar: ['REGISTRADO', 'VALIDADO', 'OBSERVADO', 'ANULADO'],
-    autorizar: ['PENDIENTE_AUTORIZACION'],
+    autorizar: ['PENDIENTE_AUTORIZACION', 'AUTORIZADO_PARCIAL'],
     ejecutar: ['AUTORIZADO', 'PROCESADO_TOTAL', 'PROCESADO_PARCIAL']
   };
 
   private readonly preselectPorModo: Record<string, Estado[]> = {
     validar: ['REGISTRADO', 'VALIDADO'],
-    autorizar: ['PENDIENTE_AUTORIZACION'],
+    autorizar: ['PENDIENTE_AUTORIZACION', 'AUTORIZADO_PARCIAL'],
     ejecutar: ['AUTORIZADO']
   };
 }

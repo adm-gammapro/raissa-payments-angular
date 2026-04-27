@@ -74,4 +74,17 @@ export class DetalleSolicitud implements OnInit {
     const cargoMonto = cargo.montoCargo;
     return total === cargoMonto ? 'success' : 'danger';
   }
+
+  protected tieneBeneficiarioValidadoEnLista(): boolean {
+    return this.cargos?.some(cargo =>
+      cargo.abonos?.some((det: any) =>
+        this.tieneBeneficiarioValidado(det)
+      )
+    );
+  }
+
+  protected tieneBeneficiarioValidado(det: any): boolean {
+    return !!(det?.ndocBeneficiarioValidado?.trim() &&
+      det?.nombreBeneficiarioValidado?.trim());
+  }
 }

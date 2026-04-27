@@ -11,8 +11,6 @@
            [loading]="loading"
            [rows]="5"
            [rowsPerPageOptions]="[5, 10, 20]"
-           stripedRows
-           showGridlines
            breakpoint="960px"
            [size]="'small'"
            (onLazyLoad)="loadLazy($event)"
@@ -20,6 +18,8 @@
            showCurrentPageReport="true"
            sortField="id"
            [sortOrder]="1"
+           stripedRows
+           showGridlines
   >
     <ng-template #caption>
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-2 w-full">
@@ -127,6 +127,7 @@
           <p-sortIcon field="fecha"/>
         </th>
         <th id="usuario">Usuario de carga</th>
+        <th id="usuario">Usuarios que autorizan</th>
         <th id="cantidad" class="text-right">Cantidad de órdenes</th>
         <th id="estado" class="text-center">Estado</th>
         <th id="acciones" class="text-center">Acciones</th>
@@ -154,7 +155,8 @@
           </ng-template>
         </td>
         <td class="text-center">{{ solicitud.fechaCarga }}</td>
-        <td>{{ solicitud.usuarioCarga }}</td>
+        <td>{{ solicitud.nombreUsuarioCarga }}</td>
+        <td>{{ solicitud.nombresUsuariosAutorizacion }}</td>
         <td class="text-right">{{ solicitud.cantidadOrdenes }}</td>
         <td class="text-center">
           <span class="p-badge" [ngStyle]="badgeStyle(solicitud.estadoSolicitud)">
@@ -186,6 +188,15 @@
           @if (modo === 'validar') {
             @if (solicitud.estadoSolicitud === 'REGISTRADO') {
               <p-button
+                icon="pi pi-times"
+                [rounded]="true"
+                severity="danger"
+                [outlined]="true"
+                pTooltip="Anular"
+                tooltipPosition="left"
+                size="small"
+                (onClick)="anularObservar('anular','VALIDAR', solicitud.id)"/>
+              <p-button
                 icon="pi pi-filter"
                 [rounded]="true"
                 severity="info"
@@ -200,10 +211,10 @@
                 [rounded]="true"
                 severity="warn"
                 [outlined]="true"
-                pTooltip="Ver detalle"
+                pTooltip="Ver observaciones"
                 tooltipPosition="left"
                 size="small"
-                (onClick)="verDetalle($event, solicitud.id)"/>
+                (onClick)="anularObservar('ver','VALIDAR', solicitud.id)"/>
               <p-button
                 icon="pi pi-times"
                 [rounded]="true"
@@ -212,18 +223,27 @@
                 pTooltip="Anular"
                 tooltipPosition="left"
                 size="small"
-                (onClick)="anular($event, solicitud.id)"/>
+                (onClick)="anularObservar('anular','VALIDAR', solicitud.id)"/>
             } @else if (solicitud.estadoSolicitud === 'ANULADO') {
               <p-button
                 icon="pi pi-eye"
                 [rounded]="true"
                 severity="warn"
                 [outlined]="true"
-                pTooltip="Ver detalle"
+                pTooltip="Ver observaciones"
                 tooltipPosition="left"
                 size="small"
-                (onClick)="verDetalle($event, solicitud.id)"/>
+                (onClick)="anularObservar('ver','VALIDAR', solicitud.id)"/>
             } @else if (solicitud.estadoSolicitud === 'VALIDADO') {
+              <p-button
+                icon="pi pi-times"
+                [rounded]="true"
+                severity="danger"
+                [outlined]="true"
+                pTooltip="Anular"
+                tooltipPosition="left"
+                size="small"
+                (onClick)="anularObservar('anular','VALIDAR', solicitud.id)"/>
               <p-button
                 icon="pi pi-send"
                 [rounded]="true"
@@ -245,6 +265,16 @@
               tooltipPosition="left"
               size="small"
               (onClick)="autorizar($event, solicitud.id)"
+            />
+            <p-button
+              icon="pi pi-question"
+              [rounded]="true"
+              severity="danger"
+              [outlined]="true"
+              pTooltip="Observar"
+              tooltipPosition="left"
+              size="small"
+              (onClick)="anularObservar('observar','AUTORIZAR', solicitud.id)"
             />
           }
           @if (this.modo === 'ejecutar') {
@@ -283,7 +313,7 @@
                 pTooltip="Observar"
                 tooltipPosition="left"
                 size="small"
-                (onClick)="observar($event, solicitud.id)"
+                (onClick)="anularObservar('observar','EJECUTAR', solicitud.id)"
               />
             }
           }
@@ -298,8 +328,26 @@
   </p-table>
 </form>
 
-<app-detalle-solicitud [(visible)]="visibleDetalle" [cargos]="cargosSolicitud"
-                       [mostrar]="IndicadorMostrar"></app-detalle-solicitud>
-<app-observaciones [(visible)]="visibleObservaciones" [modo]="modoObservaciones"></app-observaciones>
+<app-detalle-solicitud [(visible)]="visibleDetalle" [cargos]="cargosSolicitud" [mostrar]="IndicadorMostrar"></app-detalle-solicitud>
+<app-observaciones [(visible)]="visibleObservaciones"
+                   [obsList]="observaciones"
+                   [modo]="modoObservaciones"
+                   [idSolicitud]="idSolicitud"
+                   [eventoObservacion]="eventoObservacion"
+                   (cerrarObservaciones)="cerrarObservaciones()"></app-observaciones>
 <app-track [(visible)]="visibleTrack" [trackList]="tracking"></app-track>
 <app-factor-autenticacion [(visible)]="visibleFactor" (autenticado)="onAutenticado()"></app-factor-autenticacion>
+
+<p-dialog [modal]="true" [(visible)]="loadingValidacion" [style]="{ width: '20rem' }" closable="false">
+  <div class="flex align-items-center gap-3 mb-3">
+    <span class="p-text-secondary block mb-5">Procesando Validación</span>
+  </div>
+
+  <div class="card flex justify-content-center">
+    <p-progress-spinner
+      styleClass="w-4rem h-4rem"
+      strokeWidth="8"
+      fill="var(--surface-ground)"
+      animationDuration=".5s"/>
+  </div>
+</p-dialog>

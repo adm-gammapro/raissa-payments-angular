@@ -10,6 +10,9 @@ import {
 import {
   FlujoSolicitudRequest
 } from '../../../../../apis/model/module/private/operativo/solicitud/request/flujo-solicitud-request';
+import {
+  ObservacionFlujoSolicitudRequest
+} from '../../../../../apis/model/module/private/operativo/solicitud/request/observacion-flujo-solicitud-request';
 
 @Injectable({
   providedIn: 'root',
@@ -36,6 +39,18 @@ export class SolicitudService {
 
   flujoSolicitudes(request: FlujoSolicitudRequest): Observable<number> {
     return this.http.post<number>(`${this.baseUrl}/flujo-solicitud`, request).pipe(
+      catchError(err => {
+        this.authService.isNoAutorizado(err);
+        if (err?.status === 401) {
+          return EMPTY;
+        }
+        return throwError(() => err);
+      })
+    );
+  }
+
+  observacionFlujoSolicitudes(request: ObservacionFlujoSolicitudRequest): Observable<number> {
+    return this.http.post<number>(`${this.baseUrl}/flujo-solicitud-observacion`, request).pipe(
       catchError(err => {
         this.authService.isNoAutorizado(err);
         if (err?.status === 401) {

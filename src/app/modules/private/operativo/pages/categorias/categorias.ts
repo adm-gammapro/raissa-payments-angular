@@ -27,6 +27,15 @@ import {
   CategoriaRequest
 } from '../../../../../apis/model/module/private/operativo/administrativo/request/categoria-request';
 import {FormCategorias} from '../../components/categorias/form-categorias/form-categorias';
+import {
+  VincularUsuarioCategoria
+} from '../../components/categorias/vincular-usuario-categoria/vincular-usuario-categoria';
+import {
+  VinculoCategoriaUsuarioResponse
+} from '../../../../../apis/model/module/private/operativo/administrativo/response/vinculo-categoria-usuario-response';
+import {
+  VinculoCategoriaUsuarioRequest
+} from '../../../../../apis/model/module/private/operativo/administrativo/request/vinculo-categoria-usuario-request';
 
 @Component({
   selector: 'app-categorias',
@@ -41,7 +50,8 @@ import {FormCategorias} from '../../components/categorias/form-categorias/form-c
     TableModule,
     Toast,
     Tooltip,
-    FormCategorias
+    FormCategorias,
+    VincularUsuarioCategoria
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './categorias.html',
@@ -56,10 +66,14 @@ export class Categorias {
   protected registrosMostrados = 0;
   estados: Estado[] = Estado.estados;
   visibleForm: boolean = false;
+  visibleVinculo: boolean = false;
   modoUso: 'editar' | 'registrar' = 'registrar';
   selectedCategoria!: CategoriaResponse | null;
   @ViewChild('dt') dt!: Table;
   protected actualizacionManual: boolean = false;
+  protected usuariosVinculadosResponse: VinculoCategoriaUsuarioResponse | undefined;
+  protected usuariosVinculadosRequest?: VinculoCategoriaUsuarioRequest;
+  protected idCategoria!: number;
 
   protected misItems: MenuItem[] = [
     {icon: 'pi pi-home', route: '/dashboard'},
@@ -249,6 +263,36 @@ export class Categorias {
           detail: 'No se dió de baja el registro',
         });
       },
+    });
+  }
+
+  protected mostrarVinculo(idCategoria: number): void{
+    this.usuariosVinculadosRequest = {
+      idCategoria: idCategoria,
+      codigoCliente: Number(this.idEmpresa)
+    };
+
+    this.administrativoService.getCategoriaUsuariosVinculadosList(this.usuariosVinculadosRequest).subscribe({
+      next: (response: VinculoCategoriaUsuarioResponse) => {
+        this.usuariosVinculadosResponse = response;
+        this.idCategoria = idCategoria;
+        this.visibleVinculo = true;
+      },
+      error: (error) => {
+        if (error.status === 502) {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error en el servicio de obtencion de vinculo de categoria usuario'
+          });
+        } else if (error.status === 503) {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Servicio administrativo no disponible'
+          });
+        }
+      }
     });
   }
 }
