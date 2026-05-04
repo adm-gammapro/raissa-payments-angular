@@ -98,11 +98,11 @@ export class Solicitud implements OnInit {
   protected visibleObservaciones: boolean = false;
   protected visibleTrack: boolean = false;
   protected visibleFactor: boolean = false;
+  protected autenticarProcesar: boolean = false;
   protected solicitudSeleccionadaId?: number;
   protected first = 0;
   protected rows = 10;
   protected modoObservaciones: 'ver' | 'anular' | 'observar' = 'ver';
-  protected IndicadorMostrar: boolean = false;
   protected idEmpresa: string = "";
   protected usuarioActual: string = "";
   protected loading: boolean = false;
@@ -185,7 +185,7 @@ export class Solicitud implements OnInit {
       AUTORIZADO: { bg: '#16a34a', fg: '#ffffff' }, // Verde
       AUTORIZADO_PARCIAL: { bg: '#16a34a', fg: '#ffffff' }, // Verde
       ANULADO: { bg: '#dc2626', fg: '#ffffff' }, // Rojo
-      PROCESADO_PARCIAL: { bg: '#dc2626', fg: '#ffffff' }, // Rojo
+      PROCESADO_PARCIAL: { bg: '#f97316', fg: '#111827' }, // Naranja
       OBSERVADO: { bg: '#f97316', fg: '#111827' }, // Naranja
     };
     const { bg, fg } = map[estado];
@@ -197,6 +197,7 @@ export class Solicitud implements OnInit {
       fontWeight: 600,
     };
   }
+
   filtrar() {
     const fakeLazyEvent: TableLazyLoadEvent = {
       first: 0,
@@ -245,6 +246,7 @@ export class Solicitud implements OnInit {
     this.solicitudService.getSolicitudesPage(request).subscribe({
       next: (response: SolicitudSearchResponse) => {
         this.solicitudes = response.list;
+        console.log(this.solicitudes);
         this.registrosMostrados = response.list.length;
         this.totalRecords = response.totalElements;
         this.loading = false;
@@ -409,10 +411,10 @@ export class Solicitud implements OnInit {
     });
   }
 
-  autorizar(event: Event, id: number) {
+  autorizar(event: Event, id: number, tipoAutorizacion: boolean) {
     this.confirmationService.confirm({
       target: event.target as EventTarget,
-      message: 'Está seguro de autorizar solicitud?',
+      message: tipoAutorizacion ? 'Está seguro de autorizar procesamiento de solicitud?': 'Está seguro de autorizar solicitud?',
       header: 'Confirmación',
       icon: 'pi pi-info-circle',
       rejectLabel: 'Cancel',
@@ -427,7 +429,7 @@ export class Solicitud implements OnInit {
       },
 
       accept: () => {
-
+        this.autenticarProcesar = tipoAutorizacion;
         this.visibleFactor = true;
         this.solicitudSeleccionadaId = id;
       },
@@ -437,57 +439,45 @@ export class Solicitud implements OnInit {
     });
   }
 
-  procesar(event: Event, id: number) {
-    this.confirmationService.confirm({
-      target: event.target as EventTarget,
-      message: 'Está seguro de procesar solictud?',
-      header: 'Confirmación',
-      icon: 'pi pi-info-circle',
-      rejectLabel: 'Cancel',
-      rejectButtonProps: {
-        label: 'Cancelar',
-        severity: 'secondary',
-        outlined: true
-      },
-      acceptButtonProps: {
-        label: 'Procesar',
-        severity: 'info'
-      },
+  onProcesado() {
+    const id = this.solicitudSeleccionadaId;
+    if (id == null) return;
 
-      accept: () => {
-        //this.visibleFactor = true;
-        //this.solicitudSeleccionadaId = id;
+    this.loadingValidacion = true;
 
-        const payload: FlujoSolicitudRequest = {
-          idSolicitud: id,
-          flujo: 'ejecutar',
-          codigoCliente: Number(this.idEmpresa)
-        };
+    const payload: FlujoSolicitudRequest = {
+      idSolicitud: id,
+      flujo: this.modo,
+      codigoCliente: Number(this.idEmpresa)
+    };
 
-        this.solicitudService.flujoSolicitudes(payload).subscribe({
-          next: (resultado: number) => {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Confirmación',
-              detail: 'Se ejecutó solicitud ' + resultado + ' correctamente',
-            });
+    this.solicitudService.flujoSolicitudes(payload).subscribe({
+      next: (resultado: number) => {
+        const mensaje = this.modo === 'autorizar'
+          ? `Se autorizó solicitud ${resultado} correctamente`
+          : `Se ejecutó solicitud ${resultado} correctamente`;
 
-            this.filtrar();
-          },
-          error: (err) => {
-            console.error('Error al ejecutar solicitud', err);
-          }
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Confirmación',
+          detail: mensaje,
         });
+        this.loadingValidacion = false;
+
+        this.filtrar();
       },
-      reject: () => {
-        this.messageService.add({ severity: 'error', summary: 'Rechazado', detail: 'No se pudo procesar solictud' });
+      error: (err) => {
+        this.loadingValidacion = false;
+        console.error('Error al ejecutar solicitud', err);
       }
     });
+
+    this.visibleFactor = false;
+    this.solicitudSeleccionadaId = undefined;
   }
 
   verResumen(cargos: CargoSolicitudResponse[]) {
     this.cargosSolicitud = cargos;
-    this.IndicadorMostrar = false;
     this.visibleDetalle = true;
   }
 
@@ -605,6 +595,6 @@ export class Solicitud implements OnInit {
   private readonly preselectPorModo: Record<string, Estado[]> = {
     validar: ['REGISTRADO', 'VALIDADO'],
     autorizar: ['PENDIENTE_AUTORIZACION', 'AUTORIZADO_PARCIAL'],
-    ejecutar: ['AUTORIZADO']
+    ejecutar: ['AUTORIZADO', 'PROCESADO_PARCIAL']
   };
 }

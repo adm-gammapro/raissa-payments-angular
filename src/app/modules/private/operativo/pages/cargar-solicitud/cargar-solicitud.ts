@@ -219,7 +219,10 @@ export class CargarSolicitud {
       const entidad = (r['Codigo entidad financiera'] || '').toString().trim();
       const moneda = (r['moneda'] || '').toString().trim();
       const monto = Number(r['monto'] || 0);
+      const tipoDocCliente = (r['Tipo doc Beneficiario'] || '').toString().trim();
+      const nroDocCliente = (r['Nro doc Beneficiario'] || '').toString().trim();
       const cliente = (r['Beneficiario'] || '').toString().trim();
+      const mismoTitular = (r['Mismo titular'] || '').toString().trim();
 
       if (tipo === 'H') {
         currentCargo = new Cargo();
@@ -237,7 +240,10 @@ export class CargarSolicitud {
         det.entidadFinancieraAbono = entidad;
         det.monedaCuentaAbono = moneda as string;
         det.montoAbono = monto;
+        det.tipoDocCliente = tipoDocCliente;
+        det.nroDocCliente = nroDocCliente;
         det.cliente = cliente;
+        det.mismoTitular = mismoTitular;
         det.estadoEjecucion = '';
         det.detalleEjecucion = '';
         currentCargo.detalle.push(det);

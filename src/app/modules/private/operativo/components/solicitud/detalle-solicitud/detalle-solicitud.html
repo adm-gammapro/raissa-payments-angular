@@ -29,10 +29,7 @@
           <th id="entidadOrigen">Entidad origen</th>
           <th id="monedaOrigen">Moneda</th>
           <th id="montoOrigen" class="text-right">Monto cargo</th>
-          <th id="estado">Estado validación</th>
-          @if (mostrar) {
-            <th id="estadoEjecucion">Estado ejecución</th>
-          }
+          <th id="estado">Estado de Carga</th>
         </tr>
       </ng-template>
 
@@ -60,14 +57,6 @@
               [severity]="cargo.montoTotalAbonos === cargo.montoCargo ? 'success' : 'danger'">
             </p-tag>
           </td>
-          @if (mostrar) {
-            <td>
-              <p-tag
-                [value]="cargo.estadoEjecucion"
-                [severity]="cargo.estadoEjecucion === 'Correcto' ? 'success' : 'danger'">
-              </p-tag>
-            </td>
-          }
         </tr>
       </ng-template>
 
@@ -97,8 +86,16 @@
                       <th id="docBeneficiarioValidado">N. doc benef. validado</th>
                       <th id="nomBeneficiarioValidado">Nombre benef. validado</th>
                     }
-                    @if (mostrar) {
+                    @if (tieneEstadoConsultaEnLista()) {
+                      <th id="estadoConsulta">Estado validación</th>
+                    }
+                    @if (tieneRespuestaConsultaEnLista()) {
+                      <th id="respuestaConsulta">Respuesta validación</th>
+                    }
+                    @if (tieneEstadoEjecucionEnLista()) {
                       <th id="estadoEjecucionDetalle">Estado ejecución</th>
+                    }
+                    @if (tieneRespuestaEjecucionEnLista()) {
                       <th id="detalleEjecucion">Detalle ejecución</th>
                     }
                   </tr>
@@ -113,17 +110,30 @@
                     <td class="text-right">{{ det.montoDestino }}</td>
                     <td>{{ det.beneficiario }}</td>
                     @if (tieneBeneficiarioValidado(det)) {
-                      <td>{{ det.ndocBeneficiarioValidado }}</td>
-                      <td>{{ det.nombreBeneficiarioValidado }}</td>
+                      <td>{{ det.documentoBeneficiarioRespuesta }}</td>
+                      <td>{{ det.nombreBeneficiarioRespuesta }}</td>
                     }
-                    @if (mostrar) {
+                    @if (tieneEstadoConsulta(det)) {
                       <td>
                         <p-tag
-                          [value]="det.estadoEjecucion"
-                          [severity]="det.estadoEjecucion === 'Correcto' ? 'success' : 'danger'">
+                          [value]="estadoLabel(det.estadoEjecucionConsulta)"
+                          [severity]="det.estadoEjecucionConsulta === 'OK' ? 'success' : 'danger'">
                         </p-tag>
                       </td>
-                      <td>{{ det.detalleEjecucion }}</td>
+                    }
+                    @if (tieneRespuestaConsulta(det)) {
+                      <td>{{ det.dscRespuestaConsulta }}</td>
+                    }
+                    @if (tieneEstadoEjecucion(det)) {
+                      <td>
+                        <p-tag
+                          [value]="estadoLabel(det.estadoEjecucionTransferencia)"
+                          [severity]="det.estadoEjecucionTransferencia === 'OK' ? 'success' : 'danger'">
+                        </p-tag>
+                      </td>
+                    }
+                    @if (tieneRespuestaEjecucion(det)) {
+                      <td>{{ det.dscRespuestaTransferencia }}</td>
                     }
                   </tr>
                 </ng-template>

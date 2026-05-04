@@ -127,7 +127,7 @@
           <p-sortIcon field="fecha"/>
         </th>
         <th id="usuario">Usuario de carga</th>
-        <th id="usuario">Usuarios que autorizan</th>
+        <th id="usuarioAutoriza">Usuarios que autorizan</th>
         <th id="cantidad" class="text-right">Cantidad de órdenes</th>
         <th id="estado" class="text-center">Estado</th>
         <th id="acciones" class="text-center">Acciones</th>
@@ -224,6 +224,15 @@
                 tooltipPosition="left"
                 size="small"
                 (onClick)="anularObservar('anular','VALIDAR', solicitud.id)"/>
+              <p-button
+                icon="pi pi-filter"
+                [rounded]="true"
+                severity="info"
+                [outlined]="true"
+                pTooltip="Validar"
+                tooltipPosition="left"
+                size="small"
+                (onClick)="validar($event, solicitud.id)"/>
             } @else if (solicitud.estadoSolicitud === 'ANULADO') {
               <p-button
                 icon="pi pi-eye"
@@ -264,7 +273,7 @@
               pTooltip="Autorizar"
               tooltipPosition="left"
               size="small"
-              (onClick)="autorizar($event, solicitud.id)"
+              (onClick)="autorizar($event, solicitud.id, false)"
             />
             <p-button
               icon="pi pi-question"
@@ -287,10 +296,10 @@
                 pTooltip="Procesar"
                 tooltipPosition="left"
                 size="small"
-                (onClick)="procesar($event, solicitud.id)"
+                (onClick)="autorizar($event, solicitud.id, true)"
               />
             }
-            @if (solicitud.estadoSolicitud === 'PROC_PARCIAL') {
+            @if (solicitud.estadoSolicitud === 'PROCESADO_PARCIAL') {
               <p-button
                 icon="pi pi-replay"
                 [rounded]="true"
@@ -299,8 +308,17 @@
                 pTooltip="Reprocesar"
                 tooltipPosition="left"
                 size="small"
-                (onClick)="procesar($event, solicitud.id)"
+                (onClick)="autorizar($event, solicitud.id, true)"
               />
+              <p-button
+                icon="pi pi-eye"
+                [rounded]="true"
+                severity="warn"
+                [outlined]="true"
+                pTooltip="Ver observaciones"
+                tooltipPosition="left"
+                size="small"
+                (onClick)="anularObservar('ver','EJECUTAR', solicitud.id)"/>
             }
           }
           @if (this.modo === 'autorizar' || this.modo === 'ejecutar') {
@@ -328,7 +346,7 @@
   </p-table>
 </form>
 
-<app-detalle-solicitud [(visible)]="visibleDetalle" [cargos]="cargosSolicitud" [mostrar]="IndicadorMostrar"></app-detalle-solicitud>
+<app-detalle-solicitud [(visible)]="visibleDetalle" [cargos]="cargosSolicitud"></app-detalle-solicitud>
 <app-observaciones [(visible)]="visibleObservaciones"
                    [obsList]="observaciones"
                    [modo]="modoObservaciones"
@@ -336,7 +354,11 @@
                    [eventoObservacion]="eventoObservacion"
                    (cerrarObservaciones)="cerrarObservaciones()"></app-observaciones>
 <app-track [(visible)]="visibleTrack" [trackList]="tracking"></app-track>
-<app-factor-autenticacion [(visible)]="visibleFactor" (autenticado)="onAutenticado()"></app-factor-autenticacion>
+<app-factor-autenticacion [(visible)]="visibleFactor"
+                          [autenticarProcesar]="autenticarProcesar"
+                          (autenticado)="onAutenticado()"
+                          (procesado)="onProcesado()"
+                          [modo]="modo"></app-factor-autenticacion>
 
 <p-dialog [modal]="true" [(visible)]="loadingValidacion" [style]="{ width: '20rem' }" closable="false">
   <div class="flex align-items-center gap-3 mb-3">

@@ -27,15 +27,11 @@ import {
   templateUrl: './detalle-solicitud.html',
   styleUrl: './detalle-solicitud.scss',
 })
-export class DetalleSolicitud implements OnInit {
+export class DetalleSolicitud {
   @Input() visible: boolean = false;
   @Output() visibleChange = new EventEmitter<boolean>();
-  @Input() mostrar: boolean = false;
   @Input() cargos: CargoSolicitudResponse[] = [];
   expandedRows: Record<string, boolean> = {};
-
-  ngOnInit() {
-  }
 
   protected cerrar() {
     this.visibleChange.emit(false);
@@ -84,7 +80,65 @@ export class DetalleSolicitud implements OnInit {
   }
 
   protected tieneBeneficiarioValidado(det: any): boolean {
-    return !!(det?.ndocBeneficiarioValidado?.trim() &&
-      det?.nombreBeneficiarioValidado?.trim());
+    return !!(det?.documentoBeneficiarioRespuesta?.trim() &&
+      det?.nombreBeneficiarioRespuesta?.trim());
+  }
+
+  protected tieneEstadoConsultaEnLista(): boolean {
+    return this.cargos?.some(cargo =>
+      cargo.abonos?.some((det: any) =>
+        this.tieneEstadoConsulta(det)
+      )
+    );
+  }
+
+  protected tieneEstadoConsulta(det: any): boolean {
+    return !!(det?.estadoEjecucionConsulta?.trim());
+  }
+
+  protected tieneRespuestaConsultaEnLista(): boolean {
+    return this.cargos?.some(cargo =>
+      cargo.abonos?.some((det: any) =>
+        this.tieneRespuestaConsulta(det)
+      )
+    );
+  }
+
+  protected tieneRespuestaConsulta(det: any): boolean {
+    return !!(det?.dscRespuestaConsulta?.trim());
+  }
+
+  protected tieneEstadoEjecucionEnLista(): boolean {
+    return this.cargos?.some(cargo =>
+      cargo.abonos?.some((det: any) =>
+        this.tieneEstadoEjecucion(det)
+      )
+    );
+  }
+
+  protected tieneEstadoEjecucion(det: any): boolean {
+    return !!(det?.estadoEjecucionTransferencia?.trim());
+  }
+
+  protected tieneRespuestaEjecucionEnLista(): boolean {
+    return this.cargos?.some(cargo =>
+      cargo.abonos?.some((det: any) =>
+        this.tieneRespuestaEjecucion(det)
+      )
+    );
+  }
+
+  protected tieneRespuestaEjecucion(det: any): boolean {
+    return !!(det?.dscRespuestaTransferencia?.trim() &&
+      det?.estadoEjecucionTransferencia?.trim() &&
+      det?.estadoEjecucionTransferencia?.trim() != 'OK');
+  }
+
+  estadoLabel(estado: string): string {
+    switch (estado) {
+      case 'OK': return 'Correcto';
+      case 'NEG_ERROR': return 'Observado';
+      default: return estado;
+    }
   }
 }

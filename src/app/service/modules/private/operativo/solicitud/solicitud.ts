@@ -13,6 +13,12 @@ import {
 import {
   ObservacionFlujoSolicitudRequest
 } from '../../../../../apis/model/module/private/operativo/solicitud/request/observacion-flujo-solicitud-request';
+import {
+  LiquidacionSolicitudRequest
+} from '../../../../../apis/model/module/private/operativo/solicitud/request/liquidacion-solicitud-request';
+import {
+  LiquidacionSolicitudResponse
+} from '../../../../../apis/model/module/private/operativo/solicitud/response/liquidacion-solicitud-response';
 
 @Injectable({
   providedIn: 'root',
@@ -51,6 +57,19 @@ export class SolicitudService {
 
   observacionFlujoSolicitudes(request: ObservacionFlujoSolicitudRequest): Observable<number> {
     return this.http.post<number>(`${this.baseUrl}/flujo-solicitud-observacion`, request).pipe(
+      catchError(err => {
+        this.authService.isNoAutorizado(err);
+        if (err?.status === 401) {
+          return EMPTY;
+        }
+        return throwError(() => err);
+      })
+    );
+  }
+
+  getLiquidacion(request: LiquidacionSolicitudRequest): Observable<LiquidacionSolicitudResponse> {
+    return this.http.post(`${this.baseUrl}/resumen-liquidacion?`, request).pipe(
+      map((response: any) => response),
       catchError(err => {
         this.authService.isNoAutorizado(err);
         if (err?.status === 401) {

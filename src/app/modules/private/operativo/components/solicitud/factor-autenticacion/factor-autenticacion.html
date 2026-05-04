@@ -64,7 +64,8 @@
 
     <ng-template #footer>
       <p-button label="Cancelar" [outlined]="true" severity="info" (onClick)="cerrar()"></p-button>
-      <p-button label="Autenticar" [outlined]="true" severity="success" (onClick)="autenticar()" [disabled]="!otpComplete"></p-button>
+      <p-button *ngIf="modo=='autorizar'" label="Autenticar" [outlined]="true" severity="success" (onClick)="autenticar()" [disabled]="!otpComplete"></p-button>
+      <p-button *ngIf="modo=='ejecutar'"  label="Procesar" [outlined]="true" severity="success" (onClick)="procesar()" [disabled]="!otpComplete"></p-button>
     </ng-template>
   </p-dialog>
 </div>

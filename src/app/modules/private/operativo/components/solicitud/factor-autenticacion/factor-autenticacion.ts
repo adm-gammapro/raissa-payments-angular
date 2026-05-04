@@ -43,7 +43,10 @@ import {Toast} from 'primeng/toast';
 export class FactorAutenticacion implements OnInit {
   @Input() visible: boolean = false;
   @Output() visibleChange = new EventEmitter<boolean>();
+  @Input() autenticarProcesar: boolean = false;
+  @Input() modo: string = "";
   @Output() autenticado = new EventEmitter<void>();
+  @Output() procesado = new EventEmitter<void>();
   form!: FormGroup;
   value : any
   otpEnabled = false;
@@ -164,6 +167,27 @@ export class FactorAutenticacion implements OnInit {
 
     this.codigoAutenticacion = '';
     this.autenticado.emit();
+    this.cerrar();
+  }
+
+  procesar() {
+    if (!this.otpComplete) return;
+    const valorOtp = this.value?.toString().trim();
+
+    if (valorOtp !== this.codigoAutenticacion) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Código incorrecto'
+      });
+
+      this.value = '';
+      this.otpEnabled = false;
+      return;
+    }
+
+    this.codigoAutenticacion = '';
+    this.procesado.emit();
     this.cerrar();
   }
 

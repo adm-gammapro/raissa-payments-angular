@@ -91,7 +91,10 @@
                     <th id="entidadAbono">Entidad destino</th>
                     <th id="monedaAbono" class="text-center">Moneda</th>
                     <th id="montoAbono"  class="text-right">Monto</th>
+                    <th id="tipoDocClienteAbono">Tipo Doc Beneficiario</th>
+                    <th id="nroDocClienteAbono">Nro Doc Beneficiario</th>
                     <th id="clienteAbono">Beneficiario</th>
+                    <th id="mismoTitular">Mismo titular</th>
                     @if (mostrar) {
                       <th id="estadoEjecucionDetalle">Estado ejecución</th>
                       <th id="detalleEjecucion">Detalle ejecución</th>
@@ -106,7 +109,10 @@
                       <p-tag [value]="det.monedaCuentaAbono" [severity]="monedaSeverity(det.monedaCuentaAbono)"></p-tag>
                     </td>
                     <td class="text-right">{{ det.montoAbono }}</td>
+                    <td>{{ det.tipoDocCliente }}</td>
+                    <td>{{ det.nroDocCliente }}</td>
                     <td>{{ det.cliente }}</td>
+                    <td>{{ det.mismoTitular }}</td>
                     @if (mostrar) {
                       <td>
                         <p-tag
