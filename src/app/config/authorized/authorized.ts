@@ -53,7 +53,8 @@ export class Authorized implements OnInit {
   getToken(code_verifier: string, code: string): void {
     this.authService.getToken(code, code_verifier).pipe(
       tap(value => {
-        this.tokenService.setTokens(value.access_token, value.refresh_token);
+        console.log(value);
+        this.tokenService.setTokens(value.access_token, value.refresh_token, value.expires_in);
       }),
       switchMap(value => this.authService.guardarUsuario(value.access_token))
     ).subscribe({

@@ -38,7 +38,7 @@ import {Toast} from 'primeng/toast';
   ],
   providers: [MessageService],
   templateUrl: './factor-autenticacion.html',
-  styleUrl: './factor-autenticacion.scss',
+  styleUrl: './factor-autenticacion.css',
 })
 export class FactorAutenticacion implements OnInit {
   @Input() visible: boolean = false;

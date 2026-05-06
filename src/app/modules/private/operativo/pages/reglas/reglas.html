@@ -1,73 +1,87 @@
 <p-toast position="top-center"></p-toast>
 <p-confirmdialog></p-confirmdialog>
-<app-breadcrumb [itemsBread]="misItems"></app-breadcrumb>
 
-<form [formGroup]="filtroForm" (ngSubmit)="filtrar()">
-  <p-table #dt
-           [value]="reglas"
-           [tableStyle]="{ 'min-width': '50rem' }"
-           [paginator]="true"
-           [totalRecords]="totalRecords"
-           [lazy]="true"
-           [loading]="loading"
-           [rows]="5"
-           [rowsPerPageOptions]="[5, 10, 20]"
-           stripedRows
-           showGridlines
-           breakpoint="960px"
-           [size]="'small'"
-           (onLazyLoad)="loadLazy($event)"
-           currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros en total"
-           showCurrentPageReport="true"
-           sortField="id"
-           [sortOrder]="1"
-  >
-    <ng-template #caption>
-      <div class="flex items-center justify-between gap-3 mb-2 w-full">
-        <div style="width: 300px;">
-          <p-iftalabel>
-            <input
-              pInputText
-              type="text"
-              placeholder="Descripción"
-              class="sm:w-86 w-full"
-              formControlName="descripcion"
-            />
-            <label for="codigoSolicitud">Búsqueda por descripción</label>
-          </p-iftalabel>
-        </div>
-        <div style="width: 300px;">
-          <p-iftalabel>
-            <p-select
-              id="monedas"
-              formControlName="moneda"
-              [options]="monedas"
-              optionLabel="descripcion"
-              optionValue="valor"
-              placeholder="Selecciona moneda"
-              style="width: 100%;">
-            </p-select>
-            <label for="estadoRegistro">Moneda</label>
-          </p-iftalabel>
-        </div>
-        <div style="width: 300px;">
-          <p-iftalabel>
-            <p-select
-              id="estadoRegistro"
-              formControlName="estadoRegistro"
-              [options]="estados"
-              optionLabel="descripcion"
-              optionValue="valor"
-              placeholder="Selecciona estado"
-              style="width: 100%;">
-            </p-select>
-            <label for="estadoRegistro">Estado de registro</label>
-          </p-iftalabel>
-        </div>
+<p-card class="shadow-xl rounded-xl overflow-hidden">
+  <app-breadcrumb [itemsBread]="misItems"></app-breadcrumb>
 
-        <!-- Derecha: botones alineados a la derecha -->
-        <div class="flex items-center gap-2 ml-auto">
-          <div style="width: 100px;">
+  <form [formGroup]="filtroForm" (ngSubmit)="filtrar()">
+    <p-table #dt
+             [value]="reglas"
+             [tableStyle]="{ 'min-width': '50rem' }"
+             [paginator]="true"
+             [totalRecords]="totalRecords"
+             [lazy]="true"
+             [loading]="loading"
+             [rows]="5"
+             [rowsPerPageOptions]="[5, 10, 20]"
+             [rowHover]="true"
+             stripedRows
+             breakpoint="960px"
+             [size]="'small'"
+             (onLazyLoad)="loadLazy($event)"
+             currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros en total"
+             showCurrentPageReport="true"
+             sortField="id"
+             [sortOrder]="1"
+    >
+      <!-- CAPTION: Filtros -->
+      <ng-template #caption>
+        <div class="flex flex-wrap items-end justify-between gap-3 mb-2 w-full">
+
+          <!-- Filtros (izquierda) -->
+          <div class="flex flex-wrap items-end gap-3">
+
+            <!-- Búsqueda por descripción -->
+            <div class="w-[280px] sm:w-[300px]">
+              <p-iftalabel>
+                <input
+                  pInputText
+                  type="text"
+                  placeholder="Descripción"
+                  class="w-full"
+                  formControlName="descripcion"
+                />
+                <label for="codigoSolicitud">Búsqueda por descripción</label>
+              </p-iftalabel>
+            </div>
+
+            <!-- Select Moneda -->
+            <div class="w-[280px] sm:w-[300px]">
+              <p-iftalabel>
+                <p-select
+                  id="monedas"
+                  formControlName="moneda"
+                  [options]="monedas"
+                  optionLabel="descripcion"
+                  optionValue="valor"
+                  placeholder="Selecciona moneda"
+                  class="w-full"
+                  appendTo="body"
+                ></p-select>
+                <label for="estadoRegistro">Moneda</label>
+              </p-iftalabel>
+            </div>
+
+            <!-- Select Estado -->
+            <div class="w-[280px] sm:w-[300px]">
+              <p-iftalabel>
+                <p-select
+                  id="estadoRegistro"
+                  formControlName="estadoRegistro"
+                  [options]="estados"
+                  optionLabel="descripcion"
+                  optionValue="valor"
+                  placeholder="Selecciona estado"
+                  class="w-full"
+                  appendTo="body"
+                ></p-select>
+                <label for="estadoRegistro">Estado de registro</label>
+              </p-iftalabel>
+            </div>
+          </div>
+
+          <!-- Botones (derecha) -->
+          <div class="flex items-center gap-2 ml-auto pt-1">
             <p-button
               icon="pi pi-search"
               label="Buscar"
@@ -75,76 +89,93 @@
               [outlined]="true"
               severity="info"
               iconPos="top"
-              styleClass="w-full">
-            </p-button>
-          </div>
-          <div style="width: 100px;">
+              styleClass="w-[100px]"
+            ></p-button>
             <p-button
               icon="pi pi-filter-slash"
               label="Limpiar"
               (onClick)="limpiarFiltros()"
               [outlined]="true"
               severity="secondary"
-              styleClass="w-full"
-              iconPos="top">
-            </p-button>
-          </div>
-          <div style="width: 100px;">
+              iconPos="top"
+              styleClass="w-[100px]"
+            ></p-button>
             <p-button
               icon="pi pi-plus"
               label="Nuevo"
               [outlined]="true"
               severity="success"
-              styleClass="w-full"
               iconPos="top"
-              (onClick)="nuevo()">
-            </p-button>
+              (onClick)="nuevo()"
+              styleClass="w-[100px]"
+            ></p-button>
           </div>
         </div>
-      </div>
-    </ng-template>
+      </ng-template>
 
-    <ng-template #header>
-      <tr>
-        <th pSortableColumn="descripcion" id="descripcion" style="width:30%">Descripción<p-sortIcon field="descripcion"/></th>
-        <th pSortableColumn="moneda" id="moneda" style="width:20%">Moneda<p-sortIcon field="moneda"/></th>
-        <th id="limiteInferior" style="width:15%" class="text-right">Límite inferior (>)</th>
-        <th id="limiteSuperior" style="width:15%" class="text-right">Límite superior (<=)</th>
-        <th id="acciones" style="width:20%" class="text-center">Acciones</th>
-      </tr>
-    </ng-template>
+      <!-- HEADER: Encabezados -->
+      <ng-template #header>
+        <tr>
+          <th pSortableColumn="descripcion" id="descripcion" class="w-[30%]">
+            Descripción
+            <p-sortIcon field="descripcion"/>
+          </th>
+          <th pSortableColumn="moneda" id="moneda" class="w-[20%]">
+            Moneda
+            <p-sortIcon field="moneda"/>
+          </th>
+          <th id="limiteInferior" class="w-[15%] text-right">
+            Límite inferior (&gt;)
+          </th>
+          <th id="limiteSuperior" class="w-[15%] text-right">
+            Límite superior (&lt;=)
+          </th>
+          <th id="acciones" class="w-[20%] text-center">
+            Acciones
+          </th>
+        </tr>
+      </ng-template>
 
-    <ng-template #body let-regla>
-      <tr>
-        <td>{{ regla.descripcion }}</td>
-        <td>{{ regla.moneda }}</td>
-        <td class="text-right">{{ regla.limiteInferior | number:'1.2-2' }}</td>
-        <td class="text-right">{{ regla.limiteSuperior | number:'1.2-2'}}</td>
-        <td class="text-center">
-          <p-button
-            icon="pi pi-file-edit"
-            [rounded]="true"
-            severity="info"
-            [outlined]="true"
-            pTooltip="Editar"
-            tooltipPosition="left"
-            size="small"
-            (onClick)="editar(regla.codigo)"
-          />
-          <p-button
-            icon="pi pi-trash"
-            [rounded]="true"
-            severity="danger"
-            [outlined]="true"
-            pTooltip="Eliminar"
-            tooltipPosition="left"
-            size="small"
-            (onClick)="delete($event, regla.codigo)"
-          />
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
-</form>
+      <!-- BODY: Filas de datos -->
+      <ng-template #body let-regla>
+        <tr>
+          <td>{{ regla.descripcion }}</td>
+          <td>{{ regla.moneda }}</td>
+          <td class="text-right">{{ regla.limiteInferior | number:'1.2-2' }}</td>
+          <td class="text-right">{{ regla.limiteSuperior | number:'1.2-2' }}</td>
+          <td class="text-center">
+            <div class="flex items-center justify-center gap-1">
+              <p-button
+                icon="pi pi-file-edit"
+                [rounded]="true"
+                severity="info"
+                [outlined]="true"
+                pTooltip="Editar"
+                tooltipPosition="left"
+                size="small"
+                (onClick)="editar(regla.codigo)"
+              />
+              <p-button
+                icon="pi pi-trash"
+                [rounded]="true"
+                severity="danger"
+                [outlined]="true"
+                pTooltip="Eliminar"
+                tooltipPosition="left"
+                size="small"
+                (onClick)="delete($event, regla.codigo)"
+              />
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </form>
+</p-card>
 
-<app-form-reglas [(visible)]="visibleForm" [reglaData]="selectedRegla" (guardarRegistro)="guardar()" [modo]="modoUso"></app-form-reglas>
+<app-form-reglas
+  [(visible)]="visibleForm"
+  [reglaData]="selectedRegla"
+  (guardarRegistro)="guardar()"
+  [modo]="modoUso">
+</app-form-reglas>

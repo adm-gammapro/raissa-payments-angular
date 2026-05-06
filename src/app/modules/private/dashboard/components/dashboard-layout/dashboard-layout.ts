@@ -7,7 +7,7 @@ import {CommonModule} from '@angular/common';
     CommonModule
   ],
   templateUrl: './dashboard-layout.html',
-  styleUrl: './dashboard-layout.scss',
+  styleUrl: './dashboard-layout.css',
 })
 export class DashboardLayout {
   constructor(/*private readonly dashboardService: DashboardService*/) {}

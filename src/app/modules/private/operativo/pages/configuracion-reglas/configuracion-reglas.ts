@@ -37,6 +37,7 @@ import {
 import {
   CategoriaRequest
 } from '../../../../../apis/model/module/private/operativo/administrativo/request/categoria-request';
+import {Card} from 'primeng/card';
 
 @Component({
   selector: 'app-configuracion-reglas',
@@ -51,11 +52,12 @@ import {
     TableModule,
     Toast,
     Tooltip,
-    FormConfiguracionReglas
+    FormConfiguracionReglas,
+    Card
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './configuracion-reglas.html',
-  styleUrl: './configuracion-reglas.scss',
+  styleUrl: './configuracion-reglas.css',
 })
 export class ConfiguracionReglas implements OnInit {
   protected idEmpresa!: string;
@@ -224,8 +226,7 @@ export class ConfiguracionReglas implements OnInit {
       icon: 'pi pi-info-circle',
       rejectButtonProps: {
         label: 'Cancelar',
-        severity: 'secondary',
-        outlined: true,
+        severity: 'success',
       },
       acceptButtonProps: {
         label: 'Eliminar',
@@ -253,23 +254,16 @@ export class ConfiguracionReglas implements OnInit {
               this.messageService.add({
                 severity: 'error',
                 summary: 'Error',
-                detail: 'Error en el servicio de países'
+                detail: 'Error en el servicio'
               });
             } else if (error.status === 503) {
               this.messageService.add({
                 severity: 'error',
                 summary: 'Error',
-                detail: 'Servicio de países no disponible'
+                detail: 'Servicio no disponible'
               });
             }
           }
-        });
-      },
-      reject: () => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Cancelación',
-          detail: 'No se dió de baja el registro',
         });
       },
     });

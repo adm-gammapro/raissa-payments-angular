@@ -12,6 +12,8 @@ export const environment = {
   session: {
     ACCESS_TOKEN: 'access_token',
     REFRESH_TOKEN: 'refresh_token',
+    EXPIRES_IN: 'expires_in',
+    LOGIN_AT: 'login_at',
     CODE_VERIFIER: 'code_verifier',
     USERNAME: 'username',
     ID_USUARIO_SESSION: 'id_usuario_session',

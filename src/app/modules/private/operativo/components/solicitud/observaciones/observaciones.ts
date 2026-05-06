@@ -33,7 +33,7 @@ type Evento = 'REGISTRADO_EXCEL' | 'REGISTRADO_JSON' | 'VALIDAR' | 'ENVIAR_AUTOR
     FormsModule
   ],
   templateUrl: './observaciones.html',
-  styleUrl: './observaciones.scss',
+  styleUrl: './observaciones.css',
 })
 export class Observaciones implements OnInit {
   @Input() visible: boolean = false;

@@ -10,8 +10,10 @@ const CHARACTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567
 export class Token {
   constructor() { }
 
-  setTokens(access_token: string, refresh_token: string): void {
+  setTokens(access_token: string, refresh_token: string, expires_in: string): void {
     this.clear();
+    sessionStorage.setItem(environment.session.EXPIRES_IN, expires_in);
+    sessionStorage.setItem(environment.session.LOGIN_AT, Date.now().toString());
     sessionStorage.setItem(environment.session.ACCESS_TOKEN, access_token);
     sessionStorage.setItem(environment.session.REFRESH_TOKEN, refresh_token);
   }
@@ -44,6 +46,8 @@ export class Token {
     if(typeof window !== 'undefined'  && typeof window.sessionStorage !== 'undefined'){
       sessionStorage.removeItem(environment.session.ACCESS_TOKEN);
       sessionStorage.removeItem(environment.session.REFRESH_TOKEN);
+      sessionStorage.removeItem(environment.session.EXPIRES_IN);
+      sessionStorage.removeItem(environment.session.LOGIN_AT);
       sessionStorage.removeItem(environment.session.USERNAME);
       sessionStorage.removeItem(environment.session.CODE_VERIFIER);
       sessionStorage.removeItem(environment.session.MENU_ITEMS);

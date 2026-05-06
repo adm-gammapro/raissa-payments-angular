@@ -50,6 +50,7 @@ import {
 } from '../../../../../apis/model/module/private/operativo/solicitud/response/observacion-response';
 import {Dialog} from 'primeng/dialog';
 import {ProgressSpinner} from 'primeng/progressspinner';
+import {Card} from 'primeng/card';
 
 type Estado = 'REGISTRADO' | 'VALIDADO' | 'OBSERVADO' | 'PENDIENTE_AUTORIZACION' | 'ANULADO' | 'AUTORIZADO' | 'PROCESADO_TOTAL' | 'PROCESADO_PARCIAL' | 'AUTORIZADO_PARCIAL';
 
@@ -81,11 +82,12 @@ interface EstadoSolicitudInterface {
     TimeStatusPipe,
     IftaLabel,
     Dialog,
-    ProgressSpinner
+    ProgressSpinner,
+    Card
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './solicitud.html',
-  styleUrl: './solicitud.scss',
+  styleUrl: './solicitud.css',
 })
 export class Solicitud implements OnInit {
   protected solicitudes!: SolicitudResponse[];

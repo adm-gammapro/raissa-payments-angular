@@ -1,351 +1,310 @@
 <p-toast position="top-center"></p-toast>
 <p-confirmdialog></p-confirmdialog>
-<app-breadcrumb [itemsBread]="misItems"></app-breadcrumb>
 
-<form [formGroup]="filtroForm" (ngSubmit)="filtrar()">
-  <p-table [value]="solicitudes"
-           [tableStyle]="{ 'min-width': '50rem' }"
-           [paginator]="true"
-           [totalRecords]="totalRecords"
-           [lazy]="true"
-           [loading]="loading"
-           [rows]="5"
-           [rowsPerPageOptions]="[5, 10, 20]"
-           breakpoint="960px"
-           [size]="'small'"
-           (onLazyLoad)="loadLazy($event)"
-           currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros en total"
-           showCurrentPageReport="true"
-           sortField="id"
-           [sortOrder]="1"
-           stripedRows
-           showGridlines
-  >
-    <ng-template #caption>
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-2 w-full">
-        <!-- Izquierda: inputs (solo en desktop) -->
-        <div class="sm:flex flex-row gap-2">
-          <p-iftalabel>
-            <input
-              pInputText
-              type="text"
-              placeholder="Código"
-              class="sm:w-86 w-full"
-              formControlName="codigoSolicitud"
-            />
-            <label for="codigoSolicitud">Búsqueda por código</label>
-          </p-iftalabel>
-        </div>
-        <div class="sm:flex flex-row gap-2">
-          <p-iftalabel>
-            <p-datepicker
-              formControlName="fecha"
-              selectionMode="range"
-              placeholder="Fechas"
-              class="sm:w-86 w-full"
-              [readonlyInput]="true">
-            </p-datepicker>
-            <label for="codigoSolicitud">Búsqueda por rango de fechas</label>
-          </p-iftalabel>
-        </div>
-        <div class="sm:flex flex-row gap-2">
-          <p-iftalabel>
-            <input
-              pInputText
-              type="text"
-              placeholder="Usuario"
-              class="sm:w-86 w-full"
-              formControlName="usuario"
-            />
-            <label for="codigoSolicitud">Búsqueda por usuario</label>
-          </p-iftalabel>
-        </div>
-        <div class="sm:flex flex-row gap-2">
-          <div style="width: 300px;">
-            <p-iftalabel>
-              <p-multiselect
-                [options]="estadoSolicitudFiltrada"
-                formControlName="estado"
-                placeholder="Estado de solicitud"
-                optionLabel="descripcion"
-                optionValue="codigo"
-                display="chip"
-                class="sm:w-86 w-full">
-              </p-multiselect>
-              <label for="codigoSolicitud">Búsqueda por estado de solicitud</label>
-            </p-iftalabel>
+<p-card class="shadow-xl rounded-xl border-none">
+  <app-breadcrumb [itemsBread]="misItems"></app-breadcrumb>
+
+  <form [formGroup]="filtroForm" (ngSubmit)="filtrar()">
+    <p-table [value]="solicitudes"
+             [tableStyle]="{ 'min-width': '50rem' }"
+             [paginator]="true"
+             [totalRecords]="totalRecords"
+             [lazy]="true"
+             [loading]="loading"
+             [rows]="5"
+             [rowsPerPageOptions]="[5, 10, 20]"
+             breakpoint="960px"
+             [size]="'small'"
+             (onLazyLoad)="loadLazy($event)"
+             currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros en total"
+             showCurrentPageReport="true"
+             sortField="id"
+             [sortOrder]="1"
+             stripedRows
+             [rowHover]="true" ]
+    >
+      <!-- CAPTION: Filtros -->
+      <ng-template #caption>
+        <div class="flex flex-wrap items-end justify-between gap-3 mb-2 w-full">
+
+          <!-- Filtros (izquierda) -->
+          <div class="flex flex-wrap items-end gap-3">
+
+            <!-- Búsqueda por código -->
+            <div class="w-[200px] sm:w-[250px]">
+              <p-iftalabel>
+                <input
+                  pInputText
+                  type="text"
+                  placeholder="Código"
+                  class="w-full"
+                  formControlName="codigoSolicitud"
+                />
+                <label for="codigoSolicitud">Búsqueda por código</label>
+              </p-iftalabel>
+            </div>
+
+            <!-- Búsqueda por rango de fechas -->
+            <div class="w-[200px] sm:w-[250px]">
+              <p-iftalabel>
+                <p-datepicker
+                  formControlName="fecha"
+                  selectionMode="range"
+                  placeholder="Fechas"
+                  [readonlyInput]="true"
+                  class="w-full"
+                  [inputStyle]="{ width: '100%' }"
+                  appendTo="body"
+                ></p-datepicker>
+                <label for="codigoSolicitud">Búsqueda por rango de fechas</label>
+              </p-iftalabel>
+            </div>
+
+            <!-- Búsqueda por usuario -->
+            <div class="w-[200px] sm:w-[250px]">
+              <p-iftalabel>
+                <input
+                  pInputText
+                  type="text"
+                  placeholder="Usuario"
+                  class="w-full"
+                  formControlName="usuario"
+                />
+                <label for="codigoSolicitud">Búsqueda por usuario</label>
+              </p-iftalabel>
+            </div>
+
+            <!-- Búsqueda por estado -->
+            <div class="w-[200px] sm:w-[250px]">
+              <p-iftalabel>
+                <p-multiselect
+                  [options]="estadoSolicitudFiltrada"
+                  formControlName="estado"
+                  placeholder="Estado de solicitud"
+                  optionLabel="descripcion"
+                  optionValue="codigo"
+                  display="chip"
+                  class="w-full"
+                  appendTo="body"
+                ></p-multiselect>
+                <label for="codigoSolicitud">Búsqueda por estado de solicitud</label>
+              </p-iftalabel>
+            </div>
           </div>
-        </div>
 
-        <!-- Derecha: botones -->
-        <div class="flex items-center gap-2 sm:gap-2 ml-auto">
-          <!-- Buscar y Limpiar (solo visibles en desktop) -->
-          <div class="sm:flex gap-2">
-            <div style="width: 100px;">
-              <p-button
-                icon="pi pi-external-link"
-                [outlined]="true"
-                severity="info"
-                label="Exportar"
-                iconPos="top"
-                styleClass="w-full"
-              ></p-button>
-            </div>
-            <div style="width: 100px;">
-              <p-button
-                icon="pi pi-search"
-                label="Buscar"
-                (onClick)="filtrar()"
-                [outlined]="true"
-                severity="info"
-                iconPos="top"
-                styleClass="w-full">
-              </p-button>
-            </div>
-            <div style="width: 100px;">
-              <p-button
-                icon="pi pi-filter-slash"
-                label="Limpiar"
-                (onClick)="limpiarFiltros()"
-                [outlined]="true"
-                severity="secondary"
-                styleClass="w-full"
-                iconPos="top">
-              </p-button>
-            </div>
-
-          </div>
-        </div>
-      </div>
-    </ng-template>
-
-    <ng-template #header>
-      <tr>
-        <th id="codigo" class="text-center">Código de solicitud</th>
-        <th id="semaforo" class="text-center">Indicador para tiempo de aplicación</th>
-        <th id="fecha" class="text-center">Fecha de carga
-          <p-sortIcon field="fecha"/>
-        </th>
-        <th id="usuario">Usuario de carga</th>
-        <th id="usuarioAutoriza">Usuarios que autorizan</th>
-        <th id="cantidad" class="text-right">Cantidad de órdenes</th>
-        <th id="estado" class="text-center">Estado</th>
-        <th id="acciones" class="text-center">Acciones</th>
-      </tr>
-    </ng-template>
-
-    <ng-template #body let-solicitud>
-      <tr>
-        <td class="text-center">{{ solicitud.id }}</td>
-        <td class="text-center">
-          <ng-container *ngIf="(solicitud?.fechaCarga | timeStatus:30) as reciente; else noReciente">
-            <!-- rama TRUE -->
-            <i class="pi"
-               [ngClass]="'pi-check-circle status-ok'"
-               [pTooltip]="'Han pasado 30 min. o menos'"></i>
-            <span>Han pasado 30 min. o menos</span>
-          </ng-container>
-
-          <ng-template #noReciente>
-            <!-- rama FALSE -->
-            <i class="pi"
-               [ngClass]="'pi-times-circle status-bad'"
-               [pTooltip]="'Han pasado más de 30 min.'"></i>
-            <span>Han pasado más de 30 min.</span>
-          </ng-template>
-        </td>
-        <td class="text-center">{{ solicitud.fechaCarga }}</td>
-        <td>{{ solicitud.nombreUsuarioCarga }}</td>
-        <td>{{ solicitud.nombresUsuariosAutorizacion }}</td>
-        <td class="text-right">{{ solicitud.cantidadOrdenes }}</td>
-        <td class="text-center">
-          <span class="p-badge" [ngStyle]="badgeStyle(solicitud.estadoSolicitud)">
-            {{ estadoLabel(solicitud.estadoSolicitud) }}
-          </span>
-        </td>
-
-        <td style="text-align: center;">
-          <p-button
-            icon="pi pi-chart-bar"
-            [rounded]="true"
-            severity="success"
-            [outlined]="true"
-            pTooltip="Resumen"
-            tooltipPosition="left"
-            size="small"
-            (onClick)="verResumen(solicitud.cargos)"
-          />
-          <p-button
-            icon="pi pi-align-justify"
-            [rounded]="true"
-            severity="info"
-            [outlined]="true"
-            pTooltip="Tracking"
-            tooltipPosition="left"
-            size="small"
-            (onClick)="verTrack(solicitud.id)"
-          />
-          @if (modo === 'validar') {
-            @if (solicitud.estadoSolicitud === 'REGISTRADO') {
-              <p-button
-                icon="pi pi-times"
-                [rounded]="true"
-                severity="danger"
-                [outlined]="true"
-                pTooltip="Anular"
-                tooltipPosition="left"
-                size="small"
-                (onClick)="anularObservar('anular','VALIDAR', solicitud.id)"/>
-              <p-button
-                icon="pi pi-filter"
-                [rounded]="true"
-                severity="info"
-                [outlined]="true"
-                pTooltip="Validar"
-                tooltipPosition="left"
-                size="small"
-                (onClick)="validar($event, solicitud.id)"/>
-            } @else if (solicitud.estadoSolicitud === 'OBSERVADO') {
-              <p-button
-                icon="pi pi-eye"
-                [rounded]="true"
-                severity="warn"
-                [outlined]="true"
-                pTooltip="Ver observaciones"
-                tooltipPosition="left"
-                size="small"
-                (onClick)="anularObservar('ver','VALIDAR', solicitud.id)"/>
-              <p-button
-                icon="pi pi-times"
-                [rounded]="true"
-                severity="danger"
-                [outlined]="true"
-                pTooltip="Anular"
-                tooltipPosition="left"
-                size="small"
-                (onClick)="anularObservar('anular','VALIDAR', solicitud.id)"/>
-              <p-button
-                icon="pi pi-filter"
-                [rounded]="true"
-                severity="info"
-                [outlined]="true"
-                pTooltip="Validar"
-                tooltipPosition="left"
-                size="small"
-                (onClick)="validar($event, solicitud.id)"/>
-            } @else if (solicitud.estadoSolicitud === 'ANULADO') {
-              <p-button
-                icon="pi pi-eye"
-                [rounded]="true"
-                severity="warn"
-                [outlined]="true"
-                pTooltip="Ver observaciones"
-                tooltipPosition="left"
-                size="small"
-                (onClick)="anularObservar('ver','VALIDAR', solicitud.id)"/>
-            } @else if (solicitud.estadoSolicitud === 'VALIDADO') {
-              <p-button
-                icon="pi pi-times"
-                [rounded]="true"
-                severity="danger"
-                [outlined]="true"
-                pTooltip="Anular"
-                tooltipPosition="left"
-                size="small"
-                (onClick)="anularObservar('anular','VALIDAR', solicitud.id)"/>
-              <p-button
-                icon="pi pi-send"
-                [rounded]="true"
-                severity="info"
-                [outlined]="true"
-                pTooltip="Enviar a autorización"
-                tooltipPosition="left"
-                size="small"
-                (onClick)="solicitarAutorizacion($event, solicitud.id)"/>
-            }
-          }
-          @if (this.modo === 'autorizar') {
+          <!-- Botones (derecha) -->
+          <div class="flex items-center gap-2 ml-auto pt-1">
             <p-button
-              icon="pi pi-lock-open"
-              [rounded]="true"
+              icon="pi pi-external-link"
+              [outlined]="true"
               severity="info"
-              [outlined]="true"
-              pTooltip="Autorizar"
-              tooltipPosition="left"
-              size="small"
-              (onClick)="autorizar($event, solicitud.id, false)"
-            />
+              label="Exportar"
+              iconPos="top"
+              styleClass="w-[90px]"
+            ></p-button>
             <p-button
-              icon="pi pi-question"
-              [rounded]="true"
-              severity="danger"
+              icon="pi pi-search"
+              label="Buscar"
+              (onClick)="filtrar()"
               [outlined]="true"
-              pTooltip="Observar"
-              tooltipPosition="left"
-              size="small"
-              (onClick)="anularObservar('observar','AUTORIZAR', solicitud.id)"
-            />
-          }
-          @if (this.modo === 'ejecutar') {
-            @if (solicitud.estadoSolicitud === 'AUTORIZADO') {
-              <p-button
-                icon="pi pi-cog"
-                [rounded]="true"
-                severity="info"
-                [outlined]="true"
-                pTooltip="Procesar"
-                tooltipPosition="left"
-                size="small"
-                (onClick)="autorizar($event, solicitud.id, true)"
-              />
-            }
-            @if (solicitud.estadoSolicitud === 'PROCESADO_PARCIAL') {
-              <p-button
-                icon="pi pi-replay"
-                [rounded]="true"
-                severity="info"
-                [outlined]="true"
-                pTooltip="Reprocesar"
-                tooltipPosition="left"
-                size="small"
-                (onClick)="autorizar($event, solicitud.id, true)"
-              />
-              <p-button
-                icon="pi pi-eye"
-                [rounded]="true"
-                severity="warn"
-                [outlined]="true"
-                pTooltip="Ver observaciones"
-                tooltipPosition="left"
-                size="small"
-                (onClick)="anularObservar('ver','EJECUTAR', solicitud.id)"/>
-            }
-          }
-          @if (this.modo === 'autorizar' || this.modo === 'ejecutar') {
-            @if (solicitud.estadoSolicitud === 'AUTORIZADO') {
-              <p-button
-                icon="pi pi-question"
-                [rounded]="true"
-                severity="danger"
-                [outlined]="true"
-                pTooltip="Observar"
-                tooltipPosition="left"
-                size="small"
-                (onClick)="anularObservar('observar','EJECUTAR', solicitud.id)"
-              />
-            }
-          }
-        </td>
-      </tr>
-    </ng-template>
-    <ng-template #emptymessage>
-      <tr>
-        <td colspan="7">No se encuentran registros para mostrar</td>
-      </tr>
-    </ng-template>
-  </p-table>
-</form>
+              severity="info"
+              iconPos="top"
+              styleClass="w-[90px]"
+            ></p-button>
+            <p-button
+              icon="pi pi-filter-slash"
+              label="Limpiar"
+              (onClick)="limpiarFiltros()"
+              [outlined]="true"
+              severity="secondary"
+              iconPos="top"
+              styleClass="w-[90px]"
+            ></p-button>
+          </div>
+        </div>
+      </ng-template>
 
+      <!-- HEADER: Encabezados -->
+      <ng-template #header>
+        <tr>
+          <th id="codigo" class="text-center w-[10%]">Código</th>
+          <th id="semaforo" class="text-center w-[12%]">Indicador</th>
+          <th id="fecha" class="text-center w-[12%]">
+            Fecha de carga
+            <p-sortIcon field="fecha"/>
+          </th>
+          <th id="usuario" class="w-[12%]">Usuario carga</th>
+          <th id="usuarioAutoriza" class="w-[12%]">Usuario autoriza</th>
+          <th id="cantidad" class="text-right w-[8%]">Cantidad</th>
+          <th id="estado" class="text-center w-[10%]">Estado</th>
+          <th id="acciones" class="text-center w-[24%]">Acciones</th>
+        </tr>
+      </ng-template>
+
+      <!-- BODY: Filas de datos -->
+      <ng-template #body let-solicitud>
+        <tr>
+          <!-- Código -->
+          <td class="text-center">{{ solicitud.id }}</td>
+
+          <!-- Indicador de tiempo -->
+          <td class="text-center">
+            @if (solicitud?.fechaCarga | timeStatus:30; as reciente) {
+              <div class="flex items-center justify-center gap-1.5">
+                <i class="pi pi-check-circle text-green-500 text-lg"
+                   pTooltip="Han pasado 30 min. o menos"
+                   tooltipPosition="top"></i>
+                <span class="text-xs text-green-600 font-medium">Reciente</span>
+              </div>
+            } @else {
+              <div class="flex items-center justify-center gap-1.5">
+                <i class="pi pi-times-circle text-red-500 text-lg"
+                   pTooltip="Han pasado más de 30 min."
+                   tooltipPosition="top"></i>
+                <span class="text-xs text-red-600 font-medium">Demorado</span>
+              </div>
+            }
+          </td>
+
+          <!-- Fecha de carga -->
+          <td class="text-center">{{ solicitud.fechaCarga }}</td>
+
+          <!-- Usuario de carga -->
+          <td>{{ solicitud.nombreUsuarioCarga }}</td>
+
+          <!-- Usuarios que autorizan -->
+          <td>{{ solicitud.nombresUsuariosAutorizacion }}</td>
+
+          <!-- Cantidad de órdenes -->
+          <td class="text-right">{{ solicitud.cantidadOrdenes }}</td>
+
+          <!-- Estado -->
+          <td class="text-center">
+            <span
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+              [ngStyle]="badgeStyle(solicitud.estadoSolicitud)">
+              {{ estadoLabel(solicitud.estadoSolicitud) }}
+            </span>
+          </td>
+
+          <!-- Acciones -->
+          <td class="text-center">
+            <div class="flex items-center justify-center gap-1">
+
+              <!-- Botones comunes -->
+              <p-button
+                icon="pi pi-chart-bar"
+                [rounded]="true"
+                severity="success"
+                [outlined]="true"
+                pTooltip="Resumen"
+                tooltipPosition="left"
+                size="small"
+                (onClick)="verResumen(solicitud.cargos)"
+              />
+              <p-button
+                icon="pi pi-align-justify"
+                [rounded]="true"
+                severity="info"
+                [outlined]="true"
+                pTooltip="Tracking"
+                tooltipPosition="left"
+                size="small"
+                (onClick)="verTrack(solicitud.id)"
+              />
+
+              <!-- Modo: VALIDAR -->
+              @if (modo === 'validar') {
+                @switch (solicitud.estadoSolicitud) {
+                  @case ('REGISTRADO') {
+                    <p-button icon="pi pi-times" [rounded]="true" severity="danger" [outlined]="true"
+                              pTooltip="Anular" tooltipPosition="left" size="small"
+                              (onClick)="anularObservar('anular','VALIDAR', solicitud.id)"/>
+                    <p-button icon="pi pi-filter" [rounded]="true" severity="info" [outlined]="true"
+                              pTooltip="Validar" tooltipPosition="left" size="small"
+                              (onClick)="validar($event, solicitud.id)"/>
+                  }
+                  @case ('OBSERVADO') {
+                    <p-button icon="pi pi-eye" [rounded]="true" severity="warn" [outlined]="true"
+                              pTooltip="Ver observaciones" tooltipPosition="left" size="small"
+                              (onClick)="anularObservar('ver','VALIDAR', solicitud.id)"/>
+                    <p-button icon="pi pi-times" [rounded]="true" severity="danger" [outlined]="true"
+                              pTooltip="Anular" tooltipPosition="left" size="small"
+                              (onClick)="anularObservar('anular','VALIDAR', solicitud.id)"/>
+                    <p-button icon="pi pi-filter" [rounded]="true" severity="info" [outlined]="true"
+                              pTooltip="Validar" tooltipPosition="left" size="small"
+                              (onClick)="validar($event, solicitud.id)"/>
+                  }
+                  @case ('ANULADO') {
+                    <p-button icon="pi pi-eye" [rounded]="true" severity="warn" [outlined]="true"
+                              pTooltip="Ver observaciones" tooltipPosition="left" size="small"
+                              (onClick)="anularObservar('ver','VALIDAR', solicitud.id)"/>
+                  }
+                  @case ('VALIDADO') {
+                    <p-button icon="pi pi-times" [rounded]="true" severity="danger" [outlined]="true"
+                              pTooltip="Anular" tooltipPosition="left" size="small"
+                              (onClick)="anularObservar('anular','VALIDAR', solicitud.id)"/>
+                    <p-button icon="pi pi-send" [rounded]="true" severity="info" [outlined]="true"
+                              pTooltip="Enviar a autorización" tooltipPosition="left" size="small"
+                              (onClick)="solicitarAutorizacion($event, solicitud.id)"/>
+                  }
+                }
+              }
+
+              <!-- Modo: AUTORIZAR -->
+              @if (modo === 'autorizar') {
+                <p-button icon="pi pi-lock-open" [rounded]="true" severity="info" [outlined]="true"
+                          pTooltip="Autorizar" tooltipPosition="left" size="small"
+                          (onClick)="autorizar($event, solicitud.id, false)"/>
+                <p-button icon="pi pi-question" [rounded]="true" severity="danger" [outlined]="true"
+                          pTooltip="Observar" tooltipPosition="left" size="small"
+                          (onClick)="anularObservar('observar','AUTORIZAR', solicitud.id)"/>
+              }
+
+              <!-- Modo: EJECUTAR -->
+              @if (modo === 'ejecutar') {
+                @if (solicitud.estadoSolicitud === 'AUTORIZADO') {
+                  <p-button icon="pi pi-cog" [rounded]="true" severity="info" [outlined]="true"
+                            pTooltip="Procesar" tooltipPosition="left" size="small"
+                            (onClick)="autorizar($event, solicitud.id, true)"/>
+                }
+                @if (solicitud.estadoSolicitud === 'PROCESADO_PARCIAL') {
+                  <p-button icon="pi pi-replay" [rounded]="true" severity="info" [outlined]="true"
+                            pTooltip="Reprocesar" tooltipPosition="left" size="small"
+                            (onClick)="autorizar($event, solicitud.id, true)"/>
+                  <p-button icon="pi pi-eye" [rounded]="true" severity="warn" [outlined]="true"
+                            pTooltip="Ver observaciones" tooltipPosition="left" size="small"
+                            (onClick)="anularObservar('ver','EJECUTAR', solicitud.id)"/>
+                }
+              }
+
+              <!-- Modo: AUTORIZAR o EJECUTAR - Observar cuando AUTORIZADO -->
+              @if ((modo === 'autorizar' || modo === 'ejecutar') && solicitud.estadoSolicitud === 'AUTORIZADO') {
+                <p-button icon="pi pi-question" [rounded]="true" severity="danger" [outlined]="true"
+                          pTooltip="Observar" tooltipPosition="left" size="small"
+                          (onClick)="anularObservar('observar','EJECUTAR', solicitud.id)"/>
+              }
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <!-- EMPTY STATE -->
+      <ng-template #emptymessage>
+        <tr>
+          <td colspan="8" class="text-center py-8 text-gray-500">
+            <div class="flex flex-col items-center gap-2">
+              <i class="pi pi-file text-4xl"></i>
+              <p class="text-lg">No se encuentran registros para mostrar</p>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </form>
+</p-card>
+
+<!-- Componentes modales -->
 <app-detalle-solicitud [(visible)]="visibleDetalle" [cargos]="cargosSolicitud"></app-detalle-solicitud>
 <app-observaciones [(visible)]="visibleObservaciones"
                    [obsList]="observaciones"
@@ -360,14 +319,12 @@
                           (procesado)="onProcesado()"
                           [modo]="modo"></app-factor-autenticacion>
 
+<!-- Diálogo de carga -->
 <p-dialog [modal]="true" [(visible)]="loadingValidacion" [style]="{ width: '20rem' }" closable="false">
-  <div class="flex align-items-center gap-3 mb-3">
-    <span class="p-text-secondary block mb-5">Procesando Validación</span>
-  </div>
-
-  <div class="card flex justify-content-center">
+  <div class="flex flex-col items-center gap-4 py-4">
+    <span class="text-gray-600 text-sm font-medium">Procesando Validación</span>
     <p-progress-spinner
-      styleClass="w-4rem h-4rem"
+      class="w-16 h-16"
       strokeWidth="8"
       fill="var(--surface-ground)"
       animationDuration=".5s"/>

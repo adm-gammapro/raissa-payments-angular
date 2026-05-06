@@ -25,7 +25,7 @@ import {
     TagModule
   ],
   templateUrl: './detalle-solicitud.html',
-  styleUrl: './detalle-solicitud.scss',
+  styleUrl: './detalle-solicitud.css',
 })
 export class DetalleSolicitud {
   @Input() visible: boolean = false;

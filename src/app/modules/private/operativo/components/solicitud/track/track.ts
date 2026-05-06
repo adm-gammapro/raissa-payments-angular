@@ -16,7 +16,7 @@ type Evento = 'REGISTRADO_EXCEL' | 'REGISTRADO_JSON' | 'VALIDAR' | 'ENVIAR_AUTOR
     TableModule,
   ],
   templateUrl: './track.html',
-  styleUrl: './track.scss',
+  styleUrl: './track.css',
 })
 export class Track {
   @Input() visible: boolean = false;

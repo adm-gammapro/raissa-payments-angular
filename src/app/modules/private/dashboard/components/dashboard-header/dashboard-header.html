@@ -1,29 +1,68 @@
-<div class="card">
-  <p-menubar>
+<div class="bg-white shadow-md rounded-lg">
+  <p-menubar class="border-none bg-transparent">
     <ng-template #start>
-      <app-dashboard-menu></app-dashboard-menu>
-      <img src="assets/images/Raissa-logo-fondo-transparente-pequenio.png" height="92" alt="Descripción" />
+      <div class="flex items-center gap-4">
+        <app-dashboard-menu></app-dashboard-menu>
+        <img
+          src="assets/images/Raissa-logo-fondo-transparente-pequenio.png"
+          height="92"
+          alt="Logo"
+          class="object-contain"
+        />
+
+        @if (timeRemaining) {
+          <div class="hidden lg:flex items-center justify-end gap-2 bg-gray-50 px-4 py-1.5 border-t border-gray-100">
+            <span class="flex h-2 w-2 relative">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+            </span>
+            <span class="text-xs text-gray-500">Sesión activa</span>
+            <span class="text-xs text-gray-400">•</span>
+            <i class="pi pi-clock text-blue-400 text-xs"></i>
+            <span class="text-xs text-gray-600 font-medium">{{ timeRemaining }}</span>
+          </div>
+        }
+      </div>
+
     </ng-template>
+
     <ng-template #end>
-      <div class="flex flex-wrap align-items-center gap-2 justify-content-end">
+      <div class="flex flex-wrap items-center gap-3 justify-end">
         <p-toast />
         <p-splitbutton
           severity="info"
           outlined
-          [model]="items">
+          [model]="items"
+        >
           <ng-template #content>
-                        <span class="flex items-center font-bold">
-                            <img
-                              alt="logo"
-                              src="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png"
-                              class="h-2rem mr-2"
-                            />
-                            <span class="hidden sm:inline">{{ nombreUsuarioSesion }}</span>
-                        </span>
+            <span class="flex items-center gap-2 font-bold">
+              <img
+                alt="logo"
+                src="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png"
+                class="h-8 w-8 rounded-full object-cover border-2 border-gray-200"
+              />
+              <span class="hidden sm:inline text-sm">{{ nombreUsuarioSesion }}</span>
+            </span>
           </ng-template>
         </p-splitbutton>
       </div>
     </ng-template>
-
   </p-menubar>
 </div>
+
+
+<!-- Barra de tiempo de sesión (visible en móvil) -->
+@if (timeRemaining) {
+  <div class="lg:hidden bg-gray-50 border-t px-4 py-2">
+    <div class="flex items-center justify-between text-xs text-gray-600">
+      <div class="flex items-center gap-2">
+        <span class="flex h-2 w-2 relative">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+        </span>
+        <span>Sesión activa</span>
+      </div>
+      <span class="font-medium">{{ timeRemaining }}</span>
+    </div>
+  </div>
+}

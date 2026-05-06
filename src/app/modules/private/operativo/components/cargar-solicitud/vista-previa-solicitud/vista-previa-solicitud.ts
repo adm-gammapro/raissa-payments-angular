@@ -13,6 +13,11 @@ import {
   CargarSolicitudService
 } from '../../../../../../service/modules/private/operativo/cargar-solicitud/cargar-solicitud';
 import {environment} from '../../../../../../../environments/environment';
+import {FileUpload} from 'primeng/fileupload';
+import {Tooltip} from 'primeng/tooltip';
+import {Badge} from 'primeng/badge';
+import {DetalleAbono} from '../../../../../../apis/model/module/private/operativo/cargar-solicitud/detalle-abono';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-vista-previa-solicitud',
@@ -25,7 +30,10 @@ import {environment} from '../../../../../../../environments/environment';
     InputTextModule,
     MessageModule,
     TableModule,
-    TagModule
+    TagModule,
+    FileUpload,
+    Tooltip,
+    Badge
   ],
   templateUrl: './vista-previa-solicitud.html',
   styleUrl: './vista-previa-solicitud.scss',
@@ -34,9 +42,9 @@ export class VistaPreviaSolicitud implements OnChanges {
   @Input() visible = false;
   @Output() visibleChange = new EventEmitter<boolean>();
   @Output() refresh = new EventEmitter<void>();
-  @Input() mostrar = false;
-  @Input() cargos: Cargo[] = [];
-  @Input() selectedFile?: File;
+
+  protected cargos: Cargo[] = [];
+  protected selectedFile?: File;
   protected idEmpresa: string = "";
   protected username: string = "";
   expandedRows: Record<string, boolean> = {};
@@ -57,7 +65,14 @@ export class VistaPreviaSolicitud implements OnChanges {
   }
 
   protected cerrar() {
+    this.limpiarCarga()
     this.visibleChange.emit(false);
+  }
+
+  protected limpiarCarga() {
+    this.cargos = [];
+    this.selectedFile = undefined;
+    this.expandedRows = {};
   }
 
   protected expandAll() {
@@ -92,6 +107,79 @@ export class VistaPreviaSolicitud implements OnChanges {
     const total = this.totalAbonos(cargo);
     const cargoMonto = this.toNumber(cargo.montoCargo);
     return total === cargoMonto ? 'success' : 'danger';
+  }
+
+  onSelect(event: any) {
+    this.selectedFile = event.files?.[0];
+    if (this.selectedFile) {
+      this.leerExcel(this.selectedFile);
+    }
+  }
+
+  leerExcel(file: File) {
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, {type: 'array'});
+      const firstSheet = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[firstSheet];
+      const rows = XLSX.utils.sheet_to_json<any>(worksheet, {defval: ''});
+      this.cargos = this.transformar(rows);
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  // ✅ Transformación de filas Excel a Cargos
+  transformar(rows: any[]): Cargo[] {
+    const cargos: Cargo[] = [];
+    let currentCargo: Cargo | null = null;
+    let id = 1;
+
+    for (const r of rows) {
+      const tipo = (r['Tipo'] || '').toString().trim().toUpperCase();
+      const cuenta = (r['Cuenta'] || '').toString().trim();
+      const entidad = (r['Codigo entidad financiera'] || '').toString().trim();
+      const moneda = (r['moneda'] || '').toString().trim();
+      const monto = Number(r['monto'] || 0);
+      const tipoDocCliente = (r['Tipo doc Beneficiario'] || '').toString().trim();
+      const nroDocCliente = (r['Nro doc Beneficiario'] || '').toString().trim();
+      const cliente = (r['Beneficiario'] || '').toString().trim();
+      const mismoTitular = (r['Mismo titular'] || '').toString().trim();
+
+      if (tipo === 'H') {
+        currentCargo = new Cargo();
+        currentCargo.id = id++;
+        currentCargo.cuentaCargo = cuenta;
+        currentCargo.entidadFinancieraCargo = entidad;
+        currentCargo.monedaCuentaCargo = moneda as string;
+        currentCargo.montoCargo = monto;
+        currentCargo.estadoEjecucion = '';
+        currentCargo.detalle = [];
+        cargos.push(currentCargo);
+      } else if (tipo === 'D' && currentCargo) {
+        const det = new DetalleAbono();
+        det.cuentaAbono = cuenta;
+        det.entidadFinancieraAbono = entidad;
+        det.monedaCuentaAbono = moneda as string;
+        det.montoAbono = monto;
+        det.tipoDocCliente = tipoDocCliente;
+        det.nroDocCliente = nroDocCliente;
+        det.cliente = cliente;
+        det.mismoTitular = mismoTitular;
+        det.estadoEjecucion = '';
+        det.detalleEjecucion = '';
+        currentCargo.detalle.push(det);
+      }
+    }
+    return cargos;
+  }
+
+  choose(event: MouseEvent, callback: () => void) {
+    callback();
+  }
+
+  uploadEvent(callback: () => void) {
+    callback();
   }
 
   enviar() {

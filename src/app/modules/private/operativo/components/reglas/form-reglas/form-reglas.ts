@@ -3,7 +3,6 @@ import {Button} from "primeng/button";
 import {Dialog} from "primeng/dialog";
 import {InputText} from "primeng/inputtext";
 import {Message} from "primeng/message";
-import {NgIf} from "@angular/common";
 import {Panel} from "primeng/panel";
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {MessageService} from 'primeng/api';
@@ -24,7 +23,6 @@ import {InputNumber} from 'primeng/inputnumber';
     Dialog,
     InputText,
     Message,
-    NgIf,
     Panel,
     ReactiveFormsModule,
     Select,

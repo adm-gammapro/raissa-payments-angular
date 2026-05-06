@@ -1,27 +1,47 @@
-<div class="card flex justify-center">
-  <p-dialog header="Edit Profile" [modal]="true" [(visible)]="visible" [style]="{ width: '30rem' }" closable="false">
+<div class="bg-white shadow-md rounded-lg flex justify-center">
+  <p-dialog
+    header="Edit Profile"
+    [modal]="true"
+    [(visible)]="visible"
+    [style]="{ width: '30rem' }"
+    closable="false"
+  >
+    <!-- HEADER -->
     <ng-template #header>
       <div class="inline-flex items-center justify-center gap-2">
         <h2><span class="font-bold whitespace-nowrap">{{ headerTitle }}</span></h2>
       </div>
     </ng-template>
 
-    <form [formGroup]="form" class="flex flex-column">
-      <p-panel class="mb-1">
+    <!-- BODY: Formulario -->
+    <form [formGroup]="form" class="flex flex-col">
+      <p-panel class="mb-3 border-none shadow-none">
         <input type="hidden" formControlName="codigo">
-        <div class="p-1">
-          <div class="field">
-            <label for="descripcion">Descripción</label>
-            <input type="text" id="descripcion" pInputText formControlName="descripcion" class="w-full"
-                   [class.p-invalid]="form.get('descripcion')?.invalid && form.get('descripcion')?.touched"/>
-            <small *ngIf="form.get('descripcion')?.touched && form.get('descripcion')?.errors">
-              <ng-container *ngIf="form.get('descripcion')?.errors?.['required']" class="text-red-500">
+
+        <div class="p-2 flex flex-col gap-3">
+
+          <!-- Campo: Descripción -->
+          <div class="flex flex-col gap-1">
+            <label for="descripcion" class="text-sm font-medium text-gray-700">Descripción</label>
+            <input
+              type="text"
+              id="descripcion"
+              pInputText
+              formControlName="descripcion"
+              class="w-full"
+              [class.ng-invalid]="form.get('descripcion')?.invalid && form.get('descripcion')?.touched"
+              [class.ng-dirty]="form.get('descripcion')?.touched"
+            />
+            @if (form.get('descripcion')?.touched && form.get('descripcion')?.errors) {
+              @if (form.get('descripcion')?.errors?.['required']) {
                 <p-message severity="error" variant="simple" size="small">Campo obligatorio</p-message>
-              </ng-container>
-            </small>
+              }
+            }
           </div>
-          <div class="field">
-            <label for="moneda">Moneda</label>
+
+          <!-- Campo: Moneda -->
+          <div class="flex flex-col gap-1">
+            <label for="monedas" class="text-sm font-medium text-gray-700">Moneda</label>
             <p-select
               id="monedas"
               formControlName="moneda"
@@ -29,57 +49,71 @@
               optionLabel="descripcion"
               optionValue="valor"
               placeholder="Selecciona moneda"
-              style="width: 100%;"
-              [class.p-invalid]="form.get('moneda')?.invalid && form.get('moneda')?.touched">
-            </p-select>
-            <small *ngIf="form.get('moneda')?.touched && form.get('moneda')?.errors">
-              <ng-container *ngIf="form.get('moneda')?.errors?.['required']" class="text-red-500">
+              class="w-full"
+              appendTo="body"
+              [class.ng-invalid]="form.get('moneda')?.invalid && form.get('moneda')?.touched"
+              [class.ng-dirty]="form.get('moneda')?.touched"
+            ></p-select>
+
+            @if (form.get('moneda')?.touched && form.get('moneda')?.errors) {
+              @if (form.get('moneda')?.errors?.['required']) {
                 <p-message severity="error" variant="simple" size="small">Campo obligatorio</p-message>
-              </ng-container>
-            </small>
+              }
+            }
           </div>
-          <div class="field">
-            <label for="limiteInferior">Límite inferior</label>
+
+          <!-- Campo: Límite inferior -->
+          <div class="flex flex-col gap-1">
+            <label for="locale-us" class="text-sm font-medium text-gray-700">Límite inferior</label>
             <p-inputnumber
               formControlName="limiteInferior"
               inputId="locale-us"
               mode="decimal"
               locale="en-US"
               class="w-full"
-              [class.p-invalid]="form.get('limiteInferior')?.invalid && form.get('limiteInferior')?.touched"
-              [minFractionDigits]="2">
-            </p-inputnumber>
+              [minFractionDigits]="2"
+              [class.ng-invalid]="form.get('limiteInferior')?.invalid && form.get('limiteInferior')?.touched"
+              [class.ng-dirty]="form.get('limiteInferior')?.touched"
+            ></p-inputnumber>
 
-            <small *ngIf="form.get('limiteInferior')?.touched && form.get('limiteInferior')?.errors">
-              <ng-container *ngIf="form.get('limiteInferior')?.errors?.['required']" class="text-red-500">
+            @if (form.get('limiteInferior')?.touched && form.get('limiteInferior')?.errors) {
+              @if (form.get('limiteInferior')?.errors?.['required']) {
                 <p-message severity="error" variant="simple" size="small">Campo obligatorio</p-message>
-              </ng-container>
-            </small>
+              }
+            }
           </div>
-          <div class="field">
-            <label for="limiteSuperior">Límite superior</label>
+
+          <!-- Campo: Límite superior -->
+          <div class="flex flex-col gap-1">
+            <label for="limiteSuperior" class="text-sm font-medium text-gray-700">Límite superior</label>
             <p-inputnumber
               formControlName="limiteSuperior"
-              inputId="locale-us"
+              inputId="locale-us-superior"
               mode="decimal"
               locale="en-US"
               class="w-full"
-              [class.p-invalid]="form.get('limiteSuperior')?.invalid && form.get('limiteSuperior')?.touched"
-              [minFractionDigits]="2">
-            </p-inputnumber>
-            <small *ngIf="form.get('limiteSuperior')?.touched && form.get('limiteSuperior')?.errors">
-              <ng-container *ngIf="form.get('limiteSuperior')?.errors?.['required']" class="text-red-500">
+              [minFractionDigits]="2"
+              [class.ng-invalid]="form.get('limiteSuperior')?.invalid && form.get('limiteSuperior')?.touched"
+              [class.ng-dirty]="form.get('limiteSuperior')?.touched"
+            ></p-inputnumber>
+
+            @if (form.get('limiteSuperior')?.touched && form.get('limiteSuperior')?.errors) {
+              @if (form.get('limiteSuperior')?.errors?.['required']) {
                 <p-message severity="error" variant="simple" size="small">Campo obligatorio</p-message>
-              </ng-container>
-            </small>
+              }
+            }
           </div>
+
         </div>
       </p-panel>
     </form>
 
+    <!-- FOOTER -->
     <ng-template #footer>
-      <p-button label="Cancelar" [outlined]="true" severity="info" (onClick)="cerrar()"></p-button>
-      <p-button label="Guardar" [outlined]="true" severity="success" (onClick)="guardar()"></p-button>
+      <div class="flex justify-end gap-2 pt-2">
+        <p-button label="Cancelar" [outlined]="true" severity="info" (onClick)="cerrar()"></p-button>
+        <p-button label="Guardar" [outlined]="true" severity="success" (onClick)="guardar()"></p-button>
+      </div>
     </ng-template>
   </p-dialog>
 </div>

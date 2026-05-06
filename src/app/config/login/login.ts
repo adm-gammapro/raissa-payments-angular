@@ -8,7 +8,7 @@ import {HttpParams} from '@angular/common/http';
   selector: 'app-login',
   imports: [],
   templateUrl: './login.html',
-  styleUrl: './login.scss',
+  styleUrl: './login.css',
 })
 export class Login implements OnInit {
   params: any = {

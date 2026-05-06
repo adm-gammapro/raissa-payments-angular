@@ -27,6 +27,7 @@ import {
   TipoPagoRequest
 } from '../../../../../apis/model/module/private/operativo/administrativo/request/tipo-pago-request';
 import {InputText} from 'primeng/inputtext';
+import {Card} from 'primeng/card';
 
 @Component({
   selector: 'app-tipo-pago',
@@ -42,10 +43,11 @@ import {InputText} from 'primeng/inputtext';
     IftaLabel,
     FormTipoPago,
     InputText,
+    Card,
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './tipo-pago.html',
-  styleUrl: './tipo-pago.scss',
+  styleUrl: './tipo-pago.css',
 })
 export class TipoPago {
   protected idEmpresa!: string;
@@ -200,8 +202,7 @@ export class TipoPago {
       icon: 'pi pi-info-circle',
       rejectButtonProps: {
         label: 'Cancelar',
-        severity: 'secondary',
-        outlined: true,
+        severity: 'succes',
       },
       acceptButtonProps: {
         label: 'Eliminar',
@@ -230,23 +231,16 @@ export class TipoPago {
               this.messageService.add({
                 severity: 'error',
                 summary: 'Error',
-                detail: 'Error en el servicio de países'
+                detail: 'Error en el servicio'
               });
             } else if (error.status === 503) {
               this.messageService.add({
                 severity: 'error',
                 summary: 'Error',
-                detail: 'Servicio de países no disponible'
+                detail: 'Servicio no disponible'
               });
             }
           }
-        });
-      },
-      reject: () => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Cancelación',
-          detail: 'No se dió de baja el registro',
         });
       },
     });

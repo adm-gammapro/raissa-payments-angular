@@ -5,7 +5,15 @@
   [style]="{ width: '100rem' }"
   styleClass="mi-dialog-cargos-unico"
 >
-  <div class="card">
+  <!-- HEADER -->
+  <ng-template #header>
+    <div class="flex items-center justify-between w-full">
+      <h2 class="text-lg font-bold">Detalle de solicitud</h2>
+    </div>
+  </ng-template>
+
+  <!-- CONTENIDO -->
+  <div class="bg-white rounded-lg">
     <p-table
       [value]="cargos"
       dataKey="id"
@@ -62,9 +70,9 @@
 
       <ng-template #expandedrow let-cargo>
         <tr>
-          <td colspan="7">
+          <td colspan="6">
             <div class="p-4">
-              <h5 class="font-bold flex items-center gap-2">
+              <div class="font-bold flex items-center gap-2 mb-3">
                 <p-tag
                   [value]="'Abonos totales para ' + cargo.cuentaOrigen + ': '"
                   severity="info"
@@ -73,7 +81,8 @@
                   [value]="formatMonto(cargo.montoTotalAbonos, cargo.moneda)"
                   [severity]="tagSeverity(cargo)">
                 </p-tag>
-              </h5>
+              </div>
+
               <p-table [value]="cargo.abonos" dataKey="id" [tableStyle]="{ 'min-width': '50rem' }" [size]="'small'">
                 <ng-template #header>
                   <tr>
@@ -100,6 +109,7 @@
                     }
                   </tr>
                 </ng-template>
+
                 <ng-template #body let-det>
                   <tr>
                     <td>{{ det.cuentaDestino }}</td>
@@ -109,6 +119,7 @@
                     </td>
                     <td class="text-right">{{ det.montoDestino }}</td>
                     <td>{{ det.beneficiario }}</td>
+
                     @if (tieneBeneficiarioValidado(det)) {
                       <td>{{ det.documentoBeneficiarioRespuesta }}</td>
                       <td>{{ det.nombreBeneficiarioRespuesta }}</td>
@@ -137,9 +148,10 @@
                     }
                   </tr>
                 </ng-template>
+
                 <ng-template #emptymessage>
                   <tr>
-                    <td colspan="5">Sin abonos.</td>
+                    <td colspan="5" class="text-center py-4 text-gray-500">Sin abonos.</td>
                   </tr>
                 </ng-template>
               </p-table>
@@ -150,12 +162,15 @@
     </p-table>
   </div>
 
+  <!-- FOOTER -->
   <ng-template #footer>
-    <p-button
-      label="Cerrar"
-      [outlined]="true"
-      severity="info"
-      (onClick)="cerrar()"
-    />
+    <div class="flex justify-end">
+      <p-button
+        label="Cerrar"
+        [outlined]="true"
+        severity="info"
+        (onClick)="cerrar()"
+      />
+    </div>
   </ng-template>
 </p-dialog>

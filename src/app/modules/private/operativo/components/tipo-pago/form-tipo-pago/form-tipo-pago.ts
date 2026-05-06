@@ -28,7 +28,7 @@ import {environment} from '../../../../../../../environments/environment';
     CommonModule
   ],
   templateUrl: './form-tipo-pago.html',
-  styleUrl: './form-tipo-pago.scss',
+  styleUrl: './form-tipo-pago.css',
 })
 export class FormTipoPago {
   @Input() visible: boolean = false;

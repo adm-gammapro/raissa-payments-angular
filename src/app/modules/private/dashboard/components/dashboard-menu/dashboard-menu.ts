@@ -23,7 +23,7 @@ import {ClassNames} from 'primeng/classnames';
   imports: [DrawerModule, ButtonModule, Toast, PanelMenuModule, CommonModule, ClassNames],
   providers: [MessageService],
   templateUrl: './dashboard-menu.html',
-  styleUrl: './dashboard-menu.scss',
+  styleUrl: './dashboard-menu.css',
 })
 export class DashboardMenu implements OnInit {
   @ViewChild('drawerRef') drawerRef!: Drawer;

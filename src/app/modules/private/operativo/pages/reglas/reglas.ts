@@ -23,6 +23,7 @@ import {ReglaRequest} from '../../../../../apis/model/module/private/operativo/a
 import {Moneda} from '../../../../../apis/model/module/commons/moneda';
 import {FormReglas} from '../../components/reglas/form-reglas/form-reglas';
 import {DecimalPipe} from '@angular/common';
+import {Card} from 'primeng/card';
 
 @Component({
   selector: 'app-reglas',
@@ -38,11 +39,12 @@ import {DecimalPipe} from '@angular/common';
     Toast,
     Tooltip,
     FormReglas,
-    DecimalPipe
+    DecimalPipe,
+    Card
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './reglas.html',
-  styleUrl: './reglas.scss',
+  styleUrl: './reglas.css',
 })
 export class Reglas {
   protected idEmpresa!: string;
@@ -201,8 +203,7 @@ export class Reglas {
       icon: 'pi pi-info-circle',
       rejectButtonProps: {
         label: 'Cancelar',
-        severity: 'secondary',
-        outlined: true,
+        severity: 'success',
       },
       acceptButtonProps: {
         label: 'Eliminar',
@@ -230,23 +231,16 @@ export class Reglas {
               this.messageService.add({
                 severity: 'error',
                 summary: 'Error',
-                detail: 'Error en el servicio de países'
+                detail: 'Error en el servicio'
               });
             } else if (error.status === 503) {
               this.messageService.add({
                 severity: 'error',
                 summary: 'Error',
-                detail: 'Servicio de países no disponible'
+                detail: 'Servicio no disponible'
               });
             }
           }
-        });
-      },
-      reject: () => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Cancelación',
-          detail: 'No se dió de baja el registro',
         });
       },
     });

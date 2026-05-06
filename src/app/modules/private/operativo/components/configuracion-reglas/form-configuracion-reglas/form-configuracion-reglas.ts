@@ -3,9 +3,7 @@ import {Button} from 'primeng/button';
 import {Dialog} from 'primeng/dialog';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {InputNumber} from 'primeng/inputnumber';
-import {InputText} from 'primeng/inputtext';
 import {Message} from 'primeng/message';
-import {NgIf} from '@angular/common';
 import {Panel} from 'primeng/panel';
 import {Select} from 'primeng/select';
 import {
@@ -38,7 +36,6 @@ import {Predeterminado} from '../../../../../../apis/model/module/commons/predet
     FormsModule,
     InputNumber,
     Message,
-    NgIf,
     Panel,
     ReactiveFormsModule,
     Select

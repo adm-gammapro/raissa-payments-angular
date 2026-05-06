@@ -1,14 +1,14 @@
 <p-toast></p-toast>
-<div class="card flex justify-center">
+<div class="bg-white shadow-md rounded-lg flex justify-center">
   <p-button (onClick)="visible = true" severity="info" icon="pi pi-bars"/>
   <p-drawer #drawerRef [(visible)]="visible">
     <ng-template #headless>
-      <div class="card p-2">
-        <div class="w-full md:w-80 border rounded-lg overflow-hidden pb-2">
-          <div class="flex items-center gap-2 bg-surface-100">
+      <div class="p-2">
+        <div class="w-full md:w-75 border border-gray-300 rounded-lg overflow-hidden pb-2">
+          <div class="flex items-center gap-2 border-gray-300 p-3">
             <div class="leading-tight">
-              <div class="text-lg font-semibold tracking-wide text-surface-900">RAISSA PAYMENTS</div>
-              <div class="text-xs text-surface-500">Suite de transacciones</div>
+              <div class="text-lg font-semibold tracking-wide text-gray-900">RAISSA PAYMENTS</div>
+              <div class="text-xs text-gray-500">Suite de transacciones</div>
             </div>
             <p-button
               (onClick)="closeCallback($event)"
@@ -16,28 +16,26 @@
               severity="info"
               [rounded]="true"
               [outlined]="true"
-              class="ml-auto w-2 h-4">
+              class="ml-auto"
+              styleClass="w-8 h-8"
+            >
             </p-button>
           </div>
         </div>
 
-        <p-panelmenu [model]="items" pClass="w-full md:w-80"></p-panelmenu>
+        <p-panelmenu [model]="items" pClass="w-full md:w-75 border-none pt-2"></p-panelmenu>
 
-        <div class="w-full p-3">
-          <p-button label="Cerrar Sesión"
-                    icon="pi pi-sign-out"
-                    styleClass="w-full justify-center"
-                    severity="danger"
-                    outlined
-                    (onClick)="onLogout()"
+        <div class="w-full p-3 pt-4">
+          <p-button
+            label="Cerrar Sesión"
+            icon="pi pi-sign-out"
+            styleClass="w-full justify-center"
+            severity="danger"
+            outlined
+            (onClick)="onLogout()"
           ></p-button>
         </div>
       </div>
     </ng-template>
   </p-drawer>
-
 </div>
-
-
-
-

@@ -10,14 +10,9 @@ import {SelectModule} from 'primeng/select';
 import {ToastModule} from 'primeng/toast';
 import {TooltipModule} from 'primeng/tooltip';
 import {ConfirmationService, MenuItem, MessageService} from 'primeng/api';
-import {ActivatedRoute} from '@angular/router';
 import {BadgeModule} from 'primeng/badge';
 import {DatePickerModule} from 'primeng/datepicker';
-import {FileUpload} from 'primeng/fileupload';
 import {VistaPreviaSolicitud} from '../../components/cargar-solicitud/vista-previa-solicitud/vista-previa-solicitud';
-import {Cargo} from '../../../../../apis/model/module/private/operativo/cargar-solicitud/cargo';
-import * as XLSX from 'xlsx';
-import {DetalleAbono} from '../../../../../apis/model/module/private/operativo/cargar-solicitud/detalle-abono';
 import {SolicitudService} from '../../../../../service/modules/private/operativo/solicitud/solicitud';
 import {
   SolicitudResponse
@@ -34,6 +29,7 @@ import {
 } from '../../../../../apis/model/module/private/operativo/solicitud/response/cargo-solicitud-response';
 import {Util} from '../../../../../utils/util/util';
 import {IftaLabel} from 'primeng/iftalabel';
+import {Card} from 'primeng/card';
 
 @Component({
   selector: 'app-cargar-solicitud',
@@ -50,25 +46,21 @@ import {IftaLabel} from 'primeng/iftalabel';
     ToastModule,
     ConfirmDialogModule,
     DatePickerModule,
-    FileUpload,
     VistaPreviaSolicitud,
     DetalleSolicitud,
     FormsModule,
     IftaLabel,
+    Card,
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './cargar-solicitud.html',
-  styleUrl: './cargar-solicitud.scss',
+  styleUrl: './cargar-solicitud.css',
 })
 export class CargarSolicitud {
   protected visibleVistaPrevia: boolean = false;
-  protected mostrarVistaPrevia = false;
   protected first = 0;
   protected loading: boolean = false;
-  protected cargos: Cargo[] = [];
   protected visibleDetalle: boolean = false;
-  protected mostrarDetalle = false;
-  protected selectedFile?: File;
   protected totalRecords: number = 0;
   protected registrosMostrados = 0;
   protected filtroForm: FormGroup;
@@ -82,9 +74,7 @@ export class CargarSolicitud {
   ];
 
   constructor(
-    private readonly confirmationService: ConfirmationService,
     private readonly messageService: MessageService,
-    private readonly activatedRoute: ActivatedRoute,
     private readonly solicitudService: SolicitudService,
     private readonly fb: FormBuilder,
   ) {
@@ -182,73 +172,7 @@ export class CargarSolicitud {
     this.cargosSolicitud = cargos;
   }
 
-  onSelect(event: any) {
-    // evento de selección: guardamos el file para lectura y posterior envío
-    this.selectedFile = event.files?.[0];
-    if (this.selectedFile) {
-      this.leerExcel(this.selectedFile);
-    }
-  }
-
-  onUploadHandler(event: any) {
-    this.messageService.add({severity: 'info', summary: 'Archivo listo', detail: this.selectedFile?.name});
-  }
-
-  leerExcel(file: File) {
-    const reader = new FileReader();
-    reader.onload = (e: any) => {
-      const data = new Uint8Array(e.target.result);
-      const workbook = XLSX.read(data, {type: 'array'});
-      const firstSheet = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[firstSheet];
-      const rows = XLSX.utils.sheet_to_json<any>(worksheet, {defval: ''});
-      this.cargos = this.transformar(rows);
-      this.visibleVistaPrevia = true;
-    };
-    reader.readAsArrayBuffer(file);
-  }
-
-  transformar(rows: any[]): Cargo[] {
-    const cargos: Cargo[] = [];
-    let currentCargo: Cargo | null = null;
-    let id = 1;
-
-    for (const r of rows) {
-      const tipo = (r['Tipo'] || '').toString().trim().toUpperCase();
-      const cuenta = (r['Cuenta'] || '').toString().trim();
-      const entidad = (r['Codigo entidad financiera'] || '').toString().trim();
-      const moneda = (r['moneda'] || '').toString().trim();
-      const monto = Number(r['monto'] || 0);
-      const tipoDocCliente = (r['Tipo doc Beneficiario'] || '').toString().trim();
-      const nroDocCliente = (r['Nro doc Beneficiario'] || '').toString().trim();
-      const cliente = (r['Beneficiario'] || '').toString().trim();
-      const mismoTitular = (r['Mismo titular'] || '').toString().trim();
-
-      if (tipo === 'H') {
-        currentCargo = new Cargo();
-        currentCargo.id = id++;
-        currentCargo.cuentaCargo = cuenta;
-        currentCargo.entidadFinancieraCargo = entidad;
-        currentCargo.monedaCuentaCargo = moneda as string;
-        currentCargo.montoCargo = monto;
-        currentCargo.estadoEjecucion = '';
-        currentCargo.detalle = [];
-        cargos.push(currentCargo);
-      } else if (tipo === 'D' && currentCargo) {
-        const det = new DetalleAbono();
-        det.cuentaAbono = cuenta;
-        det.entidadFinancieraAbono = entidad;
-        det.monedaCuentaAbono = moneda as string;
-        det.montoAbono = monto;
-        det.tipoDocCliente = tipoDocCliente;
-        det.nroDocCliente = nroDocCliente;
-        det.cliente = cliente;
-        det.mismoTitular = mismoTitular;
-        det.estadoEjecucion = '';
-        det.detalleEjecucion = '';
-        currentCargo.detalle.push(det);
-      }
-    }
-    return cargos;
+  abrirVistaPrevia() {
+    this.visibleVistaPrevia = true;
   }
 }

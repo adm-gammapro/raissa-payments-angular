@@ -1,17 +1,28 @@
-<div class="card flex justify-center">
-  <p-dialog header="Edit Profile" [modal]="true" [(visible)]="visible" [style]="{ width: '30rem' }" closable="false">
+<div class="bg-white shadow-md rounded-lg flex justify-center">
+  <p-dialog
+    header="Edit Profile"
+    [modal]="true"
+    [(visible)]="visible"
+    [style]="{ width: '30rem' }"
+    closable="false"
+  >
+    <!-- HEADER -->
     <ng-template #header>
       <div class="inline-flex items-center justify-center gap-2">
         <h2><span class="font-bold whitespace-nowrap">{{ headerTitle }}</span></h2>
       </div>
     </ng-template>
 
-    <form [formGroup]="form" class="flex flex-column">
-      <p-panel class="mb-1">
+    <!-- BODY: Formulario -->
+    <form [formGroup]="form" class="flex flex-col">
+      <p-panel class="mb-3 border-none shadow-none">
         <input type="hidden" formControlName="codigo">
-        <div class="p-1">
-          <div class="field">
-            <label for="codigoRegla">Regla</label>
+
+        <div class="p-2 flex flex-col gap-3">
+
+          <!-- Campo: Regla -->
+          <div class="flex flex-col gap-1">
+            <label for="codigoRegla" class="text-sm font-medium text-gray-700">Regla</label>
             <p-select
               id="codigoRegla"
               formControlName="codigoRegla"
@@ -22,8 +33,11 @@
               filterBy="descripcion"
               [showClear]="true"
               placeholder="Selecciona regla"
-              style="width: 100%;"
-              [class.p-invalid]="form.get('codigoRegla')?.invalid && form.get('codigoRegla')?.touched">
+              class="w-full"
+              appendTo="body"
+              [class.ng-invalid]="form.get('codigoRegla')?.invalid && form.get('codigoRegla')?.touched"
+              [class.ng-dirty]="form.get('codigoRegla')?.touched"
+            >
               <ng-template #selectedItem let-selectedOption>
                 <div class="flex items-center gap-2">
                   <div>{{ selectedOption.descripcion }}</div>
@@ -35,15 +49,17 @@
                 </div>
               </ng-template>
             </p-select>
-            <small *ngIf="form.get('codigoRegla')?.touched && form.get('codigoRegla')?.errors">
-              <ng-container *ngIf="form.get('codigoRegla')?.errors?.['required']" class="text-red-500">
+
+            @if (form.get('codigoRegla')?.touched && form.get('codigoRegla')?.errors) {
+              @if (form.get('codigoRegla')?.errors?.['required']) {
                 <p-message severity="error" variant="simple" size="small">Campo obligatorio</p-message>
-              </ng-container>
-            </small>
+              }
+            }
           </div>
 
-          <div class="field">
-            <label for="codigoCategoria">Categoria</label>
+          <!-- Campo: Categoría -->
+          <div class="flex flex-col gap-1">
+            <label for="codigoCategoria" class="text-sm font-medium text-gray-700">Categoria</label>
             <p-select
               id="codigoCategoria"
               formControlName="codigoCategoria"
@@ -51,18 +67,23 @@
               optionLabel="descripcion"
               optionValue="codigo"
               placeholder="Seleccione categoria"
-              style="width: 100%;"
-              [class.p-invalid]="form.get('codigoCategoria')?.invalid && form.get('codigoCategoria')?.touched">
-            </p-select>
+              [showClear]="true"
+              class="w-full"
+              appendTo="body"
+              [class.ng-invalid]="form.get('codigoCategoria')?.invalid && form.get('codigoCategoria')?.touched"
+              [class.ng-dirty]="form.get('codigoCategoria')?.touched"
+            ></p-select>
 
-            <small *ngIf="form.get('codigoCategoria')?.touched && form.get('codigoCategoria')?.errors">
-              <ng-container *ngIf="form.get('codigoCategoria')?.errors?.['required']" class="text-red-500">
+            @if (form.get('codigoCategoria')?.touched && form.get('codigoCategoria')?.errors) {
+              @if (form.get('codigoCategoria')?.errors?.['required']) {
                 <p-message severity="error" variant="simple" size="small">Campo obligatorio</p-message>
-              </ng-container>
-            </small>
+              }
+            }
           </div>
-          <div class="field">
-            <label for="codigoModo">Modo</label>
+
+          <!-- Campo: Modo -->
+          <div class="flex flex-col gap-1">
+            <label for="codigoModo" class="text-sm font-medium text-gray-700">Modo</label>
             <p-select
               id="codigoModo"
               formControlName="codigoModo"
@@ -70,17 +91,23 @@
               optionLabel="descripcion"
               optionValue="valor"
               placeholder="Selecciona modo"
-              style="width: 100%;"
-              [class.p-invalid]="form.get('codigoModo')?.invalid && form.get('codigoModo')?.touched">
-            </p-select>
-            <small *ngIf="form.get('codigoModo')?.touched && form.get('codigoModo')?.errors">
-              <ng-container *ngIf="form.get('codigoModo')?.errors?.['required']" class="text-red-500">
+              [showClear]="true"
+              class="w-full"
+              appendTo="body"
+              [class.ng-invalid]="form.get('codigoModo')?.invalid && form.get('codigoModo')?.touched"
+              [class.ng-dirty]="form.get('codigoModo')?.touched"
+            ></p-select>
+
+            @if (form.get('codigoModo')?.touched && form.get('codigoModo')?.errors) {
+              @if (form.get('codigoModo')?.errors?.['required']) {
                 <p-message severity="error" variant="simple" size="small">Campo obligatorio</p-message>
-              </ng-container>
-            </small>
+              }
+            }
           </div>
-          <div class="field">
-            <label for="predeterminado">Predeterminado</label>
+
+          <!-- Campo: Predeterminado -->
+          <div class="flex flex-col gap-1">
+            <label for="predeterminado" class="text-sm font-medium text-gray-700">Predeterminado</label>
             <p-select
               id="predeterminado"
               formControlName="predeterminado"
@@ -88,17 +115,23 @@
               optionLabel="descripcion"
               optionValue="valor"
               placeholder="Selecciona predeterminado"
-              style="width: 100%;"
-              [class.p-invalid]="form.get('predeterminado')?.invalid && form.get('predeterminado')?.touched">
-            </p-select>
-            <small *ngIf="form.get('predeterminado')?.touched && form.get('predeterminado')?.errors">
-              <ng-container *ngIf="form.get('predeterminado')?.errors?.['required']" class="text-red-500">
+              [showClear]="true"
+              class="w-full"
+              appendTo="body"
+              [class.ng-invalid]="form.get('predeterminado')?.invalid && form.get('predeterminado')?.touched"
+              [class.ng-dirty]="form.get('predeterminado')?.touched"
+            ></p-select>
+
+            @if (form.get('predeterminado')?.touched && form.get('predeterminado')?.errors) {
+              @if (form.get('predeterminado')?.errors?.['required']) {
                 <p-message severity="error" variant="simple" size="small">Campo obligatorio</p-message>
-              </ng-container>
-            </small>
+              }
+            }
           </div>
-          <div class="field">
-            <label for="prioridad">Prioridad</label>
+
+          <!-- Campo: Prioridad -->
+          <div class="flex flex-col gap-1">
+            <label for="prioridad" class="text-sm font-medium text-gray-700">Prioridad</label>
             <p-inputnumber
               id="prioridad"
               formControlName="prioridad"
@@ -109,9 +142,11 @@
               [min]="1"
               [max]="10"
               [step]="1"
-              style="width: 100%;"
               [allowEmpty]="false"
-              [class.p-invalid]="form.get('prioridad')?.invalid && form.get('prioridad')?.touched">
+              class="w-full"
+              [class.ng-invalid]="form.get('prioridad')?.invalid && form.get('prioridad')?.touched"
+              [class.ng-dirty]="form.get('prioridad')?.touched"
+            >
               <ng-template #incrementbuttonicon>
                 <span class="pi pi-plus"></span>
               </ng-template>
@@ -119,19 +154,24 @@
                 <span class="pi pi-minus"></span>
               </ng-template>
             </p-inputnumber>
-            <small *ngIf="form.get('prioridad')?.touched && form.get('prioridad')?.errors">
-              <ng-container *ngIf="form.get('prioridad')?.errors?.['required']" class="text-red-500">
+
+            @if (form.get('prioridad')?.touched && form.get('prioridad')?.errors) {
+              @if (form.get('prioridad')?.errors?.['required']) {
                 <p-message severity="error" variant="simple" size="small">Campo obligatorio</p-message>
-              </ng-container>
-            </small>
+              }
+            }
           </div>
+
         </div>
       </p-panel>
     </form>
 
+    <!-- FOOTER -->
     <ng-template #footer>
-      <p-button label="Cancelar" [outlined]="true" severity="info" (onClick)="cerrar()"></p-button>
-      <p-button label="Guardar" [outlined]="true" severity="success" (onClick)="guardar()"></p-button>
+      <div class="flex justify-end gap-2 pt-2">
+        <p-button label="Cancelar" [outlined]="true" severity="info" (onClick)="cerrar()"></p-button>
+        <p-button label="Guardar" [outlined]="true" severity="success" (onClick)="guardar()"></p-button>
+      </div>
     </ng-template>
   </p-dialog>
 </div>

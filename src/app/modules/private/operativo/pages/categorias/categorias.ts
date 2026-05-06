@@ -36,6 +36,7 @@ import {
 import {
   VinculoCategoriaUsuarioRequest
 } from '../../../../../apis/model/module/private/operativo/administrativo/request/vinculo-categoria-usuario-request';
+import {Card} from 'primeng/card';
 
 @Component({
   selector: 'app-categorias',
@@ -51,11 +52,12 @@ import {
     Toast,
     Tooltip,
     FormCategorias,
-    VincularUsuarioCategoria
+    VincularUsuarioCategoria,
+    Card
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './categorias.html',
-  styleUrl: './categorias.scss',
+  styleUrl: './categorias.css',
 })
 export class Categorias {
   protected idEmpresa!: string;
@@ -214,8 +216,7 @@ export class Categorias {
       icon: 'pi pi-info-circle',
       rejectButtonProps: {
         label: 'Cancelar',
-        severity: 'secondary',
-        outlined: true,
+        severity: 'sucess',
       },
       acceptButtonProps: {
         label: 'Eliminar',
@@ -254,13 +255,6 @@ export class Categorias {
               });
             }
           }
-        });
-      },
-      reject: () => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Cancelación',
-          detail: 'No se dió de baja el registro',
         });
       },
     });

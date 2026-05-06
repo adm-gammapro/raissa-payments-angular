@@ -1,144 +1,179 @@
-<p-toast position="top-center"></p-toast>
 <p-confirmdialog></p-confirmdialog>
-<app-breadcrumb [itemsBread]="misItems"></app-breadcrumb>
 
-<form [formGroup]="filtroForm" (ngSubmit)="filtrar()">
-  <p-table [value]="solicitudes"
-           [tableStyle]="{ 'min-width': '50rem' }"
-           [paginator]="true"
-           [totalRecords]="totalRecords"
-           [lazy]="true"
-           [loading]="loading"
-           [rows]="5"
-           [rowsPerPageOptions]="[5, 10, 20]"
-           stripedRows
-           showGridlines
-           breakpoint="960px"
-           [size]="'small'"
-           (onLazyLoad)="loadLazy($event)"
-           currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros en total"
-           showCurrentPageReport="true"
-           sortField="id"
-           [sortOrder]="1"
-  >
-    <ng-template #caption>
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-2 w-full">
-        <!-- Izquierda: inputs (solo en desktop) -->
-        <div class="hidden sm:flex flex-row gap-2">
-          <p-iftalabel>
-            <input type="text"
-                   pInputText
-                   id="codigoSolicitud"
-                   formControlName="codigoSolicitud"
-                   placeholder="Código"
-            />
-            <label for="codigoSolicitud">Búsqueda por código</label>
-          </p-iftalabel>
+<p-card class="shadow-xl rounded-xl border-none">
+  <app-breadcrumb [itemsBread]="misItems"></app-breadcrumb>
+
+  <form [formGroup]="filtroForm" (ngSubmit)="filtrar()">
+    <p-table [value]="solicitudes"
+             [tableStyle]="{ 'min-width': '50rem' }"
+             [paginator]="true"
+             [totalRecords]="totalRecords"
+             [lazy]="true"
+             [loading]="loading"
+             [rows]="5"
+             [rowsPerPageOptions]="[5, 10, 20]"
+             stripedRows
+             [rowHover]="true"
+             breakpoint="960px"
+             [size]="'small'"
+             (onLazyLoad)="loadLazy($event)"
+             currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros en total"
+             showCurrentPageReport="true"
+             sortField="id"
+             [sortOrder]="1"
+    >
+      <!-- CAPTION: Filtros -->
+      <ng-template #caption>
+        <div class="flex flex-wrap items-end justify-between gap-3 mb-2 w-full">
+
+          <!-- Filtros (izquierda) -->
+          <div class="flex flex-wrap items-end gap-3">
+
+            <!-- Búsqueda por código -->
+            <div class="w-[200px] sm:w-[300px]">
+              <p-iftalabel>
+                <input
+                  type="text"
+                  pInputText
+                  id="codigoSolicitud"
+                  formControlName="codigoSolicitud"
+                  placeholder="Código"
+                  class="w-full"
+                />
+                <label for="codigoSolicitud">Búsqueda por código</label>
+              </p-iftalabel>
+            </div>
+
+            <!-- Búsqueda por rango de fechas -->
+            <div class="w-[208px] sm:w-[300px]">
+              <p-iftalabel>
+                <p-datepicker
+                  formControlName="fecha"
+                  selectionMode="range"
+                  [readonlyInput]="true"
+                  placeholder="Fechas"
+                  dateFormat="dd/mm/yy"
+                  styleClass="w-full"
+                  [inputStyle]="{ width: '100%' }"
+                  appendTo="body"
+                ></p-datepicker>
+                <label for="codigoSolicitud">Búsqueda por rango de fechas</label>
+              </p-iftalabel>
+            </div>
+
+            <!-- Búsqueda por usuario -->
+            <div class="w-[200px] sm:w-[300px]">
+              <p-iftalabel>
+                <input
+                  type="text"
+                  pInputText
+                  id="usuarioCarga"
+                  formControlName="usuarioCarga"
+                  placeholder="Usuario"
+                  class="w-full"
+                />
+                <label for="codigoSolicitud">Búsqueda por Usuario</label>
+              </p-iftalabel>
+            </div>
+          </div>
+
+          <!-- Botones (derecha) -->
+          <div class="flex items-center gap-2">
+            <p-button
+              icon="pi pi-search"
+              label="Buscar"
+              (onClick)="filtrar()"
+              [outlined]="true"
+              severity="info"
+              iconPos="top"
+              styleClass="w-[90px]"
+            ></p-button>
+
+            <p-button
+              icon="pi pi-filter-slash"
+              label="Limpiar"
+              (onClick)="limpiarFiltros()"
+              [outlined]="true"
+              severity="secondary"
+              iconPos="top"
+              styleClass="w-[90px]"
+            ></p-button>
+
+            <!-- Botón de carga de plantilla -->
+            <p-button
+              icon="pi pi-upload"
+              label="Cargar"
+              (onClick)="abrirVistaPrevia()"
+              [outlined]="true"
+              severity="success"
+              iconPos="top"
+              styleClass="w-[90px]"
+            ></p-button>
+          </div>
         </div>
-        <div class="hidden sm:flex flex-row gap-2">
-          <p-iftalabel>
-            <p-datepicker
-              formControlName="fecha"
-              selectionMode="range"
-              [readonlyInput]="true"
-              placeholder="Fechas"
-              dateFormat="dd/mm/yy"
-            >
-            </p-datepicker>
-            <label for="codigoSolicitud">Búsqueda por rango de fechas</label>
-          </p-iftalabel>
-        </div>
-        <div class="hidden sm:flex flex-row gap-2">
-          <p-iftalabel>
-            <input type="text"
-                   pInputText
-                   id="usuarioCarga"
-                   formControlName="usuarioCarga"
-                   placeholder="Usuario"
-            />
-            <label for="codigoSolicitud">Búsqueda por Usuario</label>
-          </p-iftalabel>
-        </div>
+      </ng-template>
 
-        <!-- Derecha: botones -->
-        <div class="flex items-center gap-2 sm:gap-2 ml-auto">
-          <p-button
-            icon="pi pi-search"
-            label="Buscar"
-            (onClick)="filtrar()"
-            [outlined]="true"
-            severity="info"
-            iconPos="top">
-          </p-button>
+      <!-- HEADER: Encabezados -->
+      <ng-template #header>
+        <tr>
+          <th id="codigo" class="w-[20%] text-center">Código de solicitud</th>
+          <th id="fecha" class="w-[20%] text-center">
+            Fecha de carga
+            <p-sortIcon field="fecha"/>
+          </th>
+          <th id="usuario" class="w-[25%]">Usuario de carga</th>
+          <th id="cantidad" class="w-[15%] text-right">Cantidad de órdenes</th>
+          <th id="acciones" class="w-[20%] text-center">Acciones</th>
+        </tr>
+      </ng-template>
 
-          <p-button
-            icon="pi pi-filter-slash"
-            label="Limpiar"
-            (onClick)="limpiarFiltros()"
-            [outlined]="true"
-            severity="secondary"
-            iconPos="top">
-          </p-button>
-
-          <!-- Botón extra a la derecha -->
-          <p-fileupload
-            mode="basic"
-            name="demo[]"
-            chooseIcon="pi pi-upload"
-            url="https://www.primefaces.org/cdn/api/upload.php"
-            accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
-            maxFileSize="5000000"
-            [customUpload]="true"
-            (uploadHandler)="onUploadHandler($event)"
-            (onSelect)="onSelect($event)"
-            [auto]="false"
-            chooseLabel="Cargar plantilla"
-            iconPos="top"
-          />
-        </div>
-      </div>
-    </ng-template>
-
-    <ng-template #header>
-      <tr>
-        <th id="codigo" class="text-center">Código de solicitud</th>
-        <th id="fecha" class="text-center">Fecha de carga
-          <p-sortIcon field="fecha"/>
-        </th>
-        <th id="usuario">Usuario de carga</th>
-        <th id="cantidad" class="text-right">Cantidad de órdenes</th>
-        <th id="acciones" class="text-center">Acciones</th>
-      </tr>
-    </ng-template>
-
-    <ng-template #body let-solicitud>
-      <tr>
-        <td class="text-center">{{ solicitud.id }}</td>
-        <td class="text-center">{{ solicitud.fechaCarga }}</td>
-        <td>{{ solicitud.usuarioCarga }}</td>
-        <td class="text-right">{{ solicitud.cantidadOrdenes }}</td>
-        <td class="text-center">
-          <p-button
-            icon="pi pi-eye"
-            [rounded]="true"
-            severity="info"
-            [outlined]="true"
-            pTooltip="Resumen"
-            tooltipPosition="left"
-            size="small"
-            (onClick)="detalle(solicitud.cargos)"
-          />
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
-</form>
+      <!-- BODY: Filas de datos -->
+      <ng-template #body let-solicitud>
+        <tr>
+          <td class="text-center">{{ solicitud.id }}</td>
+          <td class="text-center">{{ solicitud.fechaCarga }}</td>
+          <td>{{ solicitud.usuarioCarga }}</td>
+          <td class="text-right">{{ solicitud.cantidadOrdenes }}</td>
+          <td class="text-center">
+            <div class="flex items-center justify-center">
+              <p-button
+                icon="pi pi-eye"
+                [rounded]="true"
+                severity="info"
+                [outlined]="true"
+                pTooltip="Resumen"
+                tooltipPosition="left"
+                size="small"
+                (onClick)="detalle(solicitud.cargos)"
+              />
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <!-- EMPTY STATE -->
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6" class="text-center py-8 text-gray-500">
+            <div class="flex flex-col items-center gap-2">
+              <i class="pi pi-file text-4xl"></i>
+              <p class="text-lg">No se encontraron resultados</p>
+              @if (filtroForm.get('codigoSolicitud')?.value ||
+              filtroForm.get('usuarioCarga')?.value ||
+              filtroForm.get('fecha')?.value?.[0]) {
+                <p class="text-sm">
+                  No hay resultados para los filtros aplicados
+                </p>
+              }
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </form>
+</p-card>
 
 <app-vista-previa-solicitud
   [(visible)]="visibleVistaPrevia"
-  [cargos]="cargos"
-  [mostrar]="mostrarVistaPrevia"
-  [selectedFile]="selectedFile"
   (refresh)="filtrar()">
 </app-vista-previa-solicitud>
 

@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
   selector: 'app-dashboard-footer',
   imports: [],
   templateUrl: './dashboard-footer.html',
-  styleUrl: './dashboard-footer.scss',
+  styleUrl: './dashboard-footer.css',
 })
 export class DashboardFooter {
   appVersion = '1.0.0';

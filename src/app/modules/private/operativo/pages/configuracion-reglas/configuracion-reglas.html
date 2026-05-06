@@ -1,102 +1,117 @@
 <p-toast position="top-center"></p-toast>
 <p-confirmdialog></p-confirmdialog>
-<app-breadcrumb [itemsBread]="misItems"></app-breadcrumb>
 
-<form [formGroup]="filtroForm" (ngSubmit)="filtrar()">
-  <p-table #dt
-           [value]="configuraciones"
-           [tableStyle]="{ 'min-width': '50rem' }"
-           [paginator]="true"
-           [totalRecords]="totalRecords"
-           [lazy]="true"
-           [loading]="loading"
-           [rows]="5"
-           [rowsPerPageOptions]="[5, 10, 20]"
-           stripedRows
-           showGridlines
-           breakpoint="960px"
-           [size]="'small'"
-           (onLazyLoad)="loadLazy($event)"
-           currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros en total"
-           showCurrentPageReport="true"
-           sortField="id"
-           [sortOrder]="1"
-  >
-    <ng-template #caption>
-      <div class="flex items-center justify-between gap-3 mb-2 w-full">
-        <div style="width: 300px;">
-          <p-iftalabel>
-            <p-select
-              id="codigoRegla"
-              formControlName="codigoRegla"
-              [options]="reglas"
-              optionLabel="descripcion"
-              optionValue="codigo"
-              [filter]="true"
-              filterBy="descripcion"
-              [showClear]="true"
-              placeholder="Selecciona regla"
-              style="width: 100%;">
-              <ng-template #selectedItem let-selectedOption>
-                <div class="flex items-center gap-2">
-                  <div>{{ selectedOption.descripcion }}</div>
-                </div>
-              </ng-template>
-              <ng-template let-regla #item>
-                <div class="flex items-center gap-2">
-                  <div>{{ regla.descripcion }}</div>
-                </div>
-              </ng-template>
-            </p-select>
-            <label for="codigoRegla">Búsqueda por regla</label>
-          </p-iftalabel>
-        </div>
-        <div style="width: 300px;">
-          <p-iftalabel>
-            <p-select
-              id="codigoCategoria"
-              formControlName="codigoCategoria"
-              [options]="categorias"
-              optionLabel="descripcion"
-              optionValue="codigo"
-              placeholder="Selecciona categoria"
-              style="width: 100%;">
-            </p-select>
-            <label for="codigoCategoria">Búsqueda por categoria</label>
-          </p-iftalabel>
-        </div>
-        <div style="width: 300px;">
-          <p-iftalabel>
-            <p-select
-              id="codigoModo"
-              formControlName="codigoModo"
-              [options]="modos"
-              optionLabel="descripcion"
-              optionValue="valor"
-              placeholder="Selecciona modo"
-              style="width: 100%;">
-            </p-select>
-            <label for="codigoModo">Búsqueda por modo</label>
-          </p-iftalabel>
-        </div>
-        <div style="width: 300px;">
-          <p-iftalabel>
-            <p-select
-              id="estadoRegistro"
-              formControlName="estadoRegistro"
-              [options]="estados"
-              optionLabel="descripcion"
-              optionValue="valor"
-              placeholder="Selecciona estado"
-              style="width: 100%;">
-            </p-select>
-            <label for="estadoRegistro">Estado de registro</label>
-          </p-iftalabel>
-        </div>
+<p-card class="shadow-xl rounded-xl overflow-hidden">
+  <app-breadcrumb [itemsBread]="misItems"></app-breadcrumb>
 
-        <!-- Derecha: botones alineados a la derecha -->
-        <div class="flex items-center gap-2 ml-auto">
-          <div style="width: 100px;">
+  <form [formGroup]="filtroForm" (ngSubmit)="filtrar()">
+    <p-table #dt
+             [value]="configuraciones"
+             [tableStyle]="{ 'min-width': '50rem' }"
+             [paginator]="true"
+             [totalRecords]="totalRecords"
+             [lazy]="true"
+             [loading]="loading"
+             [rows]="5"
+             [rowsPerPageOptions]="[5, 10, 20]"
+             [rowHover]="true"
+             stripedRows
+             breakpoint="960px"
+             [size]="'small'"
+             (onLazyLoad)="loadLazy($event)"
+             currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros en total"
+             showCurrentPageReport="true"
+             sortField="id"
+             [sortOrder]="1"
+    >
+      <!-- CAPTION: Filtros -->
+      <ng-template #caption>
+        <div class="flex flex-wrap items-end justify-between gap-3 mb-2 w-full">
+
+          <!-- Filtros (izquierda) -->
+          <div class="flex flex-wrap items-end gap-3">
+
+            <!-- Select Regla -->
+            <div class="w-[280px] sm:w-[300px]">
+              <p-iftalabel>
+                <p-select
+                  id="codigoRegla"
+                  formControlName="codigoRegla"
+                  [options]="reglas"
+                  optionLabel="descripcion"
+                  optionValue="codigo"
+                  [filter]="true"
+                  filterBy="descripcion"
+                  [showClear]="true"
+                  placeholder="Selecciona regla"
+                  class="w-full"
+                  appendTo="body">
+                  <ng-template #selectedItem let-selectedOption>
+                    <div class="flex items-center gap-2">
+                      <div>{{ selectedOption.descripcion }}</div>
+                    </div>
+                  </ng-template>
+                  <ng-template let-regla #item>
+                    <div class="flex items-center gap-2">
+                      <div>{{ regla.descripcion }}</div>
+                    </div>
+                  </ng-template>
+                </p-select>
+                <label for="codigoRegla">Búsqueda por regla</label>
+              </p-iftalabel>
+            </div>
+
+            <!-- Select Categoría -->
+            <div class="w-[280px] sm:w-[300px]">
+              <p-iftalabel>
+                <p-select
+                  id="codigoCategoria"
+                  formControlName="codigoCategoria"
+                  [options]="categorias"
+                  optionLabel="descripcion"
+                  optionValue="codigo"
+                  placeholder="Selecciona categoria"
+                  class="w-full">
+                </p-select>
+                <label for="codigoCategoria">Búsqueda por categoria</label>
+              </p-iftalabel>
+            </div>
+
+            <!-- Select Modo -->
+            <div class="w-[280px] sm:w-[300px]">
+              <p-iftalabel>
+                <p-select
+                  id="codigoModo"
+                  formControlName="codigoModo"
+                  [options]="modos"
+                  optionLabel="descripcion"
+                  optionValue="valor"
+                  placeholder="Selecciona modo"
+                  styleClass="w-full">
+                </p-select>
+                <label for="codigoModo">Búsqueda por modo</label>
+              </p-iftalabel>
+            </div>
+
+            <!-- Select Estado -->
+            <div class="w-[280px] sm:w-[300px]">
+              <p-iftalabel>
+                <p-select
+                  id="estadoRegistro"
+                  formControlName="estadoRegistro"
+                  [options]="estados"
+                  optionLabel="descripcion"
+                  optionValue="valor"
+                  placeholder="Selecciona estado"
+                  styleClass="w-full">
+                </p-select>
+                <label for="estadoRegistro">Estado de registro</label>
+              </p-iftalabel>
+            </div>
+          </div>
+
+          <!-- Botones (derecha) -->
+          <div class="flex items-center gap-2 ml-auto pt-1">
             <p-button
               icon="pi pi-search"
               label="Buscar"
@@ -104,78 +119,89 @@
               [outlined]="true"
               severity="info"
               iconPos="top"
-              styleClass="w-full">
+              styleClass="w-[100px]">
             </p-button>
-          </div>
-          <div style="width: 100px;">
             <p-button
               icon="pi pi-filter-slash"
               label="Limpiar"
               (onClick)="limpiarFiltros()"
               [outlined]="true"
               severity="secondary"
-              styleClass="w-full"
-              iconPos="top">
+              iconPos="top"
+              styleClass="w-[100px]">
             </p-button>
-          </div>
-          <div style="width: 100px;">
             <p-button
               icon="pi pi-plus"
               label="Nuevo"
               [outlined]="true"
               severity="success"
-              styleClass="w-full"
               iconPos="top"
-              (onClick)="nuevo()">
+              (onClick)="nuevo()"
+              styleClass="w-[100px]">
             </p-button>
           </div>
         </div>
-      </div>
-    </ng-template>
+      </ng-template>
 
-    <ng-template #header>
-      <tr>
-        <th pSortableColumn="descripcionRegla" id="descripcionRegla" style="width:20%">Descripción regla<p-sortIcon field="descripcionRegla"/></th>
-        <th pSortableColumn="descripcionCategoria" id="descripcionCategoria" style="width:20%">Descripción categoria<p-sortIcon field="descripcionCategoria"/></th>
-        <th pSortableColumn="descripcionModo" id="descripcionModo" style="width:20%">Descripción modo<p-sortIcon field="descripcionModo"/></th>
-        <th id="predeterminado" style="width:10%" class="text-center">Predeterminado</th>
-        <th id="prioridad" style="width:10%" class="text-center">Prioridad</th>
-        <th id="acciones" style="width:20%" class="text-center">Acciones</th>
-      </tr>
-    </ng-template>
+      <!-- HEADER: Encabezados de tabla -->
+      <ng-template #header>
+        <tr>
+          <th pSortableColumn="descripcionRegla" id="descripcionRegla" class="w-[20%]">Descripción regla
+            <p-sortIcon field="descripcionRegla"/>
+          </th>
+          <th pSortableColumn="descripcionCategoria" id="descripcionCategoria" class="w-[20%]">Descripción categoria
+            <p-sortIcon field="descripcionCategoria"/>
+          </th>
+          <th pSortableColumn="descripcionModo" id="descripcionModo" class="w-[20%]">Descripción modo
+            <p-sortIcon field="descripcionModo"/>
+          </th>
+          <th id="predeterminado" class="w-[10%] text-center">Predeterminado</th>
+          <th id="prioridad" class="w-[10%] text-center">Prioridad</th>
+          <th id="acciones" class="w-[20%] text-center">Acciones</th>
+        </tr>
+      </ng-template>
 
-    <ng-template #body let-configuracion>
-      <tr>
-        <td>{{ configuracion.descripcionRegla }}</td>
-        <td>{{ configuracion.descripcionCategoria }}</td>
-        <td>{{ configuracion.descripcionModo }}</td>
-        <td>{{ configuracion.predeterminado }}</td>
-        <td>{{ configuracion.prioridad }}</td>
-        <td class="text-center">
-          <p-button
-            icon="pi pi-file-edit"
-            [rounded]="true"
-            severity="info"
-            [outlined]="true"
-            pTooltip="Editar"
-            tooltipPosition="left"
-            size="small"
-            (onClick)="editar(configuracion.codigo)"
-          />
-          <p-button
-            icon="pi pi-trash"
-            [rounded]="true"
-            severity="danger"
-            [outlined]="true"
-            pTooltip="Eliminar"
-            tooltipPosition="left"
-            size="small"
-            (onClick)="delete($event, configuracion.codigo)"
-          />
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
-</form>
+      <!-- BODY: Filas de datos -->
+      <ng-template #body let-configuracion>
+        <tr>
+          <td>{{ configuracion.descripcionRegla }}</td>
+          <td>{{ configuracion.descripcionCategoria }}</td>
+          <td>{{ configuracion.descripcionModo }}</td>
+          <td>{{ configuracion.predeterminado }}</td>
+          <td>{{ configuracion.prioridad }}</td>
+          <td class="text-center">
+            <div class="flex items-center justify-center gap-1">
+              <p-button
+                icon="pi pi-file-edit"
+                [rounded]="true"
+                severity="info"
+                [outlined]="true"
+                pTooltip="Editar"
+                tooltipPosition="left"
+                size="small"
+                (onClick)="editar(configuracion.codigo)"
+              />
+              <p-button
+                icon="pi pi-trash"
+                [rounded]="true"
+                severity="danger"
+                [outlined]="true"
+                pTooltip="Eliminar"
+                tooltipPosition="left"
+                size="small"
+                (onClick)="delete($event, configuracion.codigo)"
+              />
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </form>
+</p-card>
 
-<app-form-configuracion-reglas [(visible)]="visibleForm" [configuracionData]="selectedConfiguracion" (guardarRegistro)="guardar()" [modo]="modoUso"></app-form-configuracion-reglas>
+<app-form-configuracion-reglas
+  [(visible)]="visibleForm"
+  [configuracionData]="selectedConfiguracion"
+  (guardarRegistro)="guardar()"
+  [modo]="modoUso">
+</app-form-configuracion-reglas>

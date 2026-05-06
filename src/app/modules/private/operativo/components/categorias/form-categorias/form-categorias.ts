@@ -3,7 +3,6 @@ import {Button} from "primeng/button";
 import {Dialog} from "primeng/dialog";
 import {InputText} from "primeng/inputtext";
 import {Message} from "primeng/message";
-import {NgIf} from "@angular/common";
 import {Panel} from "primeng/panel";
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {
@@ -12,9 +11,6 @@ import {
 import {MessageService} from 'primeng/api';
 import {AdministrativoService} from '../../../../../../service/modules/private/operativo/administrativo/administrativo';
 import {environment} from '../../../../../../../environments/environment';
-import {
-  TipoPagoRequest
-} from '../../../../../../apis/model/module/private/operativo/administrativo/request/tipo-pago-request';
 import {
   CategoriaResponse
 } from '../../../../../../apis/model/module/private/operativo/administrativo/response/categoria-response';
@@ -29,7 +25,6 @@ import {
         Dialog,
         InputText,
         Message,
-        NgIf,
         Panel,
         ReactiveFormsModule
     ],
