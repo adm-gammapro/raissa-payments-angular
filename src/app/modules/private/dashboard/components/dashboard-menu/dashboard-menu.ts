@@ -3,7 +3,7 @@ import {Drawer, DrawerModule} from 'primeng/drawer';
 import {ButtonModule} from 'primeng/button';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MenuItem, MessageService} from 'primeng/api';
-import {MenuService} from '../../../../../service/modules/private/layout/dashboard/menu';
+import {MenuService} from '../../../../../service/modules/private/layout/dashboard/menu.service';
 import {
   MenuUsuarioResponse
 } from '../../../../../apis/model/module/private/admnistrativo/dashboard/response/menu-usuario-response';
@@ -46,12 +46,16 @@ export class DashboardMenu implements OnInit {
       let idEmpresa: string | null = sessionStorage.getItem(environment.session.ID_EMPRESA);
 
       if (typeof window !== 'undefined' && typeof window.sessionStorage !== 'undefined') {
+
         if (sessionStorage.getItem(environment.session.MENU_ITEMS)) {
+
           const menuItemsString = sessionStorage.getItem(environment.session.MENU_ITEMS);
+
           if (menuItemsString) {
             this.items = JSON.parse(menuItemsString) as MenuItem[];
           }
         } else {
+
           this.menuService.getMenuUsuarios(user, idEmpresa).subscribe({
             next: resp => {
               this.items = this.cargarMenu(resp);

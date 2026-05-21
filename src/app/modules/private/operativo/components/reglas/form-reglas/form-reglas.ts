@@ -6,7 +6,7 @@ import {Message} from "primeng/message";
 import {Panel} from "primeng/panel";
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {MessageService} from 'primeng/api';
-import {AdministrativoService} from '../../../../../../service/modules/private/operativo/administrativo/administrativo';
+import {AdministrativoService} from '../../../../../../service/modules/private/operativo/administrativo/administrativo.service';
 import {environment} from '../../../../../../../environments/environment';
 import {
   ReglaResponse
@@ -29,7 +29,7 @@ import {InputNumber} from 'primeng/inputnumber';
     InputNumber
   ],
   templateUrl: './form-reglas.html',
-  styleUrl: './form-reglas.scss',
+  styleUrl: './form-reglas.css',
 })
 export class FormReglas {
   @Input() visible: boolean = false;

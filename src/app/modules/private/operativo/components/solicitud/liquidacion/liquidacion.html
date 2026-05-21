@@ -1,1 +1,125 @@
-<p>liquidacion works!</p>
+<div class="bg-white shadow-md rounded-lg flex justify-center">
+  <p-dialog
+    [modal]="true"
+    [(visible)]="visible"
+    [style]="{ width: '70rem' }"
+    closable="false"
+  >
+    <!-- HEADER -->
+    <ng-template #header>
+      <div class="inline-flex items-center justify-center gap-2">
+        <h2><span class="font-bold whitespace-nowrap">Liquidación</span></h2>
+      </div>
+    </ng-template>
+
+    <!-- CABECERA DE TOTALES -->
+    @if (liquidacion) {
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+
+        <!-- Moneda -->
+        <div class="col-span-3 bg-blue-50 rounded-lg p-3 border border-blue-100">
+          <span class="flex justify-center text-xs text-blue-600 font-medium">Moneda</span>
+          <p class="flex justify-center text-lg font-bold text-blue-800">{{ liquidacion.moneda | moneda }}</p>
+        </div>
+
+        <!-- Total Liquidación -->
+        <div class="bg-green-50 rounded-lg p-3 border border-green-100">
+          <span class="flex justify-end text-xs text-green-600 font-medium">Total cargado en esta planilla</span>
+          <p class="flex justify-end text-lg font-bold text-green-800">{{ liquidacion.totalLiquidacion | numberFormat: {currency: liquidacion.moneda} }}</p>
+        </div>
+
+        <!-- Cargo -->
+        <div class="bg-purple-50 rounded-lg p-3 border border-purple-100">
+          <span class="flex justify-end text-xs text-purple-600 font-medium">Cargo sin impuestos ni comisiones</span>
+          <p class="flex justify-end text-lg font-bold text-purple-800">{{ liquidacion.cargo | numberFormat: {currency: liquidacion.moneda} }}</p>
+        </div>
+
+        <!-- Total Cobros -->
+        <div class="bg-indigo-50 rounded-lg p-3 border border-indigo-100">
+          <span class="flex justify-end text-xs text-indigo-600 font-medium">Cargo por impuestos y comisiones</span>
+          <p class="flex justify-end text-lg font-bold text-indigo-800">{{ liquidacion.totalCobros | numberFormat: {currency: liquidacion.moneda} }}</p>
+        </div>
+
+        <!-- Total Impuestos -->
+        <div class="bg-orange-50 rounded-lg p-3 border border-orange-100">
+          <span class="flex justify-end text-xs text-orange-600 font-medium">Total Impuestos</span>
+          <p class="flex justify-end text-lg font-bold text-orange-800">{{ liquidacion.totalImpuestos | numberFormat: {currency: liquidacion.moneda} }}</p>
+        </div>
+
+        <!-- Comisiones Origen -->
+        <div class="bg-red-50 rounded-lg p-3 border border-red-100">
+          <span class="flex justify-end text-xs text-red-600 font-medium">Total comisiones origen</span>
+          <p class="flex justify-end text-lg font-bold text-red-800">{{ liquidacion.totalComisionesOrigen | numberFormat: {currency: liquidacion.moneda} }}</p>
+        </div>
+
+        <!-- Comisiones Destino -->
+        <div class="bg-teal-50 rounded-lg p-3 border border-teal-100">
+          <span class="flex justify-end text-xs text-teal-600 font-medium">Total comisiones destino</span>
+          <p class="flex justify-end text-lg font-bold text-teal-800">{{ liquidacion.totalComisionesDestino | numberFormat: {currency: liquidacion.moneda} }}</p>
+        </div>
+      </div>
+    }
+
+    <!-- TABLA DE DETALLE -->
+    <p-table
+      [value]="liquidacion?.detalle ?? []"
+      [tableStyle]="{ 'min-width': '45rem' }"
+      [size]="'small'"
+      stripedRows
+      showGridlines
+      class="mb-4"
+    >
+      <ng-template #caption>
+        <div class="flex items-center gap-2">
+          <i class="pi pi-list text-blue-500"></i>
+          <span class="font-semibold text-gray-700">Detalle de Liquidación</span>
+        </div>
+      </ng-template>
+
+      <ng-template #header>
+        <tr>
+          <th id="cciDestino">CCI Destino</th>
+          <th id="cliente">Cliente</th>
+          <th id="abono" class="text-right">Abono</th>
+          <th id="itf" class="text-right">ITF</th>
+          <th id="comisionOrigen" class="text-right">Comisión Origen</th>
+          <th id="comisionDestino" class="text-right">Comisión Destino</th>
+        </tr>
+      </ng-template>
+
+      <ng-template #body let-detalle>
+        <tr>
+          <td>
+            <span class="font-mono text-sm">{{ detalle.cciDestino }}</span>
+          </td>
+          <td>
+            <span class="font-mono text-sm">{{ detalle.cliente }}</span>
+          </td>
+          <td class="text-right">{{ detalle.monto  | numberFormat: {currency: detalle.moneda} }}</td>
+          <td class="text-right">{{ detalle.itf  | numberFormat: {currency: detalle.moneda} }}</td>
+          <td class="text-right">{{ detalle.comisionOrigen  | numberFormat: {currency: detalle.moneda} }}</td>
+          <td class="text-right">{{ detalle.comisionDestino  | numberFormat: {currency: detalle.moneda} }}</td>
+        </tr>
+      </ng-template>
+
+      <!-- EMPTY STATE -->
+      <ng-template #emptymessage>
+        <tr>
+          <td colspan="4" class="text-center py-8 text-gray-500">
+            <div class="flex flex-col items-center gap-2">
+              <i class="pi pi-inbox text-4xl"></i>
+              <p class="text-lg">Sin detalle de liquidación</p>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+
+    <!-- FOOTER -->
+    <ng-template #footer>
+      <div class="flex justify-end pt-2">
+        <p-button label="Cerrar" [outlined]="true" severity="info" (onClick)="cerrar()"></p-button>
+      </div>
+    </ng-template>
+  </p-dialog>
+</div>

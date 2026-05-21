@@ -8,6 +8,7 @@ import {Logout} from './config/logout/logout';
 import {Dashboard} from './modules/private/dashboard/pages/dashboard/dashboard';
 import {operativoRoutes} from './modules/private/operativo/operativo.routes';
 import {dashboardRoutes} from './modules/private/dashboard/dashboard.routes';
+import {administrativoRoutes} from './modules/private/administrativo/administrativo.routes';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'login' },
@@ -38,6 +39,11 @@ export const routes: Routes = [
         path: 'operativo',
         canActivate: [AuthGuard],
         children: operativoRoutes
+      },
+      {
+        path: 'administrativo',
+        canActivate: [AuthGuard],
+        children: administrativoRoutes
       },
       {
         path: 'dashboard',

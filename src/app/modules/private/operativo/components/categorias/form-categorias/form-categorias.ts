@@ -9,7 +9,7 @@ import {
   TipoPagoResponse
 } from '../../../../../../apis/model/module/private/operativo/administrativo/response/tipo-pago-response';
 import {MessageService} from 'primeng/api';
-import {AdministrativoService} from '../../../../../../service/modules/private/operativo/administrativo/administrativo';
+import {AdministrativoService} from '../../../../../../service/modules/private/operativo/administrativo/administrativo.service';
 import {environment} from '../../../../../../../environments/environment';
 import {
   CategoriaResponse
@@ -29,7 +29,7 @@ import {
         ReactiveFormsModule
     ],
   templateUrl: './form-categorias.html',
-  styleUrl: './form-categorias.scss',
+  styleUrl: './form-categorias.css',
 })
 export class FormCategorias {
   @Input() visible: boolean = false;

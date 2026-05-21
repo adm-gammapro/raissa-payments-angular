@@ -1,7 +1,7 @@
 <p-toast position="top-center"></p-toast>
 <p-confirmdialog></p-confirmdialog>
 
-<p-card class="shadow-xl rounded-xl overflow-hidden">
+<p-card class="shadow-xl rounded-xl border-none">
   <app-breadcrumb [itemsBread]="misItems"></app-breadcrumb>
 
   <form [formGroup]="filtroForm" (ngSubmit)="filtrar()">

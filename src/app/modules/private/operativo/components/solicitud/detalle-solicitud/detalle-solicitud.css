@@ -1,6 +1,6 @@
 ::ng-deep {
   .mi-dialog-cargos-unico {
-    // Tabla interna (hijo) - Filas en azul claro
+    /*Tabla interna (hijo) - Filas en azul claro*/
     .p-datatable-tbody .p-datatable-tbody > tr {
       background-color: #e3f2fd !important;
 
@@ -13,7 +13,7 @@
       }
     }
 
-    // Forzar que la tabla padre mantenga su color por defecto
+    /*Forzar que la tabla padre mantenga su color por defecto*/
     .p-datatable-tbody > tr {
       background-color: #ffffff !important;
 

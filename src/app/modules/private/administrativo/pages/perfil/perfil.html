@@ -1,0 +1,136 @@
+<p-toast position="top-center"></p-toast>
+<p-confirmDialog></p-confirmDialog>
+
+<p-card class="shadow-xl rounded-xl overflow-hidden">
+  <app-breadcrumb [itemsBread]="misItems"></app-breadcrumb>
+
+  <form [formGroup]="filtroForm" (ngSubmit)="filtrar()">
+    <p-table #dt
+             [value]="perfiles"
+             [tableStyle]="{ 'min-width': '50rem' }"
+             [paginator]="true"
+             [totalRecords]="totalRecords"
+             [lazy]="true"
+             [loading]="loading"
+             [rows]="5"
+             [rowsPerPageOptions]="[5, 10, 20]"
+             [rowHover]="true"
+             stripedRows
+             breakpoint="960px"
+             [size]="'small'"
+             (onLazyLoad)="loadLazy($event)"
+             currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros en total"
+             showCurrentPageReport="true"
+             sortField="descripcion"
+             [sortOrder]="1"
+             appendTo="body"
+    >
+
+      <!-- CAPTION: Filtros -->
+      <ng-template #caption>
+        <div class="flex flex-wrap items-end justify-between gap-3 mb-2 w-full">
+          <div class="flex flex-wrap items-end gap-3">
+            <!-- Búsqueda por descripción -->
+            <div class="w-[280px] sm:w-[300px]">
+              <p-iftalabel>
+                <input id="descripcionsearch" pInputText type="text" placeholder="Descripción" class="w-full" formControlName="descripcion"/>
+                <label for="descripcionsearch">Búsqueda por descripción</label>
+              </p-iftalabel>
+            </div>
+
+            <!-- Búsqueda por abreviatura -->
+            <div class="w-[280px] sm:w-[300px]">
+              <p-iftalabel>
+                <input id="abreviaturaSearch" pInputText type="text" placeholder="Abreviatura" class="w-full" formControlName="abreviatura"/>
+                <label for="abreviaturaSearch">Búsqueda por abreviatura</label>
+              </p-iftalabel>
+            </div>
+
+            <!-- Select Estado -->
+            <div class="w-[280px] sm:w-[300px]">
+              <p-iftalabel>
+                <p-select id="estadoRegistro" formControlName="estadoRegistro" [options]="estados" optionLabel="descripcion" optionValue="valor" placeholder="Selecciona estado" class="w-full" appendTo="body"></p-select>
+                <label for="estadoRegistro">Estado de registro</label>
+              </p-iftalabel>
+            </div>
+          </div>
+
+          <!-- Botones -->
+          <div class="flex items-center gap-2 ml-auto pt-1">
+            <p-button icon="pi pi-search" label="Buscar" (onClick)="filtrar()" [outlined]="true" severity="info" iconPos="top" styleClass="w-[100px]"></p-button>
+            <p-button icon="pi pi-filter-slash" label="Limpiar" (onClick)="limpiarFiltros()" [outlined]="true" severity="secondary" iconPos="top" styleClass="w-[100px]"></p-button>
+            <p-button icon="pi pi-plus" label="Nuevo" [outlined]="true" severity="success" iconPos="top" (onClick)="nuevo()" styleClass="w-[100px]"></p-button>
+          </div>
+        </div>
+      </ng-template>
+
+      <!-- HEADER -->
+      <ng-template #header>
+        <tr>
+          <th id="descripcion" pSortableColumn="descripcion" class="w-[25%]">Descripción <p-sortIcon field="descripcion"/></th>
+          <th id="abreviatura" pSortableColumn="abreviatura" class="w-[15%]">Referencia <p-sortIcon field="abreviatura"/></th>
+          <th id="nombreComercial" pSortableColumn="nombreComercial" class="w-[25%]">Referencia destino <p-sortIcon field="nombreComercial"/></th>
+          <th id="fechaCaducidad" class="w-[15%]">Fecha Caducidad</th>
+          <th id="estado" class="w-[10%]">Estado</th>
+          <th id="acciones" class="w-[10%] text-center">Acciones</th>
+        </tr>
+      </ng-template>
+
+      <!-- BODY -->
+      <ng-template #body let-perfil>
+        <tr>
+          <td>{{ perfil.descripcion }}</td>
+          <td>{{ perfil.abreviatura }}</td>
+          <td>{{ perfil.nombreComercial }}</td>
+          <td>{{ perfil.fechaCaducidad | date:'dd/MM/yyyy' }}</td>
+          <td>{{ perfil.estadoRegistro | estadoRegistroLabel}} </td>
+          <td class="text-center">
+            <div class="flex items-center justify-center gap-1">
+              <p-button
+                icon="pi pi-building"
+                [rounded]="true"
+                severity="info"
+                [outlined]="true"
+                pTooltip="Vincular clientes"
+                tooltipPosition="left"
+                size="small"
+                (onClick)="abrirModalClientes(perfil.codigo)"
+              ></p-button>
+              <p-button
+                icon="pi pi-bars"
+                [rounded]="true"
+                severity="info"
+                [outlined]="true"
+                pTooltip="Vincular opciones de menú"
+                tooltipPosition="left"
+                size="small"
+                (onClick)="abrirModalOpciones(perfil.codigo)"
+              ></p-button>
+              <p-button icon="pi pi-file-edit" [rounded]="true" [outlined]="true" pTooltip="Editar" tooltipPosition="left" size="small" (onClick)="editar(perfil.codigo)"/>
+              <p-button icon="pi pi-trash" [rounded]="true" severity="danger" [outlined]="true" pTooltip="Eliminar" tooltipPosition="left" size="small" (onClick)="delete($event, perfil.codigo)"/>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </form>
+</p-card>
+
+<app-form-perfil
+  [(visible)]="visibleForm"
+  [perfilData]="selectedPerfil"
+  (guardarRegistro)="guardar()"
+  [modo]="modoUso">
+</app-form-perfil>
+
+<app-vincular-perfil-clientes
+  *ngIf="modalClientesVisible"
+  [(visible)]="modalClientesVisible"
+  [PerfilId]="perfilSeleccionadoId"
+></app-vincular-perfil-clientes>
+
+<app-vincular-perfil-opciones
+  *ngIf="modalOpcionesVisible"
+  [(visible)]="modalOpcionesVisible"
+  [PerfilId]="perfilSeleccionadoOpcionId"
+></app-vincular-perfil-opciones>

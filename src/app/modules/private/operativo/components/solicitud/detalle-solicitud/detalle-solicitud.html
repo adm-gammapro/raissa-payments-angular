@@ -134,6 +134,8 @@
                     }
                     @if (tieneRespuestaConsulta(det)) {
                       <td>{{ det.dscRespuestaConsulta }}</td>
+                    }@else {
+                      <td>—</td>
                     }
                     @if (tieneEstadoEjecucion(det)) {
                       <td>

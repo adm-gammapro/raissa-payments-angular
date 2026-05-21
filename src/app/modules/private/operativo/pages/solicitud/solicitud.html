@@ -21,7 +21,7 @@
              sortField="id"
              [sortOrder]="1"
              stripedRows
-             [rowHover]="true" ]
+             [rowHover]="true"
     >
       <!-- CAPTION: Filtros -->
       <ng-template #caption>
@@ -129,15 +129,15 @@
         <tr>
           <th id="codigo" class="text-center w-[10%]">Código</th>
           <th id="semaforo" class="text-center w-[12%]">Indicador</th>
-          <th id="fecha" class="text-center w-[12%]">
+          <th id="fecha" class="text-center w-[16%]">
             Fecha de carga
             <p-sortIcon field="fecha"/>
           </th>
           <th id="usuario" class="w-[12%]">Usuario carga</th>
           <th id="usuarioAutoriza" class="w-[12%]">Usuario autoriza</th>
           <th id="cantidad" class="text-right w-[8%]">Cantidad</th>
-          <th id="estado" class="text-center w-[10%]">Estado</th>
-          <th id="acciones" class="text-center w-[24%]">Acciones</th>
+          <th id="estado" class="text-center w-[14%]">Estado</th>
+          <th id="acciones" class="text-center w-[16%]">Acciones</th>
         </tr>
       </ng-template>
 
@@ -276,6 +276,11 @@
                             pTooltip="Ver observaciones" tooltipPosition="left" size="small"
                             (onClick)="anularObservar('ver','EJECUTAR', solicitud.id)"/>
                 }
+                @if (solicitud.estadoSolicitud === 'PROCESADO_PARCIAL' || solicitud.estadoSolicitud === 'PROCESADO_TOTAL') {
+                  <p-button icon="pi pi-money-bill" [rounded]="true" severity="info" [outlined]="true"
+                            pTooltip="Ver liquidacion" tooltipPosition="left" size="small"
+                            (onClick)="verLiquidacion(solicitud.id)"/>
+                }
               }
 
               <!-- Modo: AUTORIZAR o EJECUTAR - Observar cuando AUTORIZADO -->
@@ -330,3 +335,8 @@
       animationDuration=".5s"/>
   </div>
 </p-dialog>
+
+<app-liquidacion
+  [(visible)]="visibleLiquidacion"
+  [liquidacion]="liquidacionData">
+</app-liquidacion>

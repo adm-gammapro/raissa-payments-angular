@@ -7,7 +7,7 @@ import {ConfirmationService, MenuItem, MessageService} from 'primeng/api';
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
-import {BreadcrumbComponent} from '../../../administrativo/components/breadcrumb/breadcrumb.component';
+import {BreadcrumbComponent} from '../../../commons/components/breadcrumb/breadcrumb.component';
 import { TooltipModule } from 'primeng/tooltip';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -24,7 +24,7 @@ import {
   SolicitudSearchResponse
 } from '../../../../../apis/model/module/private/operativo/solicitud/response/solicitud-search-response';
 import {Util} from '../../../../../utils/util/util';
-import {SolicitudService} from '../../../../../service/modules/private/operativo/solicitud/solicitud';
+import {SolicitudService} from '../../../../../service/modules/private/operativo/solicitud/solicitud.service';
 import {
   SolicitudResponse
 } from '../../../../../apis/model/module/private/operativo/solicitud/response/solicitud-response';
@@ -34,7 +34,7 @@ import {
 import {
   FlujoSolicitudRequest
 } from '../../../../../apis/model/module/private/operativo/solicitud/request/flujo-solicitud-request';
-import {TrackingService} from '../../../../../service/modules/private/operativo/solicitud/tracking';
+import {TrackingService} from '../../../../../service/modules/private/operativo/solicitud/tracking.service';
 import {
   TrackingResponse
 } from '../../../../../apis/model/module/private/operativo/solicitud/response/tracking-response';
@@ -44,13 +44,17 @@ import {IftaLabel} from 'primeng/iftalabel';
 import {
   ObservacionRequest
 } from '../../../../../apis/model/module/private/operativo/solicitud/request/observacion-request';
-import {ObservacionService} from '../../../../../service/modules/private/operativo/solicitud/observacion';
+import {ObservacionService} from '../../../../../service/modules/private/operativo/solicitud/observacion.service';
 import {
   ObservacionResponse
 } from '../../../../../apis/model/module/private/operativo/solicitud/response/observacion-response';
 import {Dialog} from 'primeng/dialog';
 import {ProgressSpinner} from 'primeng/progressspinner';
 import {Card} from 'primeng/card';
+import {Liquidacion} from '../../components/solicitud/liquidacion/liquidacion';
+import {
+  LiquidacionSolicitudResponse
+} from '../../../../../apis/model/module/private/operativo/solicitud/response/liquidacion-solicitud-response';
 
 type Estado = 'REGISTRADO' | 'VALIDADO' | 'OBSERVADO' | 'PENDIENTE_AUTORIZACION' | 'ANULADO' | 'AUTORIZADO' | 'PROCESADO_TOTAL' | 'PROCESADO_PARCIAL' | 'AUTORIZADO_PARCIAL';
 
@@ -83,7 +87,8 @@ interface EstadoSolicitudInterface {
     IftaLabel,
     Dialog,
     ProgressSpinner,
-    Card
+    Card,
+    Liquidacion
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './solicitud.html',
@@ -114,7 +119,9 @@ export class Solicitud implements OnInit {
   protected observaciones!: ObservacionResponse[];
   protected idSolicitud!: number;
   protected eventoObservacion: string = "";
-  loadingValidacion: boolean = false;
+  protected loadingValidacion: boolean = false;
+  protected visibleLiquidacion: boolean = false;
+  protected liquidacionData?: LiquidacionSolicitudResponse;
 
   misItems: MenuItem[] = [];
 
@@ -573,6 +580,18 @@ export class Solicitud implements OnInit {
 
     this.visibleFactor = false;
     this.solicitudSeleccionadaId = undefined;
+  }
+
+  verLiquidacion(idSolicitud: number) {
+    this.solicitudService.getLiquidacion(idSolicitud, Number(this.idEmpresa)).subscribe({
+      next: (response: LiquidacionSolicitudResponse) => {
+        this.liquidacionData = response;
+        this.visibleLiquidacion = true;
+      },
+      error: (error) => {
+        console.error('Error al cargar liquidación:', error);
+      }
+    });
   }
 
   private filtrarPorModo() {

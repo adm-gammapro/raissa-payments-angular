@@ -10,7 +10,7 @@ import {
   ReglaResponse
 } from '../../../../../../apis/model/module/private/operativo/administrativo/response/regla-response';
 import {MessageService} from 'primeng/api';
-import {AdministrativoService} from '../../../../../../service/modules/private/operativo/administrativo/administrativo';
+import {AdministrativoService} from '../../../../../../service/modules/private/operativo/administrativo/administrativo.service';
 import {environment} from '../../../../../../../environments/environment';
 import {
   ConfiguracionReglasResponse
@@ -41,7 +41,7 @@ import {Predeterminado} from '../../../../../../apis/model/module/commons/predet
     Select
   ],
   templateUrl: './form-configuracion-reglas.html',
-  styleUrl: './form-configuracion-reglas.scss',
+  styleUrl: './form-configuracion-reglas.css',
 })
 export class FormConfiguracionReglas implements OnInit {
   @Input() visible: boolean = false;

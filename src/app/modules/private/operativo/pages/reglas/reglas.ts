@@ -1,5 +1,5 @@
 import {Component, ViewChild} from '@angular/core';
-import {BreadcrumbComponent} from '../../../administrativo/components/breadcrumb/breadcrumb.component';
+import {BreadcrumbComponent} from '../../../commons/components/breadcrumb/breadcrumb.component';
 import {Button} from 'primeng/button';
 import {ConfirmDialog} from 'primeng/confirmdialog';
 import {IftaLabel} from 'primeng/iftalabel';
@@ -11,7 +11,7 @@ import {Toast} from 'primeng/toast';
 import {Tooltip} from 'primeng/tooltip';
 import {Estado} from '../../../../../apis/model/module/commons/estado';
 import {ConfirmationService, MenuItem, MessageService} from 'primeng/api';
-import {AdministrativoService} from '../../../../../service/modules/private/operativo/administrativo/administrativo';
+import {AdministrativoService} from '../../../../../service/modules/private/operativo/administrativo/administrativo.service';
 import {environment} from '../../../../../../environments/environment';
 import {Util} from '../../../../../utils/util/util';
 import {ReglaResponse} from '../../../../../apis/model/module/private/operativo/administrativo/response/regla-response';
@@ -86,8 +86,10 @@ export class Reglas {
   filtrar() {
     this.actualizacionManual = true;
     this.loading = true;
-    this.dt.reset();
-    this.dt.rows = 5;
+    if (this.dt) {
+      this.dt.reset();
+      this.dt.rows = 5;
+    }
 
     setTimeout(() => {
       const fakeLazyEvent: TableLazyLoadEvent = {

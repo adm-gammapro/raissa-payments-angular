@@ -10,7 +10,7 @@ import {
   TipoPagoResponse
 } from '../../../../../../apis/model/module/private/operativo/administrativo/response/tipo-pago-response';
 import {Message} from 'primeng/message';
-import {AdministrativoService} from '../../../../../../service/modules/private/operativo/administrativo/administrativo';
+import {AdministrativoService} from '../../../../../../service/modules/private/operativo/administrativo/administrativo.service';
 import {
   TipoPagoRequest
 } from '../../../../../../apis/model/module/private/operativo/administrativo/request/tipo-pago-request';

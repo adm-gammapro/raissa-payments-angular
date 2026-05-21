@@ -8,5 +8,6 @@ export interface LiquidacionSolicitudResponse {
   totalImpuestos: number;
   totalComisionesOrigen: number;
   totalComisionesDestino: number;
+  moneda: string;
   detalle: DetalleLiquidacionSolicitudResponse[];
 }

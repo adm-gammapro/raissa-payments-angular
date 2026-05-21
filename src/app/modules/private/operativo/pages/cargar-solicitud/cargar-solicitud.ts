@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {CommonModule} from '@angular/common';
-import {BreadcrumbComponent} from '../../../administrativo/components/breadcrumb/breadcrumb.component';
+import {BreadcrumbComponent} from '../../../commons/components/breadcrumb/breadcrumb.component';
 import {ButtonModule} from 'primeng/button';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -13,7 +13,7 @@ import {ConfirmationService, MenuItem, MessageService} from 'primeng/api';
 import {BadgeModule} from 'primeng/badge';
 import {DatePickerModule} from 'primeng/datepicker';
 import {VistaPreviaSolicitud} from '../../components/cargar-solicitud/vista-previa-solicitud/vista-previa-solicitud';
-import {SolicitudService} from '../../../../../service/modules/private/operativo/solicitud/solicitud';
+import {SolicitudService} from '../../../../../service/modules/private/operativo/solicitud/solicitud.service';
 import {
   SolicitudResponse
 } from '../../../../../apis/model/module/private/operativo/solicitud/response/solicitud-response';

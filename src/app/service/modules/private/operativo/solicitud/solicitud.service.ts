@@ -67,7 +67,12 @@ export class SolicitudService {
     );
   }
 
-  getLiquidacion(request: LiquidacionSolicitudRequest): Observable<LiquidacionSolicitudResponse> {
+  getLiquidacion(idSolicitud: number, idEmpresa: number): Observable<LiquidacionSolicitudResponse> {
+    const request: LiquidacionSolicitudRequest = {
+      solicitudId: idSolicitud,
+      codigoCliente: idEmpresa
+    };
+
     return this.http.post(`${this.baseUrl}/resumen-liquidacion?`, request).pipe(
       map((response: any) => response),
       catchError(err => {

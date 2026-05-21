@@ -1,0 +1,164 @@
+<p-toast position="top-center"></p-toast>
+<p-confirmDialog></p-confirmDialog>
+
+<p-card class="shadow-xl rounded-xl border-none">
+  <app-breadcrumb [itemsBread]="misItems"></app-breadcrumb>
+
+  <form [formGroup]="filtroForm" (ngSubmit)="filtrar()">
+    <p-table #dt
+             [value]="usuarios"
+             [tableStyle]="{ 'min-width': '50rem' }"
+             [paginator]="true"
+             [totalRecords]="totalRecords"
+             [lazy]="true"
+             [loading]="loading"
+             [rows]="5"
+             [rowsPerPageOptions]="[5, 10, 20]"
+             [rowHover]="true"
+             stripedRows
+             breakpoint="960px"
+             [size]="'small'"
+             (onLazyLoad)="loadLazy($event)"
+             currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros en total"
+             showCurrentPageReport="true"
+             sortField="apePaterno"
+             [sortOrder]="1">
+
+      <!-- CAPTION: Filtros -->
+      <ng-template #caption>
+        <div class="flex flex-wrap items-end justify-between gap-3 mb-2 w-full">
+          <div class="flex flex-wrap items-end gap-3">
+            <!-- Búsqueda por nombre de usuario -->
+            <div class="w-[280px] sm:w-[300px]">
+              <p-iftalabel>
+                <input id="nombreUsuario" pInputText type="text" placeholder="Nombre de usuario" class="w-full" formControlName="nombreUsuario"/>
+                <label for="nombreUsuario">Búsqueda por nombre de usuario</label>
+              </p-iftalabel>
+            </div>
+
+            <!-- Select Estado -->
+            <div class="w-[280px] sm:w-[300px]">
+              <p-iftalabel>
+                <p-select id="estadoRegistro" formControlName="estadoRegistro" [options]="estados" optionLabel="descripcion" optionValue="valor" placeholder="Selecciona estado" class="w-full" appendTo="body"></p-select>
+                <label for="estadoRegistro">Estado de registro</label>
+              </p-iftalabel>
+            </div>
+          </div>
+
+          <!-- Botones -->
+          <div class="flex items-center gap-2 ml-auto pt-1">
+            <p-button icon="pi pi-search" label="Buscar" (onClick)="filtrar()" [outlined]="true" severity="info" iconPos="top" styleClass="w-[100px]"></p-button>
+            <p-button icon="pi pi-filter-slash" label="Limpiar" (onClick)="limpiarFiltros()" [outlined]="true" severity="secondary" iconPos="top" styleClass="w-[100px]"></p-button>
+            <p-button icon="pi pi-plus" label="Nuevo" [outlined]="true" severity="success" iconPos="top" (onClick)="nuevo()" styleClass="w-[100px]"></p-button>
+          </div>
+        </div>
+      </ng-template>
+
+      <!-- HEADER -->
+      <ng-template #header>
+        <tr>
+          <th id="username" pSortableColumn="username" class="w-[10%]">Usuario <p-sortIcon field="username"/></th>
+          <th id="nombres" pSortableColumn="nombres" class="w-[10%]">Nombres <p-sortIcon field="nombres"/></th>
+          <th id="apePaterno" pSortableColumn="apePaterno" class="w-[10%]">Apellido Paterno <p-sortIcon field="apePaterno"/></th>
+          <th id="apeMaterno" pSortableColumn="apeMaterno" class="w-[10%]">Apellido Materno <p-sortIcon field="apeMaterno"/></th>
+          <th id="Correo" class="w-[20%]">Correo</th>
+          <th id="tipoUsuario" class="w-[10%]">Tipo Usuario</th>
+          <th id="claseUsuario" class="w-[10%]">Clase Usuario</th>
+          <th id="Estado" class="w-[10%]">Estado</th>
+          <th id="Acciones" class="w-[10%] text-center">Acciones</th>
+      </ng-template>
+
+      <!-- BODY -->
+      <ng-template #body let-usuario>
+        <tr>
+          <td>{{ usuario.username }}</td>
+          <td>{{ usuario.nombres }}</td>
+          <td>{{ usuario.apePaterno }}</td>
+          <td>{{ usuario.apeMaterno }}</td>
+          <td>{{ usuario.correo }}</td>
+          <td>{{ usuario.tipoUsuario | tipoUsuarioLabel }}</td>
+          <td>{{ usuario.claseUsuario | claseUsuarioLabel }}</td>
+          <td>{{ usuario.estadoRegistro  | estadoRegistroLabel }}</td>
+          <td class="text-center">
+            <div class="flex items-center justify-center gap-1">
+              <p-button
+                icon="pi pi-sliders-h"
+                [rounded]="true"
+                severity="info"
+                [outlined]="true"
+                pTooltip="Vinculas sistemas"
+                tooltipPosition="left"
+                size="small"
+                (onClick)="abrirModalSistemas(usuario.id)"
+              ></p-button>
+              <p-button
+                icon="pi pi-building"
+                [rounded]="true"
+                severity="info"
+                [outlined]="true"
+                pTooltip="Vincular empresas"
+                tooltipPosition="left"
+                size="small"
+                (onClick)="abrirModalClientes(usuario.id)"
+              ></p-button>
+              <p-button
+                icon="pi pi-id-card"
+                [rounded]="true"
+                severity="info"
+                [outlined]="true"
+                pTooltip="Vincular perfiles"
+                tooltipPosition="left"
+                size="small"
+                (onClick)="abrirModalPerfiles(usuario.id)"
+              ></p-button>
+              <p-button
+                icon="pi pi-cog"
+                [rounded]="true"
+                severity="success"
+                [outlined]="true"
+                pTooltip="Configurar"
+                tooltipPosition="left"
+                size="small"
+                (onClick)="abrirModalConfiguraciones(usuario.id, usuario.nombres)"
+              ></p-button>
+              <p-button icon="pi pi-file-edit" [rounded]="true" [outlined]="true" pTooltip="Editar" tooltipPosition="left" size="small" (onClick)="editar(usuario.id)"/>
+              <p-button icon="pi pi-trash" [rounded]="true" severity="danger" [outlined]="true" pTooltip="Eliminar" tooltipPosition="left" size="small" (onClick)="delete($event, usuario.id)"/>
+            </div>
+          </td>
+          </tr>
+      </ng-template>
+    </p-table>
+  </form>
+</p-card>
+
+<app-form-usuario
+  [(visible)]="visibleForm"
+  [usuarioData]="selectedUsuario"
+  (guardarRegistro)="guardar()"
+  [modo]="modoUso">
+</app-form-usuario>
+
+<app-vincular-usuario-sistemas
+  *ngIf="modalSistemasVisible"
+  [(visible)]="modalSistemasVisible"
+  [UsuarioId]="usuarioSeleccionadoId"
+></app-vincular-usuario-sistemas>
+
+<app-vincular-usuario-clientes
+  *ngIf="modalClientesVisible"
+  [(visible)]="modalClientesVisible"
+  [UsuarioId]="usuarioSeleccionadoClienteId"
+></app-vincular-usuario-clientes>
+
+<app-vincular-usuario-perfiles
+  *ngIf="modalPerfilesVisible"
+  [(visible)]="modalPerfilesVisible"
+  [UsuarioId]="usuarioSeleccionadoPerfilId"
+></app-vincular-usuario-perfiles>
+
+<app-listar-configuraciones-usuario
+  *ngIf="modalConfiguracionesVisible"
+  [(visible)]="modalConfiguracionesVisible"
+  [usuarioId]="usuarioSeleccionadoConfigId"
+  [usuarioNombre]="usuarioSeleccionadoConfigNombre"
+></app-listar-configuraciones-usuario>

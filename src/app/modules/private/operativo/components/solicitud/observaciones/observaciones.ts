@@ -12,7 +12,7 @@ import {
 } from '../../../../../../apis/model/module/private/operativo/solicitud/response/observacion-response';
 import {MessageService} from 'primeng/api';
 import {environment} from '../../../../../../../environments/environment';
-import {SolicitudService} from '../../../../../../service/modules/private/operativo/solicitud/solicitud';
+import {SolicitudService} from '../../../../../../service/modules/private/operativo/solicitud/solicitud.service';
 import {
   ObservacionFlujoSolicitudRequest
 } from '../../../../../../apis/model/module/private/operativo/solicitud/request/observacion-flujo-solicitud-request';

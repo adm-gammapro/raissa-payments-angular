@@ -1,0 +1,113 @@
+<div class="bg-white shadow-md rounded-lg flex justify-center">
+  <p-dialog header="Usuario" [modal]="true" [(visible)]="visible" [style]="{ width: '45rem' }" closable="false">
+    <!-- HEADER -->
+    <ng-template #header>
+      <div class="inline-flex items-center justify-center gap-2">
+        <h2><span class="font-bold whitespace-nowrap">{{ headerTitle }}</span></h2>
+      </div>
+    </ng-template>
+
+    <!-- BODY -->
+    <form [formGroup]="form" class="flex flex-col">
+      <p-panel class="mb-3 shadow-none">
+        <input type="hidden" formControlName="id">
+        <input type="hidden" formControlName="username" id="username">
+
+        <div class="p-2 grid grid-cols-1 md:grid-cols-2 gap-3">
+          <!-- Campo: Nombres -->
+          <div class="flex flex-col gap-1">
+            <label for="nombres" class="text-sm font-medium text-gray-700">Nombres *</label>
+            <input id="nombres" type="text" pInputText formControlName="nombres" class="w-full"/>
+            @if (form.get('nombres')?.touched && form.get('nombres')?.errors?.['required']) {
+              <p-message severity="error" variant="simple" size="small">Campo obligatorio</p-message>
+            }
+          </div>
+
+          <!-- Campo: Apellido Paterno -->
+          <div class="flex flex-col gap-1">
+            <label for="apePaterno" class="text-sm font-medium text-gray-700">Apellido Paterno *</label>
+            <input id="apePaterno" type="text" pInputText formControlName="apePaterno" class="w-full"/>
+            @if (form.get('apePaterno')?.touched && form.get('apePaterno')?.errors?.['required']) {
+              <p-message severity="error" variant="simple" size="small">Campo obligatorio</p-message>
+            }
+          </div>
+
+          <!-- Campo: Apellido Materno -->
+          <div class="flex flex-col gap-1">
+            <label for="apeMaterno" class="text-sm font-medium text-gray-700">Apellido Materno</label>
+            <input id="apeMaterno" type="text" pInputText formControlName="apeMaterno" class="w-full"/>
+          </div>
+
+          <!-- Campo: Correo -->
+          <div class="flex flex-col gap-1">
+            <label for="correo" class="text-sm font-medium text-gray-700">Correo Electrónico *</label>
+            <input id="correo" type="email" pInputText formControlName="correo" class="w-full"/>
+            @if (form.get('correo')?.touched && form.get('correo')?.errors) {
+              @if (form.get('correo')?.errors?.['required']) {
+                <p-message severity="error" variant="simple" size="small">Campo obligatorio</p-message>
+              }
+              @if (form.get('correo')?.errors?.['email']) {
+                <p-message severity="error" variant="simple" size="small">Correo inválido</p-message>
+              }
+            }
+          </div>
+
+          <!-- Campo: Teléfono -->
+          <div class="flex flex-col gap-1">
+            <label for="telefono" class="text-sm font-medium text-gray-700">Teléfono</label>
+            <input id="telefono" type="text" pInputText formControlName="telefono" class="w-full"/>
+          </div>
+
+          <!-- Campo: Tipo Documento -->
+          <div class="flex flex-col gap-1">
+            <label for="tipoDoc" class="text-sm font-medium text-gray-700">Tipo Documento *</label>
+            <p-select id="tipoDoc" formControlName="codigoTipoDocumento" [options]="tipoDocs" optionLabel="descripcion" optionValue="codigo" placeholder="Selecciona tipo" class="w-full" appendTo="body"></p-select>
+            @if (form.get('codigoTipoDocumento')?.touched && form.get('codigoTipoDocumento')?.errors?.['required']) {
+              <p-message severity="error" variant="simple" size="small">Campo obligatorio</p-message>
+            }
+          </div>
+
+          <!-- Campo: Número Documento -->
+          <div class="flex flex-col gap-1">
+            <label for="numeroDocumento" class="text-sm font-medium text-gray-700">Número Documento *</label>
+            <input id="numeroDocumento" type="text" pInputText formControlName="numeroDocumento" class="w-full"/>
+            @if (form.get('numeroDocumento')?.touched && form.get('numeroDocumento')?.errors?.['required']) {
+              <p-message severity="error" variant="simple" size="small">Campo obligatorio</p-message>
+            }
+          </div>
+
+          <!-- Campo: Clase Usuario -->
+          <div class="flex flex-col gap-1">
+            <label for="claseUsuario" class="text-sm font-medium text-gray-700">Clase Usuario *</label>
+            <p-select id="claseUsuario" formControlName="claseUsuario" [options]="clasesUsuario" optionLabel="descripcion" optionValue="valor" placeholder="Selecciona clase" class="w-full" appendTo="body"></p-select>
+            @if (form.get('claseUsuario')?.touched && form.get('claseUsuario')?.errors?.['required']) {
+              <p-message severity="error" variant="simple" size="small">Campo obligatorio</p-message>
+            }
+          </div>
+
+          <!-- Campo: ID Empresa (hidden o disabled) -->
+          <input type="hidden" formControlName="idEmpresa">
+        </div>
+      </p-panel>
+    </form>
+
+    <!-- FOOTER -->
+    <ng-template #footer>
+      <div class="flex justify-end gap-2 pt-2">
+        <p-button label="Cancelar" [outlined]="true" severity="info" (onClick)="cerrar()"></p-button>
+        <p-button label="Guardar" [outlined]="true" severity="success" (onClick)="guardar()"></p-button>
+      </div>
+    </ng-template>
+  </p-dialog>
+</div>
+
+<p-dialog [modal]="true" [(visible)]="loading" [style]="{ width: '20rem' }" closable="false">
+  <div class="flex flex-col items-center gap-4 py-4">
+    <span class="text-gray-600 text-sm font-medium">Procesando registro</span>
+    <p-progress-spinner
+      class="w-16 h-16"
+      strokeWidth="8"
+      fill="var(--surface-ground)"
+      animationDuration=".5s"/>
+  </div>
+</p-dialog>

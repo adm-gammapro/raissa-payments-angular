@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {Button} from "primeng/button";
 import {Dialog} from "primeng/dialog";
-import {FormBuilder, ReactiveFormsModule} from "@angular/forms";
+import {ReactiveFormsModule} from "@angular/forms";
 import {
   VinculoCategoriaUsuarioResponse
 } from '../../../../../../apis/model/module/private/operativo/administrativo/response/vinculo-categoria-usuario-response';
@@ -12,8 +12,8 @@ import {
 import {
   CategoriaUsuarioRequest
 } from '../../../../../../apis/model/module/private/operativo/administrativo/request/categoria-usuario-request';
-import {ConfirmationService, MessageService} from 'primeng/api';
-import {AdministrativoService} from '../../../../../../service/modules/private/operativo/administrativo/administrativo';
+import {MessageService} from 'primeng/api';
+import {AdministrativoService} from '../../../../../../service/modules/private/operativo/administrativo/administrativo.service';
 import {environment} from '../../../../../../../environments/environment';
 
 @Component({

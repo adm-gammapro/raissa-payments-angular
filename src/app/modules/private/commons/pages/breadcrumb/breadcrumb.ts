@@ -14,7 +14,7 @@ import {CommonModule} from '@angular/common';
     TagModule
   ],
   templateUrl: './breadcrumb.html',
-  styleUrl: './breadcrumb.scss',
+  styleUrl: './breadcrumb.css',
 })
 export class Breadcrumb {
   @Input() itemsBread: MenuItem[] | undefined;

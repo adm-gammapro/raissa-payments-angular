@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {BreadcrumbComponent} from '../../../administrativo/components/breadcrumb/breadcrumb.component';
+import {BreadcrumbComponent} from '../../../commons/components/breadcrumb/breadcrumb.component';
 import {Button} from 'primeng/button';
 import {ConfirmDialog} from 'primeng/confirmdialog';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -10,7 +10,7 @@ import {Toast} from 'primeng/toast';
 import {Tooltip} from 'primeng/tooltip';
 import {Estado} from '../../../../../apis/model/module/commons/estado';
 import {ConfirmationService, MenuItem, MessageService} from 'primeng/api';
-import {AdministrativoService} from '../../../../../service/modules/private/operativo/administrativo/administrativo';
+import {AdministrativoService} from '../../../../../service/modules/private/operativo/administrativo/administrativo.service';
 import {environment} from '../../../../../../environments/environment';
 import {Util} from '../../../../../utils/util/util';
 import {

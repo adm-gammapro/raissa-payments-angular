@@ -11,7 +11,7 @@ import {Cargo} from '../../../../../../apis/model/module/private/operativo/carga
 import {MessageService} from 'primeng/api';
 import {
   CargarSolicitudService
-} from '../../../../../../service/modules/private/operativo/cargar-solicitud/cargar-solicitud';
+} from '../../../../../../service/modules/private/operativo/cargar-solicitud/cargar-solicitud.service';
 import {environment} from '../../../../../../../environments/environment';
 import {FileUpload} from 'primeng/fileupload';
 import {Tooltip} from 'primeng/tooltip';

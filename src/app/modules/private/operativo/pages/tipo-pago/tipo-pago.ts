@@ -1,5 +1,5 @@
 import {Component, ViewChild} from '@angular/core';
-import {BreadcrumbComponent} from '../../../administrativo/components/breadcrumb/breadcrumb.component';
+import {BreadcrumbComponent} from '../../../commons/components/breadcrumb/breadcrumb.component';
 import {Button} from 'primeng/button';
 import {ConfirmDialog} from 'primeng/confirmdialog';
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
@@ -10,7 +10,7 @@ import {ConfirmationService, MenuItem, MessageService} from 'primeng/api';
 import {
   TipoPagoSearch
 } from '../../../../../apis/model/module/private/operativo/administrativo/request/tipo-pago-search';
-import {AdministrativoService} from '../../../../../service/modules/private/operativo/administrativo/administrativo';
+import {AdministrativoService} from '../../../../../service/modules/private/operativo/administrativo/administrativo.service';
 import {environment} from '../../../../../../environments/environment';
 import {
   TipoPagoResponse
